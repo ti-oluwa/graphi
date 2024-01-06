@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../../static/styles/base.css">
+    <link rel="stylesheet" href="../../static/styles/signup.css">
+
+    <title>Graphi | Create an account</title>
+</head>
+<body>
+    <div class="container">
+        <main>
+            <section id="main-text">
+                <h1>Graphi</h1>
+                <p>
+                    Create an account to start using Graphi.
+                </p>
+            </section>
+
+            <section id="form-wrapper">
+                <div id="form-card">
+                    <div id="form-header">
+                        <h2>Sign Up</h2>
+                        <p>
+                            Let's set up your account.
+                        </p>
+                    </div>
+                    <!-- Account Creation Form Section -->
+                    <form action="" id="signup-form" onsubmit="(e) => {e.stopImmediatePropagation(); e.preventDefault();}">
+                        <div id="form-fields">
+                            <div id="users-names">
+                                <label for="firstname" hidden>First Name</label>
+                                <input 
+                                    type="text" 
+                                    id="firstname" 
+                                    name="firstname" 
+                                    class="form-input" 
+                                    placeholder="First name" 
+                                    maxlength="50" 
+                                    required
+                                >
+            
+                                <label for="lastname" hidden>Last Name</label>
+                                <input 
+                                    type="text" 
+                                    id="lastname" 
+                                    name="lastname" 
+                                    class="form-input"
+                                    placeholder="Last name" 
+                                    maxlength="50" 
+                                    required
+                                >
+                            </div>
+            
+                            <label for="email" hidden>Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                class="form-input"
+                                placeholder="Email address" 
+                                required
+                            >
+
+                            <label for="timezone" hidden>Timezone</label>
+                            <input 
+                                type="text" 
+                                id="timezone" 
+                                name="timezone" 
+                                class="form-input"
+                                placeholder="Select your timezone" 
+                                required
+                            >
+            
+                            <label for="password1" hidden>Password</label>
+                            <input 
+                                type="password" 
+                                id="password1" 
+                                name="password1" 
+                                class="form-input" 
+                                placeholder="Password"
+                                minlength="8" 
+                                required
+                            >
+            
+                            <label for="password2" hidden>Confirm Password</label>
+                            <input 
+                                type="password" 
+                                id="password2" 
+                                name="password2" 
+                                class="form-input"
+                                placeholder="Confirm password" 
+                                minlength="8" 
+                                required
+                            >
+                        </div>
+
+                        <div id="submit-btn-wrapper">
+                            <button class="btn-primary" id="submit-btn" type="submit">
+                                Sign Up
+                            </button>
+                        </div>
+
+                        <small>
+                            Already have an account?
+                            <a href="#">Sign in</a>
+                        </small>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+<script src="../../static/scripts/signup.js"></script>
+</html>

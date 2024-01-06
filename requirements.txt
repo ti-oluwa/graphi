@@ -1,3 +1,6 @@
 django==5.0.1
 djsm==0.1.2
 djmoney
+django_utz
+django-crispy-forms
+django-timezone-field

@@ -1,0 +1,163 @@
+
+body{
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--parchment) 100%);
+}
+
+main{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px 0;
+    padding: 100px 40px;
+}
+
+main > #main-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 24px 0;
+    padding: 16px;
+}
+
+#main-text > h1{
+    font-family: "Raleway";
+    font-size: clamp(48px, 2vw, 60px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--jasper);
+}
+
+#main-text > p{
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--dark-blue);
+}
+
+
+main > #form-wrapper{
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#form-wrapper > #form-card{
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+#form-card > #form-header{
+    justify-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px 0;
+    padding: 16px;
+    border-bottom: 1px solid var(--bluish-gray);
+}
+
+#form-header > h2{
+    font-size: 24px;
+    font-family: 'Raleway';
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--dark-blue);
+}
+
+#form-header > p{
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
+#form-card > #signin-form{
+    justify-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px 0;
+    padding: 16px;
+}
+
+#signin-form > #form-fields{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px 0;
+}
+
+#form-fields .form-input{
+    width: 100%;
+    display: block;
+    border: none;
+    border-radius: 0px;
+    box-shadow: 0px 1px 0px var(--teal);
+}
+
+#form-fields .form-input:focus-within{
+    box-shadow: 0px 1.5px 0px var(--teal);
+}
+
+#form-fields .form-input:not(:placeholder-shown){
+    box-shadow: 0px 1.5px 0px var(--teal);
+}
+
+#users-names > .form-input{
+    flex-basis: 50%;
+}
+
+#signin-form > #submit-btn-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+#submit-btn-wrapper > #submit-btn{
+    width: 100%;
+    max-width: 200px;
+}
+
+#signin-form > small{
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
+#signin-form > small > a{
+    color: var(--jasper);
+}
+
+
+/* Media queries */
+@media screen and (max-width: 726px) {
+    main{
+        flex-direction: column;
+        padding: 40px 20px;
+        gap: 20px 0;
+    }
+
+    main > #main-text{
+        justify-content: center;
+        align-items: center;
+        gap: 16px 0;
+        text-align: center;
+    }
+}
