@@ -35,6 +35,7 @@ INSTALLED_APPS = [
 
     'timezone_field',
     'django_utz',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -98,7 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "users.TallyUser"
+AUTH_USER_MODEL = "users.UserAccount"
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

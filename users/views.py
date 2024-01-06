@@ -1,25 +1,42 @@
 from typing import Any
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
 from django.views.generic import CreateView
 
 
-from .forms import TallyUserCreationForm
+from .forms import UserCreationForm
+from .models import UserAccount
 
 
 class UserCreateView(CreateView):
     """View for creating a user."""
-    form_class = TallyUserCreationForm
+    form_class = UserCreationForm
     template_name = "users/signup.html"
-    success_url = "/"
+    success_url = "/signin/"
 
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         """Handle POST requests."""
-        form = self.form_class(request.POST)
+        form = self.form_class(request.data)
         if form.is_valid():
-            form.save(commit=False)
-            return self.form_valid(form)
-        return self.form_invalid(form)
+            user: UserAccount = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            user.send_verification_email()
+            return JsonResponse(
+                data={
+                    "status": "success",
+                    "redirect_url": self.success_url,
+                },
+                status=201
+            )
+            
+        return JsonResponse(
+            data={
+                "status": "error",
+                "errors": form.errors,
+            },
+            status=400
+        )
 
 
 

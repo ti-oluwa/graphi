@@ -28,7 +28,7 @@
                         </p>
                     </div>
                     <!-- Account Creation Form Section -->
-                    <form action="" id="signup-form" onsubmit="(e) => {e.stopImmediatePropagation(); e.preventDefault();}">
+                    <form action="" id="signup-form">
                         <div id="form-fields">
                             <div id="users-names">
                                 <label for="firstname" hidden>First Name</label>
@@ -57,20 +57,11 @@
                             <label for="email" hidden>Email Address</label>
                             <input 
                                 type="email" 
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                 id="email" 
                                 name="email" 
                                 class="form-input"
                                 placeholder="Email address" 
-                                required
-                            >
-
-                            <label for="timezone" hidden>Timezone</label>
-                            <input 
-                                type="text" 
-                                id="timezone" 
-                                name="timezone" 
-                                class="form-input"
-                                placeholder="Select your timezone" 
                                 required
                             >
             

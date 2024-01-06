@@ -5,11 +5,11 @@ from django.utils.translation import gettext_lazy as _
 from django_utz.models.mixins import UTZUserModelMixin, UTZModelMixin
 from timezone_field import TimeZoneField
 
-from .managers import TallyUserManager
+from .managers import UserAccountManager
 
 
-class TallyUser(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBaseUser):
-    """Custom user model for Tally users."""
+class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBaseUser):
+    """Custom user model"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     firstname = models.CharField(max_length=50)
     lastname = models.CharField(max_length=50)
@@ -26,8 +26,8 @@ class TallyUser(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBase
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ("firstname", "lastname")
 
-    objects = TallyUserManager()
-    
+    objects = UserAccountManager()
+
     user_timezone_field = "timezone"
     datetime_fields = ("registered_at", "updated_at")
     
@@ -38,3 +38,8 @@ class TallyUser(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBase
     @property
     def fullname(self):
         return f"{self.firstname} {self.lastname}"
+
+
+    def send_verification_email(self):
+        """Send verification email to user."""
+        pass    

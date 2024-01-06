@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from .models import TallyUser
+from .models import UserAccount
 
-admin.site.register(TallyUser)
+admin.site.register(UserAccount)

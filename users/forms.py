@@ -1,13 +1,13 @@
 # from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import TallyUser
+from .models import User
 
 
-class TallyUserCreationForm(UserCreationForm):
+class UserCreationForm(UserCreationForm):
     """Form for creating a new user."""
     class Meta(UserCreationForm):
-        model = TallyUser
+        model = User
         fields = (
             "firstname", "lastname", "email", 
             "timezone", "password1", "password2",

@@ -19,7 +19,7 @@ class Store(UTZModelMixin, models.Model):
     name = models.CharField(max_length=150)
     type = models.CharField(max_length=50, choices=StoreType.choices, default=StoreType.OTHER)
     email = models.EmailField(blank=True)
-    owner = models.ForeignKey("users.TallyUser", on_delete=models.CASCADE, related_name="stores")
+    owner = models.ForeignKey("users.UserAccount", on_delete=models.CASCADE, related_name="stores")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

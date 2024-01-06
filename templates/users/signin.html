@@ -27,12 +27,13 @@
                             Log into your account.
                         </p>
                     </div>
-                    <!-- Account Creation Form Section -->
+                    <!-- Sign In Form Section -->
                     <form action="" id="signin-form">
                         <div id="form-fields">
                             <label for="email" hidden>Email Address</label>
                             <input 
                                 type="email" 
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" 
                                 id="email" 
                                 name="email" 
                                 class="form-input"

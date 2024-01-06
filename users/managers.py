@@ -1,8 +1,8 @@
 from django.contrib.auth.models import BaseUserManager
 
 
-class TallyUserManager(BaseUserManager):
-    """Custom manager for `TallyUser` model."""
+class UserAccountManager(BaseUserManager):
+    """Custom manager for `UserAccount` model."""
     use_in_migrations = True
 
     def create_user(self, email, password, **extra_fields):

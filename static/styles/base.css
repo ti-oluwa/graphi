@@ -90,6 +90,26 @@ input:not(:placeholder-shown){
     margin: -1px !important;
 }
 
+input[type="checkbox"]{
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--dark-gray);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked{
+    background-color: var(--teal);
+    border: 1px solid var(--teal);
+}
+
+.input-invalid{
+    box-shadow: 0px 1px 2px var(--jasper) !important;
+}
+
 label{
     color: var(--text-dark);
     font-weight: 700;
@@ -113,9 +133,15 @@ button{
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.btn-primary:hover{
+.btn-primary:active{
     background-color: var(--parchment);
     color: var(--white);
+}
+
+.btn-primary:hover{
+    background-color: var(--jasper);
+    color: var(--white);
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary{
@@ -124,9 +150,15 @@ button{
     border: 1px solid var(--dark-gray);
 }
 
-.btn-secondary:hover{
+.btn-secondary:active{
     background-color: var(--bluish-gray);
     color: var(--text-dark);
+}
+
+.btn-secondary:hover{
+    background-color: var(--light-gray);
+    color: var(--text-dark);
+    border: 1px solid var(--dark-gray);
 }
 
 button:disabled{
