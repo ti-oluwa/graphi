@@ -41,8 +41,10 @@ body{
     font-smooth: always !important;
     -webkit-text-size-adjust: none;
     color: var(--text-dark);
-    background-color: var(--white);
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--parchment) 100%);
     overflow-x: hidden !important;
+    width: 100%;
+    min-height: 100vh;
 }
 
 h1,h2, h3, h4, h5, h6{
@@ -62,6 +64,10 @@ p, li, a{
     font-family: "Manrope";
     color: var(--text-dark);
     line-height: 1.6;
+}
+
+li{
+    list-style: none;
 }
 
 ::placeholder{
@@ -166,7 +172,10 @@ button:disabled{
     pointer-events: none;
 }
 
-.show_block{
-    display: block;
+.show-block{
+    display: block !important;
 }
 
+.show-flex{
+    display: flex !important;
+}

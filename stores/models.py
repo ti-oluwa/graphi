@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from django_utz.models.mixins import UTZModelMixin
 
+
 class StoreType(models.TextChoices):
     """Choices for store types."""
     GROCERY = "grocery", "Grocery"

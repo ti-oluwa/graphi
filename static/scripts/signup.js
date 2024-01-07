@@ -1,44 +1,34 @@
+
 const signUpForm = document.querySelector('#signup-form');
 const signUpButton = document.querySelector('#signup-form #submit-btn');
-const timezoneField = document.querySelector('#signup-form #timezone');
+const emailField = document.querySelector('#signup-form #email');
 const passwordField1 = document.querySelector('#signup-form #password1');
 const passwordField2 = document.querySelector('#signup-form #password2');
 
+const signUpURL = "/signup/";
 
-/**
- * Gets the timezone of the client
- * @returns {string} the timezone of the client
- */
-function getClientTimezone() {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+signUpForm.onPost = function(){
+    signUpButton.disabled = true;
+    signUpButton.innerHTML = 'Please wait...';
 }
 
 
-/**
- * Checks if the password is valid and sets custom validity message if not
- * @returns {boolean} true if the password is valid, false otherwise
- */
-function validatePassword() {
-    if (passwordField1.value !== passwordField2.value) {
-        passwordField2.setCustomValidity('Passwords do not match');
-        passwordField2.reportValidity();
-        return false;
-    } else {
-        passwordField2.setCustomValidity('');
-        return true;
-    }
+signUpForm.onResponse = function(){
+    signUpButton.disabled = false;
+    signUpButton.innerHTML = 'Sign Up';
 }
+
 
 signUpForm.onsubmit = (e) => {
     e.stopImmediatePropagation();
     e.preventDefault();
-    console.log(getTimezone());
-    if (!validatePassword()){
-        return;
-    };
 
-    signUpButton.disabled = true;
-    signUpButton.innerHTML = 'Please wait...';
+    if (!isValidEmail(emailField.value)) {
+        fieldHasError(emailField, 'Invalid email address!');
+        return;
+    }
+    if (!validatePassword(passwordField1, passwordField2)) return;
+    
     const formData = new FormData(signUpForm);
     const data = {};
     for (const [key, value] of formData.entries()) {
@@ -46,23 +36,36 @@ signUpForm.onsubmit = (e) => {
     }
     data['timezone'] = getClientTimezone();
 
-    fetch('/signup/', {
+    signUpForm.onPost();
+
+    const options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
         },
+        mode: 'same-origin',
         body: JSON.stringify(data),
-        credentials: 'include',
-    }).then((response) => {
-        if (response.ok) {
+    }
+
+    fetch(signUpURL, options).then((response) => {
+        signUpForm.onResponse();
+        if (!response.status === 201) {
             response.json().then((data) => {
-                window.location.href = data['redirect_url'];
+                const errors = data.errors ?? null;
+                if (!errors) return;
+                if(!typeof errors === Object) throw new TypeError("Invalid response type for 'errors'")
+
+                for (const [fieldName, msg] of Object.entries(errors)){
+                    let field = signUpForm.querySelector(`input[name=${fieldName}]`);
+                    fieldHasError(field, msg);
+                }
             });
-        } else {
+        }else{
             response.json().then((data) => {
-                signUpButton.disabled = false;
-                signUpButton.innerHTML = 'Sign Up';
-                alert(data['detail']);
+                const redirectURL  = data.redirect_url ?? null
+                if(!redirectURL) return;
+                window.location.href = redirectURL;
             });
         }
     });

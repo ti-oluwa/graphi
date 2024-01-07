@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django_utz.middleware.DjangoUTZMiddleware',
 ]
 
-ROOT_URLCONF = 'tally.urls'
+ROOT_URLCONF = 'graphi.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tally.wsgi.application'
+WSGI_APPLICATION = 'graphi.wsgi.application'
 
 
 # Database
@@ -100,6 +100,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = "users.UserAccount"
+
+AUTHENTICATION_BACKENDS = ['users.auth_backends.EmailBackend']
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

@@ -1,11 +1,8 @@
 
 body{
-    width: 100%;
-    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(180deg, #FFFFFF 0%, var(--parchment) 100%);
 }
 
 main{
@@ -101,7 +98,27 @@ main > #form-wrapper{
     gap: 16px 0;
 }
 
-#form-fields .form-input{
+#form-fields .form-field{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px 0;
+}
+
+.form-field .field-message{
+    color: var(--jasper);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.6;
+    display: none;
+}
+
+.form-field:has(.invalid-field) .field-message{
+    display: block;
+}
+
+.form-field .form-input{
     width: 100%;
     display: block;
     border: none;
@@ -109,11 +126,11 @@ main > #form-wrapper{
     box-shadow: 0px 1px 0px var(--teal);
 }
 
-#form-fields .form-input:focus-within{
+.form-field .form-input:focus-within{
     box-shadow: 0px 1.5px 0px var(--teal);
 }
 
-#form-fields .form-input:not(:placeholder-shown){
+.form-field .form-input:not(:placeholder-shown){
     box-shadow: 0px 1.5px 0px var(--teal);
 }
 
@@ -125,7 +142,7 @@ main > #form-wrapper{
     gap: 16px 16px;
 }
 
-#users-names > .form-input{
+#users-names > .form-field{
     flex-basis: 50%;
 }
 

@@ -30,6 +30,10 @@ class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBa
 
     user_timezone_field = "timezone"
     datetime_fields = ("registered_at", "updated_at")
+
+    class Meta:
+        verbose_name = _("useraccount")
+        verbose_name_plural = _("useraccounts")
     
 
     def __str__(self):

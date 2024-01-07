@@ -1,11 +1,13 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../../static/styles/base.css">
-    <link rel="stylesheet" href="../../static/styles/signin.css">
+    <link rel="stylesheet" href="{% static 'styles//base.css' %}">
+    <link rel="stylesheet" href="{% static 'styles//signin.css' %}">
 
     <title>Graphi | Sign In</title>
 </head>
@@ -27,30 +29,36 @@
                             Log into your account.
                         </p>
                     </div>
+
                     <!-- Sign In Form Section -->
-                    <form action="" id="signin-form">
+                    <form id="signin-form">
                         <div id="form-fields">
-                            <label for="email" hidden>Email Address</label>
-                            <input 
-                                type="email" 
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" 
-                                id="email" 
-                                name="email" 
-                                class="form-input"
-                                placeholder="Email address" 
-                                required
-                            >
-            
-                            <label for="password" hidden>Password</label>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                class="form-input" 
-                                placeholder="Password"
-                                minlength="8" 
-                                required
-                            >
+                            <div class="form-field">
+                                <label for="email" hidden>Email Address</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="form-input"
+                                    placeholder="Email address" 
+                                    required
+                                >
+                                <small class="field-message"></small>
+                            </div>
+                            
+                            <div class="form-field">
+                                <label for="password" hidden>Password</label>
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    class="form-input" 
+                                    placeholder="Password"
+                                    minlength="8" 
+                                    required
+                                >
+                                <small class="field-message"></small>
+                            </div>
                         </div>
 
                         <div id="submit-btn-wrapper">
@@ -61,7 +69,7 @@
 
                         <small>
                             Don't have an account?
-                            <a href="signup.html">Sign up</a>
+                            <a href="{% url 'signup' %}">Sign up</a>
                         </small>
                     </form>
                 </div>
@@ -70,4 +78,7 @@
         </main>
     </div>
 </body>
+
+<script src="{% static '/scripts/utils.js' %}"></script>
+<script src="{% static '/scripts/signin.js' %}"></script>
 </html>
