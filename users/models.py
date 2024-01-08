@@ -36,12 +36,16 @@ class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBa
         verbose_name_plural = _("useraccounts")
     
 
-    def __str__(self):
-        return self.fullname
+    def __str__(self) -> str:
+        return self.email
     
     @property
     def fullname(self):
         return f"{self.firstname} {self.lastname}"
+    
+    @property
+    def initials(self):
+        return f"{self.firstname[0]}{self.lastname[0]}"
 
 
     def send_verification_email(self):

@@ -5,7 +5,7 @@ class UserAccountManager(BaseUserManager):
     """Custom manager for `UserAccount` model."""
     use_in_migrations = True
 
-    def create_user(self, email, password, **extra_fields):
+    def create_user(self, email, password, save: bool = True, **extra_fields):
         if not email:
             raise ValueError("User must have an email!")
         if not password:
@@ -17,7 +17,8 @@ class UserAccountManager(BaseUserManager):
         )
         
         user.set_password(password)
-        user.save(using=self._db)
+        if save is True:
+            user.save(using=self._db)
         return user
 
 
@@ -25,6 +26,7 @@ class UserAccountManager(BaseUserManager):
         user = self.create_user(
             email=email,
             password=password,
+            save=False,
             **extra_fields
         )
         user.is_admin = True

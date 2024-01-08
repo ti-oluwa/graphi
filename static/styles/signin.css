@@ -3,6 +3,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--parchment) 100%);
 }
 
 main{

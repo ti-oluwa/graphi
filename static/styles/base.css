@@ -1,181 +1,311 @@
-@import url('https://fonts.googleapis.com/css?family=Manrope');
-@import url('https://fonts.googleapis.com/css?family=DM+Sans');
-@import url('https://fonts.googleapis.com/css?family=Raleway');
-
-:root{
-    --bluish-gray: #d5dce5;
-    --light-gray: #f2f2f2;
-    --dark-gray: #373b3f;
-    --white: #fff;
-    --text-dark: #2f2f2f;
-    --deep-blue: #031926;
-    --teal: #468189;
-    --cambridge-blue: #77aca2;
-    --ash-gray: #9dbebb;
-    --parchment: #f4e9cd;
-    --lavender: #DADFF7;
-    --jasper: #D5573B;
-}
-
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.container{
-    margin: 0 auto;
-    width: 90%;
-}
-
-.stop_scroll{
-    height: 100%;
-    overflow: hidden !important;
-}
-
 body{
-    font-family: "Manrope";  
-    overflow-wrap: break-word;
-    -webkit-font-smoothing: antialiased !important;
-    -moz-osx-font-smoothing: grayscale !important;
-    font-smooth: always !important;
-    -webkit-text-size-adjust: none;
-    color: var(--text-dark);
-    background: linear-gradient(180deg, #FFFFFF 0%, var(--parchment) 100%);
-    overflow-x: hidden !important;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 40px 0;
+    background: var(--white);
+    position: relative;
+}
+
+.floating-card{
     width: 100%;
+    background: transparent;
+    backdrop-filter: blur(16px);
+    border-radius: 8px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 20px 40px;
+}
+
+.current-tab{
+    color: var(--jasper) !important;
+}
+
+
+/* Side bar Section */
+
+#sidebar{
+    position: sticky;
+    inset: 0;
+    width: 25%;
+    max-width: 500px;
     min-height: 100vh;
+    background: none;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 40px;
+    background: var(--deep-blue);
 }
 
-h1,h2, h3, h4, h5, h6{
-    font-family: "Manrope";
+#sidebar #logo{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sidebar #logo h1{
+    font-family: "Raleway";
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--jasper);
+    text-align: center;
+}
+
+#sidebar > nav{
+    width: 100%;
+}
+
+#sidebar > nav::before{
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    background: var(--deep-blue);
+    opacity: 0.5;
+    filter: blur(5px);
+    z-index: -1;
+}
+
+#sidebar > nav > ul{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+#sidebar > nav > ul > li > a{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--teal);
+    font-size: 18px;
+    font-weight: 600;
+    font-family: "DM Sans";
+}
+
+#sidebar > nav > ul > li > a > svg{
+    width: 24px;
+    height: 24px;
+}
+
+.show-sidebar{
+    transition: 0.2s ease-out;
+    transform: none !important;
+}
+
+
+/* Main Section */
+#main{
+    position: sticky;
+    inset: 0;
+    padding: 40px;
+    width: 100%;
+    /* min-height: 100vh; */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+#main > header{
+    position: sticky;
+    top: 40px;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-radius: 24px;
+    background: transparent;
+    backdrop-filter: blur(16px);
+}
+
+#main > header > #search-bar{
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: var(--bluish-gray);
     color: var(--text-dark);
 }
 
-a{
-    text-decoration: underline;
-}
-
-a:hover{
-    transition: 0.05s ease-out color;
-}
-
-p, li, a{
-    font-family: "Manrope";
-    color: var(--text-dark);
-    line-height: 1.6;
-}
-
-li{
-    list-style: none;
-}
-
-::placeholder{
-    color: var(--bluish-gray);
-    font-family: "Manrope";
-}
-
-input{
-    font-family: "Manrope";
-    border-radius: 4px;
-    border: 1px solid var(--dark-gray);
-    outline: none;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-dark);
-    padding: 4px;
-}
-
-input:focus-within{
-    border: 1px solid var(--teal);
-    margin: -1px !important;
-}
-
-input:not(:placeholder-shown){
-    border: 1px solid var(--teal);
-    margin: -1px !important;
-}
-
-input[type="checkbox"]{
+#main > header > #search-bar > svg{
     width: 16px;
     height: 16px;
-    margin: 0;
-    padding: 0;
-    border: 1px solid var(--dark-gray);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
 }
 
-input[type="checkbox"]:checked{
-    background-color: var(--teal);
-    border: 1px solid var(--teal);
-}
-
-.input-invalid{
-    box-shadow: 0px 1px 2px var(--jasper) !important;
-}
-
-label{
-    color: var(--text-dark);
-    font-weight: 700;
-}
-
-button{
-    font-family: "Manrope";
-    border-radius: 4px;
+#main > header > #search-bar > input{
+    width: 100%;
+    background: none;
     border: none;
-    font-size: 18px;
+    outline: none;
+    font-family: "Manrope";
+    font-size: 14px;
     font-weight: 500;
-    padding: 10px 20px;
-    outline: none !important;
-    transition: all 0.1s ease-out;
+    color: inherit;
+}
+
+#main > header > #search-bar > input::placeholder{
+    color: inherit;
+    font-family: "Manrope";
+}
+
+
+#main > header > #nav-menu{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0 16px;
+    padding: 0 16px;
+    font-family: "DM Sans";
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#nav-menu > li > a{
+    text-decoration: none;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#nav-menu > li > #account{
+    width: max-content;
+    padding: 4px 6px;
+    border-radius: 6px;
+    background: var(--parchment);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0 8px;
+    flex-shrink: 0;
+}
+
+#account > #initials{
+    font-family: "DM Sans";
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--teal);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+#account > #fullname{
+    font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    flex-shrink: 0;
+}
+
+#nav-menu > li > #signout{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0 4px;
+    flex-shrink: 0;
+}
+
+#nav-menu > li > #signout > *{
+    flex-shrink: 0;
+}
+
+#nav-menu #menu-toggle{
+    display: none;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
+    gap: 0 8px;
 }
 
-.btn-primary{
-    background-color: var(--jasper);
-    color: var(--white);
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+#menu-toggle > svg{
+    width: 24px;
+    height: 24px;
 }
 
-.btn-primary:active{
-    background-color: var(--parchment);
-    color: var(--white);
+body:has(#sidebar.show-sidebar){
+    overflow-y: hidden !important;
 }
 
-.btn-primary:hover{
-    background-color: var(--jasper);
-    color: var(--white);
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
+body:has(#sidebar.show-sidebar) #menu-toggle{
+    color: var(--jasper);
 }
 
-.btn-secondary{
-    background-color: var(--light-gray);
-    color: var(--text-dark);
-    border: 1px solid var(--dark-gray);
+/* Media Queries */
+@media (hover:hover){
+
+    #sidebar > nav > ul > li > a:hover{
+        color: var(--cambridge-blue);
+    }
+
+    #nav-menu > li > #account:hover{
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    #nav-menu > li > #signout:hover{
+        color: red;
+    }
+    
+    #menu-toggle:hover{
+        color: var(--jasper);
+    }
+
 }
 
-.btn-secondary:active{
-    background-color: var(--bluish-gray);
-    color: var(--text-dark);
+
+@media screen and (max-width: 1280px){
+
+    #sidebar{
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        width: 400px;
+        max-width: 80%;
+        transform: translateX(-110%);
+    }
+
+    #nav-menu #menu-toggle{
+        display: flex;
+    }
 }
 
-.btn-secondary:hover{
-    background-color: var(--light-gray);
-    color: var(--text-dark);
-    border: 1px solid var(--dark-gray);
+
+@media screen and (max-width: 980px){
+
+    #main{
+        padding: 40px 20px;
+    }
+
+    #signout > span{
+        display: none;
+    }
 }
 
-button:disabled{
-    opacity: 0.5;
-    pointer-events: none;
-}
 
-.show-block{
-    display: block !important;
-}
+@media screen and (max-width: 600px){
 
-.show-flex{
-    display: flex !important;
+    #account > #fullname{
+        display: none;
+    }
+
+    #menu-toggle > span{
+        display: none;
+    }
 }

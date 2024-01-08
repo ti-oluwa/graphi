@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}
+Graphi | Dashboard
+{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<!-- Dashboard Section -->
+<section id="dashboard-stats">
+    <div id="stats-header">
+        <h2>Dashboard</h2>
+        <p>Account stats summary</p>
+    </div>
+
+    <div id="stats-cards">
+        <div class="stat-card floating-card">
+            <div class="stat-card-header">
+                <h3>Stores</h3>
+                <p>Total number of stores</p>
+            </div>
+            <div class="stat-card-body">
+                <h1>{{ stores_count }}</h1>
+            </div>
+        </div>
+
+        <div class="stat-card floating-card">
+            <div class="stat-card-header">
+                <h3>Products</h3>
+                <p>Number of products available in all stores</p>
+            </div>
+            <div class="stat-card-body">
+                <h1>{{ products_count }}</h1>
+            </div>
+        </div>
+
+        <div class="stat-card floating-card">
+            <div class="stat-card-header">
+                <h3>Sales</h3>
+                <p>Number of sales made</p>
+            </div>
+            <div class="stat-card-body">
+                <h1>0</h1>
+                <span class="more-options">Advanced options</span>
+            </div>
+
+            <!-- More Options for Sales Stats -->
+            <div class="floating-card options-card">
+                <div class="card-header">
+                    <h4>Advanced Options</h4>
+                    <img class="close-card" width="16" height="16" src="../../static/icons/close-icon.svg">
+                </div>
+
+                <div class="card-body">
+                    <div class="card-body-head">
+                        <h3>Show sales by</h3>
+                        <button class="btn-secondary">Apply</button>
+                    </div>
+
+                    <form id="sales-stat-form">
+                        <fieldset>
+                            <legend>Store</legend>
+
+                            <div class="form-field">
+                                <input type="radio" name="store" id="all" value="all" checked>
+                                <label for="all">All stores</label>
+                            </div>
+
+                            <div class="form-field">
+                                <input type="radio" name="store" id="store-1" value="store-1">
+                                <label for="store-1">Store 1</label>
+                            </div>
+
+                            <div class="form-field">
+                                <input type="radio" name="store" id="store-2" value="store-2">
+                                <label for="store-2">Store 2</label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Product Category</legend>
+
+                            <div class="form-field">
+                                <input type="radio" name="category" id="all" value="all" checked>
+                                <label for="all">All categories</label>
+                            </div>
+
+                            <div class="form-field">
+                                <input type="radio" name="category" id="category-1" value="category-1">
+                                <label for="category-1">Category 1</label>
+                            </div>
+
+                            <div class="form-field">
+                                <input type="radio" name="category" id="category-2" value="category-2">
+                                <label for="category-2">Category 2</label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Date</legend>
+
+                            <div class="form-field">
+                                <input type="date" name="date" id="date" value="">
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Time Range</legend>
+
+                            <div class="form-field">
+                                <label for="time1">From</label>
+                                <input type="time" name="time1" id="time1" value="00:00">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="time2">To</label>
+                                <input type="time" name="time2" id="time2" value="23:59">
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Date Range</legend>
+
+                            <div class="form-field">
+                                <label for="date1">From</label>
+                                <input type="date" name="date1" id="date1" value="">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="time2">To</label>
+                                <input type="date" name="date2" id="date2" value="">
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card floating-card">
+            <div class="stat-card-header">
+                <h3>Revenue</h3>
+                <p>Total revenue</p>
+            </div>
+            <div class="stat-card-body">
+                <h1>0</h1>
+                <span class="more-options">Advanced options</span>
+            </div>
+
+            <!-- More Options for Revenue Stats -->
+            <div class="floating-card options-card">
+                <div class="card-header">
+                    <h4>Advanced Options</h4>
+                    <img class="close-card" width="16" height="16" src="../../static/icons/close-icon.svg">
+                </div>
+
+                <div class="card-body">
+                    <div class="card-body-head">
+                        <h3>Show revenue by</h3>
+                        <button class="btn-secondary">Apply</button>
+                    </div>
+
+                    <form id="revenue-stat-form">
+                        <fieldset>
+                            <legend>Store</legend>
+
+                            <div class="form-field">
+                                <input type="radio" name="store" id="all" value="all" checked>
+                                <label for="all">All stores</label>
+                            </div>
+
+                            <div class="form-field">
+                                <input type="radio" name="store" id="store-1" value="store-1">
+                                <label for="store-1">Store 1</label>
+                            </div>
+
+                            <div class="form-field">
+                                <input type="radio" name="store" id="store-2" value="store-2">
+                                <label for="store-2">Store 2</label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Product Category</legend>
+
+                            <div class="form-field">
+                                <input type="radio" name="category" id="all" value="all" checked>
+                                <label for="all">All categories</label>
+                            </div>
+
+                            <div class="form-field">
+                                <input type="radio" name="category" id="category-1" value="category-1">
+                                <label for="category-1">Category 1</label>
+                            </div>
+
+                            <div class="form-field">
+                                <input type="radio" name="category" id="category-2" value="category-2">
+                                <label for="category-2">Category 2</label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Date</legend>
+
+                            <div class="form-field">
+                                <input type="date" name="date" id="date" value="">
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Time Range</legend>
+
+                            <div class="form-field">
+                                <label for="time1">From</label>
+                                <input type="time" name="time1" id="time1" value="00:00">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="time2">To</label>
+                                <input type="time" name="time2" id="time2" value="23:59">
+                            </div>
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>Date Range</legend>
+
+                            <div class="form-field">
+                                <label for="date1">From</label>
+                                <input type="date" name="date1" id="date1" value="">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="time2">To</label>
+                                <input type="date" name="date2" id="date2" value="">
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Charts and Graphs Section -->
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'scripts/dashboard.js' %}"></script>
+{% endblock scripts %}
+
