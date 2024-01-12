@@ -32,6 +32,7 @@
 
                     <!-- Sign In Form Section -->
                     <form id="signin-form">
+                        {% csrf_token %}
                         <div id="form-fields">
                             <div class="form-field">
                                 <label for="email" hidden>Email Address</label>

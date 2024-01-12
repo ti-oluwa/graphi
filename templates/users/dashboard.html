@@ -67,6 +67,7 @@ Graphi | Dashboard
                     </div>
 
                     <form id="sales-stat-form">
+                        {% csrf_token %}
                         <fieldset class="store-options">
                             <legend>Store</legend>
 
@@ -157,6 +158,7 @@ Graphi | Dashboard
                     </div>
 
                     <form id="revenue-stat-form">
+                        {% csrf_token %}
                         <fieldset class="store-options">
                             <legend>Store</legend>
 

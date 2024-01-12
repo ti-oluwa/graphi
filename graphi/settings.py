@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-import djsm 
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +25,6 @@ INSTALLED_APPS = [
 
     'timezone_field',
     'django_utz',
-    'rest_framework',
     'djsm',
     'djmoney.contrib.exchange',
 
