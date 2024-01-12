@@ -4,6 +4,7 @@ import uuid
 from django.utils.translation import gettext_lazy as _
 from django_utz.models.mixins import UTZUserModelMixin, UTZModelMixin
 from timezone_field import TimeZoneField
+from djmoney.models.fields import CurrencyField
 
 from .managers import UserAccountManager
 
@@ -15,6 +16,7 @@ class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBa
     lastname = models.CharField(max_length=50)
     email = models.EmailField(_("email address"), unique=True)
     timezone = TimeZoneField(_("timezone"), default="Africa/Lagos", help_text=_("Choose your timezone."))
+    preferred_currency = CurrencyField(_("preferred currency"), default="NGN")
     is_active = models.BooleanField(_("active") ,default=True)
     is_admin = models.BooleanField(_("admin") ,default=False)
     is_staff = models.BooleanField(_("staff") ,default=False)

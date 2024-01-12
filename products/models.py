@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from django.db import models
 import uuid
 from djmoney.models.fields import MoneyField
@@ -34,8 +36,8 @@ class Product(UTZModelMixin, models.Model):
     color = models.CharField(max_length=50, blank=True)
     size = models.CharField(max_length=50, blank=True)
     weight = models.DecimalField(_("Weight in grams"), max_digits=10, decimal_places=2, blank=True, null=True)
-    group = models.ForeignKey("ProductGroup", blank=True, null=True, on_delete=models.SET_NULL, related_name="products")
     category = models.CharField(max_length=50, choices=ProductCategories.choices, default=ProductCategories.OTHERS)
+    group = models.ForeignKey("ProductGroup", blank=True, null=True, on_delete=models.SET_NULL, related_name="products")
     brand = models.ForeignKey("ProductBrand", blank=True, null=True, on_delete=models.SET_NULL, related_name="products")
     store = models.ForeignKey("stores.Store", on_delete=models.CASCADE, related_name="products")
     added_at = models.DateTimeField(auto_now_add=True)
@@ -43,8 +45,16 @@ class Product(UTZModelMixin, models.Model):
 
     datetime_fields = ("added_at", "updated_at")
 
+    class Meta:
+        verbose_name = "Product"
+        verbose_name_plural = "Products"
+        ordering = ["name"]
+
     def __str__(self):
         return self.name
+    
+    def __eq__(self, other: Product):
+        return isinstance(other, self.__class__) and self.pk == other.pk
     
 
 
@@ -57,6 +67,11 @@ class ProductGroup(UTZModelMixin, models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     datetime_fields = ("created_at", "updated_at")
+
+    class Meta:
+        verbose_name = "Product Group"
+        verbose_name_plural = "Product Groups"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -72,6 +87,11 @@ class ProductBrand(UTZModelMixin, models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     datetime_fields = ("created_at", "updated_at")
+
+    class Meta:
+        verbose_name = "Product Brand"
+        verbose_name_plural = "Product Brands"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name

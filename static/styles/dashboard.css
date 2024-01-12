@@ -8,7 +8,7 @@
     align-items: flex-start;
     gap: 40px 0;
     padding: 10px;
-    height: 100vmax;
+    margin: 20px 0;
 }
 
 #dashboard-stats > #stats-header{
@@ -37,8 +37,8 @@
 #dashboard-stats > #stats-cards{
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    grid-gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 30px;
 }
 
 #stats-cards > .stat-card{
@@ -79,6 +79,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    flex-wrap: wrap;
     gap: 10px;
 }
 

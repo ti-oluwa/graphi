@@ -9,23 +9,73 @@ from django.views import generic
 
 from .forms import UserCreationForm
 from .models import UserAccount
+from products.models import ProductCategories
 from .decorators import redirect_authenticated
 from .utils import (
-    get_products_count, get_stores_count
+    get_products_count, get_stores_count,
+    aggregate_sales_count, aggregate_revenue_from_sales
 )
 
 
 
-class UserDashboardView(LoginRequiredMixin, generic.TemplateView):
+class DashboardView(LoginRequiredMixin, generic.TemplateView):
     """View for the user dashboard."""
     template_name = "users/dashboard.html"
+    http_method_names = ["get"]
 
     def get_context_data(self, **kwargs: Any) -> dict:
         context = super().get_context_data(**kwargs)
-        context["user"] = self.request.user
         context["stores_count"] = get_stores_count(self.request.user)
         context["products_count"] = get_products_count(self.request.user)
+        context["sales_count"] = aggregate_sales_count(self.request.user)
+        context["revenue_from_sales"] = aggregate_revenue_from_sales(self.request.user)
+        context["product_categories"] = ProductCategories.labels
         return context
+    
+
+
+class DashboardStatisticsView(LoginRequiredMixin, generic.View):
+    """View for retrieving dashboard statistics."""
+    http_method_names = ["post"]
+
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
+        """Handles dashboard statistics AJAX/Fetch POST request"""
+        data = json.loads(request.body)
+        stat_type = data.pop("stat_type", None)
+
+        if stat_type == "sales":
+            result = aggregate_sales_count(self.request.user, **data)
+            return JsonResponse(
+                data={
+                    "status": "success",
+                    "detail": "Sales statistics retrieved successfully!",
+                    "data": {
+                        "result": result
+                    }
+                },
+                status=200
+            )
+        
+        elif stat_type == "revenue":
+            result = aggregate_revenue_from_sales(self.request.user, **data)
+            return JsonResponse(
+                data={
+                    "status": "success",
+                    "detail": "Revenue statistics retrieved successfully!",
+                    "data": {
+                        "result": f'{result.currency} {result.amount}'
+                    }
+                },
+                status=200
+            )
+        
+        return JsonResponse(
+            data={
+                "status": "error",
+                "detail": f"Invalid statistics type: {stat_type}"
+            },
+            status=400
+        )
 
 
 
@@ -35,7 +85,8 @@ class UserCreateView(generic.CreateView):
     template_name = "users/signup.html"
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
-        data = json.loads(request.body.decode())
+        """Handles user creation AJAX/Fetch POST request"""
+        data = json.loads(request.body)
         form = self.get_form_class()(data)
 
         if form.is_valid():
@@ -73,7 +124,8 @@ class UserAuthenticationView(generic.TemplateView):
 
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
-        data = json.loads(request.body.decode())
+        """Handles user authentication AJAX/Fetch POST request"""
+        data = json.loads(request.body)
         email = data.get('email', None)
         password = data.get('password', None)
         user = authenticate(request, username=email, password=password)
@@ -138,7 +190,8 @@ class UserLogoutView(generic.RedirectView):
 
 
 
-user_dashboard_view = UserDashboardView.as_view()
+dashboard_view = DashboardView.as_view()
+dashboard_stats_view = DashboardStatisticsView.as_view()
 user_create_view = UserCreateView.as_view()
 user_auth_view = UserAuthenticationView.as_view()
 user_verification_view = UserVerificationView.as_view()

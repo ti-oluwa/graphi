@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from django_utz.models.mixins import UTZModelMixin
+from djmoney.models.fields import CurrencyField
 
 
 class StoreTypes(models.TextChoices):
@@ -27,6 +28,7 @@ class Store(UTZModelMixin, models.Model):
     type = models.CharField(max_length=50, choices=StoreTypes.choices, default=StoreTypes.OTHER)
     email = models.EmailField(blank=True)
     owner = models.ForeignKey("users.UserAccount", on_delete=models.CASCADE, related_name="stores")
+    default_currency = CurrencyField(default="NGN")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

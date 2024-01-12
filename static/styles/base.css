@@ -2,9 +2,9 @@ body{
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 40px 0;
     background: var(--white);
     position: relative;
+    height: 100vh;
 }
 
 .floating-card{
@@ -106,14 +106,26 @@ body{
 #main{
     position: sticky;
     inset: 0;
-    padding: 40px;
     width: 100%;
-    /* min-height: 100vh; */
+    height: 100%;
+    padding: 0 20px;
+}
+
+#main > #main-content{
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    padding-inline: 20px;
+    margin-top: 40px;
     gap: 40px;
+}
+
+#main-content::-webkit-scrollbar{
+    width: 8px;
+    height: 8px;
 }
 
 #main > header{
@@ -289,8 +301,8 @@ body:has(#sidebar.show-sidebar) #menu-toggle{
 
 @media screen and (max-width: 980px){
 
-    #main{
-        padding: 40px 20px;
+    #main > #main-content{
+        padding-inline: 0;
     }
 
     #signout > span{
