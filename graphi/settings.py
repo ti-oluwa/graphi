@@ -1,11 +1,12 @@
 from pathlib import Path
 import os
+import djsm
 
+djsm_manager = djsm.get_djsm(quiet=False)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = "zsrextryuygiojpretyuio"
+SECRET_KEY = djsm_manager.get_or_create_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
