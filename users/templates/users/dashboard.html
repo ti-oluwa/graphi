@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base/base.html' %}
 {% load static %}
 {% load tz %}
 
@@ -7,7 +7,7 @@ Graphi | Dashboard
 {% endblock page_title %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{% static 'styles/users/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'users//styles//dashboard.css' %}">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -57,7 +57,7 @@ Graphi | Dashboard
             <div class="floating-card options-card">
                 <div class="card-header">
                     <h4>Advanced Options</h4>
-                    <img class="close-card" width="16" height="16" src="{% static 'icons/close-icon.svg' %}">
+                    <img class="close-card" width="16" height="16" src="{% static 'icons//close-icon.svg' %}">
                 </div>
 
                 <div class="card-body">
@@ -228,6 +228,6 @@ Graphi | Dashboard
 {% endblock content %}
 
 {% block scripts %}
-<script src="{% static 'scripts/users/dashboardStats.js' %}"></script>
+<script src="{% static 'users//scripts//dashboardStats.js' %}"></script>
 {% endblock scripts %}
 

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base/base.html' %}
 {% load static %}
 
 {% load custom_filters %}
@@ -6,8 +6,8 @@
 {% block title %}Store List{% endblock title %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{% static 'styles/form_card.css' %}">
-<link rel="stylesheet" href="{% static 'styles/stores/store_list.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'stores//styles//store_list.css' %}">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -216,10 +216,10 @@
 </section>
 
 {% include 'stores/store_passkey.html' %}
-{% include 'paginator.html' %}
+{% include 'base/paginator.html' %}
 {% endblock content %}
 
 {% block scripts %}
-<script src="{% static 'scripts/stores/storeList.js' %}"></script>
+<script src="{% static 'stores//scripts//storeList.js' %}"></script>
 {% endblock scripts %}
 
