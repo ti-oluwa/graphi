@@ -3,7 +3,7 @@
 
 {% load custom_filters %}
 
-{% block title %}Store List{% endblock title %}
+{% block page_title %}Store List{% endblock page_title %}
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="card-options">
-                    <a href="" title="Edit store details" class="card-option edit-store-toggle">
+                    <a href="{% url 'stores:store_update' store.pk %}" title="Update store details" class="card-option update-store-toggle">
                         <svg 
                             width="24px"
                             height="24px"
@@ -215,7 +215,6 @@
     </div>
 </section>
 
-{% include 'stores/store_passkey.html' %}
 {% include 'base/paginator.html' %}
 {% endblock content %}
 

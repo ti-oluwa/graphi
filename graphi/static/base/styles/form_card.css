@@ -1,21 +1,11 @@
 #form-card{
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
+    display: block;
+    width: 100%;
     max-width: 400px;
     height: max-content;
     border-radius: 8px;
     background: var(--white);
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
-    z-index: 10000;
-    isolation: isolate;
-}
-
-#main:has(#form-card.show-block){
-    overflow: hidden !important;
 }
 
 #form-card > #form-header{
@@ -44,7 +34,7 @@
     color: var(--text-dark);
 }
 
-#form-card > #create-store-form{
+#form-card > form{
     justify-self: stretch;
     display: flex;
     flex-direction: column;
@@ -54,7 +44,7 @@
     padding: 16px;
 }
 
-#create-store-form > #form-fields{
+form > #form-fields{
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -120,7 +110,7 @@
     box-shadow: 0px 1.5px 0px var(--teal);
 }
 
-#create-store-form > #submit-btn-wrapper{
+form > #submit-btn-wrapper{
     width: 100%;
     display: flex;
     justify-content: center;

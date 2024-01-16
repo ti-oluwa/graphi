@@ -1,31 +1,20 @@
-const createStoreToggle = document.querySelector('#create-store-toggle');
-const createStoreFormCard = document.querySelector('#form-card');
-const createStoreForm = document.querySelector('#create-store-form');
-const createStoreButton = document.querySelector('#create-store-form #submit-btn');
-const emailField = document.querySelector('#create-store-form #email');
+const updateStoreFormCard = document.querySelector('#form-card');
+const updateStoreForm = document.querySelector('#update-store-form');
+const updateStoreButton = document.querySelector('#update-store-form #submit-btn');
+const emailField = document.querySelector('#update-store-form #email');
 
 
-createStoreToggle.onclick = () => {
-    createStoreFormCard.classList.add('show-block');
-};
-
-document.addEventListener('click', (e) => {
-    if (!createStoreToggle.contains(e.target) && !createStoreFormCard.contains(e.target)){
-        createStoreFormCard.classList.remove('show-block');
-    };
-});
-
-createStoreButton.onPost = function(){
+updateStoreButton.onPost = function(){
     this.disabled = true;
-    this.innerHTML = 'Creating Store...';
+    this.innerHTML = 'Updating Store...';
 }
 
-createStoreButton.onResponse = function(){
+updateStoreButton.onResponse = function(){
     this.disabled = false;
-    this.innerHTML = 'Create Store';
+    this.innerHTML = 'Update Store';
 }
 
-createStoreForm.onsubmit = function(e) {
+updateStoreForm.onsubmit = function(e) {
     e.stopImmediatePropagation();
     e.preventDefault();
 
@@ -39,7 +28,7 @@ createStoreForm.onsubmit = function(e) {
         data[key] = value;
     }
 
-    createStoreButton.onPost();
+    updateStoreButton.onPost();
     $.ajax({
         url: this.action,
         type: 'POST',
@@ -48,12 +37,13 @@ createStoreForm.onsubmit = function(e) {
         headers: {'X-CSRFToken': getCookie('csrftoken')},
 
         success: (response) => {
+            const data = JSON.parse(response.detail)
             if(response.status === 'success'){
-                window.location.reload();
+                window.location.href = data.redirect_url
             };
         },
         error: (response) => {
-            createStoreButton.onResponse();
+            updateStoreButton.onResponse();
             const data = JSON.parse(response.detail)
             const errors = data.errors ?? null;
             if (errors){
@@ -64,8 +54,7 @@ createStoreForm.onsubmit = function(e) {
                     formFieldHasError(field.parentElement, msg);
                 };
             };
-
-            alert(data.detail ?? 'An error occurred while creating store!')
+            alert(data.detail ?? 'An error occurred while updating store!')
         }
     });
 };

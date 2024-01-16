@@ -82,7 +82,7 @@
 #stores-body > #stores-wrapper{
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px 20px;
 }
 
@@ -220,6 +220,23 @@
 
 .store-card:hover:not(.view-products-link:hover) > .card-options{
     display: flex;
+}
+
+
+/* Modifications to store creation form card */
+#form-card{
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    z-index: 10000;
+    isolation: isolate;
+}
+
+#main:has(#form-card.show-block){
+    overflow: hidden !important;
 }
 
 /* Media Queries */

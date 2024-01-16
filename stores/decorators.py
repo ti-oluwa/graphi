@@ -1,12 +1,15 @@
-from typing import Callable, Any
+from typing import Callable
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.views.generic import View
 import json
+import functools
 
 from .models import Store
 
 
 def to_JsonResponse(func: Callable[..., HttpResponse]) -> Callable[..., JsonResponse]:
     """Ensures that the decorated view returns a JsonResponse."""
+    @functools.wraps(func)
     def wrapper(request: HttpRequest, *args, **kwargs) -> JsonResponse:
         response = func(request, *args, **kwargs)
         if isinstance(response, HttpResponse):
@@ -40,8 +43,9 @@ def passkey_authorization_required(
         """
         Authorizes a request to decoratored view for access to a store using a passkey.
         """
-        def wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse | JsonResponse:
-            passkey = json.loads(request.body).get(passkey_field, None)
+        @functools.wraps(func)
+        def wrapper(view: View, request: HttpRequest, *args, **kwargs) -> HttpResponse | JsonResponse:
+            passkey = json.loads(request.body).pop(passkey_field, None)
             store_id = kwargs.get(store_pk_field)
             if not passkey or not store_id:
                 return HttpResponse(status=400)
@@ -50,7 +54,7 @@ def passkey_authorization_required(
             if not store.check_request_is_authorized(request) and not store.authorize_request(request, passkey):
                 return HttpResponse(status=401, content=message)
 
-            return func(request, *args, **kwargs)
+            return func(view, request, *args, **kwargs)
         
         if view_response_type == "json":
             return to_JsonResponse(wrapper)

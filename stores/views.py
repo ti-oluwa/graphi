@@ -17,7 +17,21 @@ from .decorators import passkey_authorization_required
 stores_global_queryset = Store.objects.all().prefetch_related("products").select_related("owner")
 
 
-class StoreListView(LoginRequiredMixin, generic.ListView):
+
+class AddStoreTypesAndCurrencyChoicesToContextMixin:
+    """Update context with store types and currency choices"""
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["store_types"] = StoreTypes.choices
+        context["currencies"] = CURRENCY_CHOICES
+        return context
+
+
+class StoreListView(
+        AddStoreTypesAndCurrencyChoicesToContextMixin,
+        LoginRequiredMixin, 
+        generic.ListView
+    ):
     model = Store
     template_name = "stores/store_list.html"
     context_object_name = "stores"
@@ -28,12 +42,10 @@ class StoreListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(owner=self.request.user)
     
-
+    
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["types_count"] = self.get_queryset().values("type").distinct().count()
-        context["store_types"] = StoreTypes.choices
-        context["currencies"] = CURRENCY_CHOICES
         return context
 
 
@@ -84,11 +96,16 @@ class StoreCreateView(LoginRequiredMixin, generic.CreateView):
 
 
 
-class StoreUpdateView(LoginRequiredMixin, generic.UpdateView):
+class StoreUpdateView(
+        AddStoreTypesAndCurrencyChoicesToContextMixin,
+        LoginRequiredMixin, 
+        generic.UpdateView
+    ):
     model = Store
     form_class = StoreForm
-    http_method_names = ["post"]
+    http_method_names = ["get", "post"]
     pk_url_kwarg = "store_id"
+    template_name = "stores/store_update.html"
 
     @passkey_authorization_required(
         message="Unauthorized to update this store! Provide a valid store passkey.", 

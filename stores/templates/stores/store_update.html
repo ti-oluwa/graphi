@@ -1,0 +1,130 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block page_title %}Update Store{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'stores//styles//store_update.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div id="card-container">
+    <div id="form-card">
+        <div id="form-header">
+            <h2>Update Store</h2>
+            <p>Update store details</p>
+        </div>
+    
+        <!-- Store Update Form -->
+        <form action="{% url 'stores:store_update' store.pk %}" id="update-store-form">
+            {% csrf_token %}
+            <div id="form-fields">
+                <div class="form-field">
+                    <label for="name" hidden>Store Name</label>
+                    <input
+                        title="Change the name of your store" 
+                        id="name" 
+                        name="name" 
+                        class="form-input"
+                        placeholder="Store name" 
+                        value="{{ store.name }}"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div>
+    
+                <div class="form-field">
+                    <label for="email" hidden>Store Email</label>
+                    <input 
+                        title="Change the email address for your store"
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="Store email"
+                        value="{{ store.email }}"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div> 
+    
+                <div class="form-field">
+                    <label for="store-type" hidden>Store Type</label>
+                    <select 
+                        title="Change the store type"
+                        id="store-type" 
+                        name="type" 
+                        required 
+                        class="form-select"
+                    >
+                        <option value="">Select your store type</option>
+                        {% for type in store_types %}
+                            <option 
+                                value="{{ type|first }}" 
+                                {% if type|first == store.type %}
+                                    selected
+                                {% endif %}
+                            >
+                            {{ type|last }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div>
+                
+                <div class="form-field">
+                    <label for="store-currency" hidden>Default Store Currency</label>
+                    <select 
+                        title="Change the currency in which your stores products will be priced"
+                        id="store-currency" 
+                        name="default_currency" 
+                        required 
+                        class="form-select"
+                    >
+                        <option value="">Choose a preferred currency</option>
+                        {% for currency in currencies %}
+                        <option 
+                            value="{{ currency|first }}" 
+                            {% if currency|first == store.default_currency.symbol %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ currency|last }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div>
+    
+                <div class="form-field">
+                    <label for="passkey" hidden>Store Passkey</label>
+                    <input 
+                        title="Enter the pass key for {{ store.name }} to confirm the update"
+                        type="password" 
+                        id="passkey" 
+                        name="passkey" 
+                        class="form-input" 
+                        placeholder="Enter passkey to confirm update"
+                        minlength="4" 
+                        maxlength="20"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div>
+            </div>
+    
+            <div id="submit-btn-wrapper">
+                <button class="btn-primary" id="submit-btn" type="submit">
+                    Update Store
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'stores//scripts//storeUpdate.js' %}"></script>
+{% endblock scripts %}
+
