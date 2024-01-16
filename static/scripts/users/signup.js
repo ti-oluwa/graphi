@@ -5,17 +5,16 @@ const emailField = document.querySelector('#signup-form #email');
 const passwordField1 = document.querySelector('#signup-form #password1');
 const passwordField2 = document.querySelector('#signup-form #password2');
 
-const signUpURL = "/signup/";
 
-signUpForm.onPost = function(){
-    signUpButton.disabled = true;
-    signUpButton.innerHTML = 'Please wait...';
+signUpButton.onPost = function(){
+    this.disabled = true;
+    this.innerHTML = 'Please wait...';
 }
 
 
-signUpForm.onResponse = function(){
-    signUpButton.disabled = false;
-    signUpButton.innerHTML = 'Sign Up';
+signUpButton.onResponse = function(){
+    this.disabled = false;
+    this.innerHTML = 'Sign Up';
 }
 
 
@@ -24,7 +23,7 @@ signUpForm.onsubmit = (e) => {
     e.preventDefault();
 
     if (!isValidEmail(emailField.value)) {
-        fieldHasError(emailField, 'Invalid email address!');
+        formFieldHasError(emailField.parentElement, 'Invalid email address!');
         return;
     }
     if (!validatePassword(passwordField1, passwordField2)) return;
@@ -36,7 +35,7 @@ signUpForm.onsubmit = (e) => {
     }
     data['timezone'] = getClientTimezone();
 
-    signUpForm.onPost();
+    signUpButton.onPost();
 
     const options = {
         method: 'POST',
@@ -48,8 +47,8 @@ signUpForm.onsubmit = (e) => {
         body: JSON.stringify(data),
     }
 
-    fetch(signUpURL, options).then((response) => {
-        signUpForm.onResponse();
+    fetch(signUpForm.action, options).then((response) => {
+        signUpButton.onResponse();
         if (!response.status === 201) {
             response.json().then((data) => {
                 const errors = data.errors ?? null;
@@ -58,7 +57,7 @@ signUpForm.onsubmit = (e) => {
 
                 for (const [fieldName, msg] of Object.entries(errors)){
                     let field = signUpForm.querySelector(`input[name=${fieldName}]`);
-                    fieldHasError(field, msg);
+                    formFieldHasError(field.parentElement, msg);
                 }
             });
         }else{

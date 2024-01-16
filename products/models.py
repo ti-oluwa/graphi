@@ -43,7 +43,7 @@ class Product(UTZModelMixin, models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ("added_at", "updated_at")
+    datetime_fields = ["added_at", "updated_at"]
 
     class Meta:
         verbose_name = "Product"

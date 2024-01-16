@@ -4,17 +4,16 @@ const signInButton = document.querySelector('#signin-form #submit-btn');
 const emailField = document.querySelector('#signin-form #email');
 const passwordField = document.querySelector('#signin-form #password');
 
-const signInURL = "/signin/";
 
-signInForm.onPost = function(){
-    signInButton.disabled = true;
-    signInButton.innerHTML = 'Signing in...';
+signInButton.onPost = function(){
+    this.disabled = true;
+    this.innerHTML = 'Signing in...';
 }
 
 
-signInForm.onResponse = function(){
-    signInButton.disabled = false;
-    signInButton.innerHTML = 'Sign In';
+signInButton.onResponse = function(){
+    this.disabled = false;
+    this.innerHTML = 'Sign In';
 }
 
 
@@ -23,7 +22,7 @@ signInForm.onsubmit = (e) => {
     e.preventDefault();
 
     if (!isValidEmail(emailField.value)) {
-        fieldHasError(emailField, 'Invalid email address!');
+        formFieldHasError(emailField.parentElement, 'Invalid email address!');
         return;
     }
     
@@ -33,7 +32,7 @@ signInForm.onsubmit = (e) => {
         data[key] = value;
     }
 
-    signInForm.onPost();
+    signInButton.onPost();
 
     const options = {
         method: 'POST',
@@ -45,13 +44,13 @@ signInForm.onsubmit = (e) => {
         body: JSON.stringify(data),
     }
 
-    fetch(signInURL, options).then((response) => {
-        signInForm.onResponse();
+    fetch(signInForm.action, options).then((response) => {
+        signInButton.onResponse();
         if (!response.ok) {
             response.json().then((data) => {
                 const errorDetail = data.detail ?? null
                 if(!errorDetail) return;
-                fieldHasError(passwordField, errorDetail);
+                formFieldHasError(passwordField.parentElement, errorDetail);
             });
         }else{
             response.json().then((data) => {

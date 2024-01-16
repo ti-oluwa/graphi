@@ -49,6 +49,7 @@
     gap: 10px;
     isolation: isolate;
     position: relative;
+    padding-inline: 20px;
 }
 
 .stat-card > .stat-card-header{
@@ -87,7 +88,7 @@
     font-family: "DM Sans";
     font-size: clamp(24px, 2vw, 36px);
     font-weight: 700;
-    color: var(--text-dark);
+    color: var(--dark-gray);
     flex-shrink: 0;
 }
 
@@ -95,7 +96,7 @@
     font-family: "Manrope";
     font-size: 12px;
     font-weight: 500;
-    color: var(--teal);
+    color: var(--jasper);
     cursor: pointer;
     text-decoration: underline;
 }
@@ -224,7 +225,7 @@
 @media (hover:hover){
 
     .stat-card-body > .more-options:hover{
-        color: var(--cambridge-blue);
+        opacity: 0.8;
     }
 }
 

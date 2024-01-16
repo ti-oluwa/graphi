@@ -31,7 +31,7 @@ class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBa
     objects = UserAccountManager()
 
     user_timezone_field = "timezone"
-    datetime_fields = ("registered_at", "updated_at")
+    datetime_fields = ["registered_at", "updated_at"]
 
     class Meta:
         verbose_name = _("useraccount")

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="{% static 'styles//main.css' %}">
-    <link rel="stylesheet" href="{% static 'styles//signin.css' %}">
+    <link rel="stylesheet" href="{% static 'styles//users//signin.css' %}">
 
     <title>Graphi | Sign In</title>
 </head>
@@ -31,7 +31,7 @@
                     </div>
 
                     <!-- Sign In Form Section -->
-                    <form id="signin-form">
+                    <form action="{% url 'users:signin' %}" id="signin-form">
                         {% csrf_token %}
                         <div id="form-fields">
                             <div class="form-field">
@@ -55,7 +55,6 @@
                                     name="password" 
                                     class="form-input" 
                                     placeholder="Password"
-                                    minlength="8" 
                                     required
                                 >
                                 <small class="field-message"></small>
@@ -70,7 +69,7 @@
 
                         <small>
                             Don't have an account?
-                            <a href="{% url 'signup' %}">Sign up</a>
+                            <a href="{% url 'users:signup' %}">Sign up</a>
                         </small>
                     </form>
                 </div>
@@ -81,5 +80,5 @@
 </body>
 
 <script src="{% static 'scripts//utils.js' %}"></script>
-<script src="{% static 'scripts//signin.js' %}"></script>
+<script src="{% static 'scripts//users//signin.js' %}"></script>
 </html>

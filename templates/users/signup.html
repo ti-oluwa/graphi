@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="{% static 'styles//main.css' %}">
-    <link rel="stylesheet" href="{% static 'styles//signup.css' %}">
+    <link rel="stylesheet" href="{% static 'styles//users//signup.css' %}">
 
     <title>Graphi | Create an account</title>
 </head>
@@ -30,7 +30,7 @@
                         </p>
                     </div>
                     <!-- Account Creation Form Section -->
-                    <form action="" id="signup-form">
+                    <form action="{% url 'users:signup' %}" id="signup-form">
                         {% csrf_token %}
                         <div id="form-fields">
                             <div id="users-names">
@@ -113,7 +113,7 @@
 
                         <small>
                             Already have an account?
-                            <a href="{% url 'signin' %}">Sign in</a>
+                            <a href="{% url 'users:signin' %}">Sign in</a>
                         </small>
                     </form>
                 </div>
@@ -124,5 +124,5 @@
 </body>
 
 <script src="{% static 'scripts//utils.js' %}"></script>
-<script src="{% static 'scripts//signup.js' %}"></script>
+<script src="{% static 'scripts//users//signup.js' %}"></script>
 </html>

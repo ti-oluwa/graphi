@@ -18,7 +18,7 @@ class Sale(UTZModelMixin, models.Model):
     made_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ("made_at", "updated_at")
+    datetime_fields = ["made_at", "updated_at"]
 
     class Meta:
         verbose_name = "Sale"

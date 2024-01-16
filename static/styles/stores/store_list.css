@@ -1,0 +1,230 @@
+#stores-container{
+    width: 100%;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px 0;
+}
+
+#stores-container > #stores-header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+#stores-header > #header-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 5px 0;
+}
+
+#header-text > h1{
+    font-size: clamp(24px, 2vw, 36px);
+    font-weight: 700;
+    font-family: 'Raleway';
+    color: var(--text-dark);
+}
+
+#header-text > p{
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Manrope';
+    color: var(--text-dark);
+}
+
+#header-text > small{
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Manrope';
+    color: var(--cambridge-blue);
+}
+
+#stores-header > #header-buttons{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+#header-buttons #create-store-toggle{
+    font-size: clamp(12px, 2vw, 14px);
+    padding: 10px 10px;
+}
+
+#stores-container > #stores-body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px 0;
+}
+
+#stores-body > #body-header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.25);
+}
+
+#body-header > p{
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Manrope';
+    color: var(--deep-blue);
+}
+
+#stores-body > #stores-wrapper{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+    gap: 20px 20px;
+}
+
+#stores-wrapper > .store-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    padding-inline: 20px;
+    cursor: pointer;
+    position: relative;
+}
+
+.store-card > .store-card-top{
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 16px;
+}
+
+.store-card-top > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px 0;
+}
+
+.store-card-top .store-name{
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Manrope';
+    color: var(--text-dark);
+    flex-shrink: 0;
+}
+
+.store-card-top .store-category{
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Manrope';
+    color: var(--teal);
+}
+
+.store-card-top .store-products-count{
+    font-size: 11.5px;
+    font-weight: 500;
+    font-family: 'Manrope';
+    color: var(--dark-gray);
+    flex-shrink: 0;
+}
+
+.store-card > .store-card-bottom{
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0 16px;
+}
+
+.store-card-bottom > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px 0;
+    max-width: 60%;
+    flex-shrink: 0;
+}
+
+.store-card-bottom .last-sale-indicator{
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'Manrope';
+    color: var(--dark-gray);
+    padding: 4px 6px;
+    border-radius: 8px;
+    background: var(--parchment);
+    flex-shrink: 0;
+}
+
+.store-card-bottom .store-email{
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'Manrope';
+    color: var(--dark-gray);
+    flex-shrink: 0;
+}
+
+.store-card-bottom .view-products-link{
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'Manrope';
+    color: var(--jasper);
+    text-decoration: underline;
+}
+
+.store-card > .card-options{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    height: 40px;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 8px;
+    padding: 0 4px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-options > .card-option{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-options > .card-option > svg{
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    color: var(--dark-gray);
+}
+
+.card-options > .card-option > svg:hover{
+    opacity: 0.8;
+    color: var(--jasper);
+}
+
+.store-card:hover:not(.view-products-link:hover) > .card-options{
+    display: flex;
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+    #stores-container{
+        padding: 40px 10px;
+    }
+}

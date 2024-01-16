@@ -98,7 +98,7 @@ class UserCreateView(generic.CreateView):
                 data={
                     "status": "success",
                     "detail": "Account created successfully. Check your email for verification link.",
-                    "redirect_url": reverse("signin")
+                    "redirect_url": reverse("users:signin")
                 },
                 status=201
             )
@@ -118,7 +118,7 @@ class UserAuthenticationView(generic.TemplateView):
     """View for authenticating a user."""
     template_name = "users/signin.html"
 
-    @redirect_authenticated("dashboard")
+    @redirect_authenticated("users:dashboard")
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
@@ -135,7 +135,7 @@ class UserAuthenticationView(generic.TemplateView):
                 data={
                     "status": "success",
                     "detail": f"Welcome {user.fullname}!",
-                    "redirect_url": reverse("dashboard")
+                    "redirect_url": reverse("users:dashboard")
                 },
                 status=200
             )
@@ -164,7 +164,7 @@ class UserVerificationView(LoginRequiredMixin, generic.TemplateView):
                 data={
                     "status": "success",
                     "detail": "Account verified successfully!",
-                    "redirect_url": reverse("signin")
+                    "redirect_url": reverse("users:signin")
                 },
                 status=200
             )
