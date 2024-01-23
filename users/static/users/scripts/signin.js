@@ -45,13 +45,14 @@ signInForm.onsubmit = (e) => {
     }
 
     fetch(signInForm.action, options).then((response) => {
-        signInButton.onResponse();
         if (!response.ok) {
+            signInButton.onResponse();
             response.json().then((data) => {
                 const errorDetail = data.detail ?? null
                 if(!errorDetail) return;
                 formFieldHasError(passwordField.parentElement, errorDetail);
             });
+            
         }else{
             response.json().then((data) => {
                 const redirectURL  = data.redirect_url ?? null

@@ -6,7 +6,7 @@ from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from djmoney.settings import CURRENCY_CHOICES
 
 
@@ -173,10 +173,24 @@ class StoreUpdateView(
 
     def post(self, request, *args, **kwargs) -> JsonResponse:
         data = json.loads(request.body)
-        store = self.get_object()
+        passkey = data.pop("passkey", None)
+        store: Store = self.get_object()
         form = self.get_form_class()(data=data, instance=store)
         if form.is_valid():
-            store = form.save(commit=True)
+            store = form.save(commit=False)
+            if passkey:
+                try:
+                    store.set_passkey(passkey)
+                except (TypeError, ValueError) as exc:
+                    return JsonResponse(
+                        data={
+                            "status": "error",
+                            "detail": str(exc),
+                        },
+                        status=400
+                    )
+            store.save()
+
             return JsonResponse(
                 data={
                     "status": "success",

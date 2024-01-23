@@ -1,3 +1,4 @@
+from django.conf.locale import he
 from django.db import models
 import uuid
 from django.http import HttpRequest
@@ -33,6 +34,10 @@ class Store(UTZModelMixin, models.Model):
     email = models.EmailField(blank=True)
     owner = models.ForeignKey("users.UserAccount", on_delete=models.CASCADE, related_name="stores")
     passkey = models.CharField(max_length=50, default=None, blank=True, null=True, editable=False)
+    signature = models.CharField(
+        max_length=50, default=uuid.uuid4().hex, blank=True, null=True, editable=False,
+        help_text="A unique string that identifies this store apart from its primary key. It is used in store access authorization."
+    )
     default_currency = CurrencyField(default="NGN")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -46,14 +51,29 @@ class Store(UTZModelMixin, models.Model):
         return self.name
     
 
+    def change_signature(self) -> None:
+        """
+        Changes the signature of this store.
+
+        Changing the signature invalidates previous authorizations.
+        """
+        self.signature = uuid.uuid4().hex
+        return None
+    
+    
     def set_passkey(self, passkey: str) -> None:
-        """Sets a passkey for this store."""
+        """
+        Sets a passkey for this store.
+        
+        The change made by this method is not saved to the database.
+        Call `save()` on the store instance to save the change to the database.
+        """
         if not isinstance(passkey, str):
             raise TypeError("Passkey must be a string.")
         if len(passkey) < 4:
             raise ValueError("Passkey must be at least 4 characters long.")
         self.passkey = passkey
-        self.save()
+        self.change_signature()
         return None
     
 
@@ -61,30 +81,15 @@ class Store(UTZModelMixin, models.Model):
         """Authorizes a request to access this store."""
         if not request.user == self.owner:
             return False
+        # If the store has no passkey, it is always authorized.
         if not self.passkey:
             return True
         
         authorized = passkey == self.passkey
         if authorized:
-            request.session["authorized_stores"] = [*request.session.get("authorized_stores", []), str(self.pk)]
             expiry_time = timezone.now() + timedelta(days=1)
-            request.session[f'authorization_for_store_{self.pk}_expires_at'] = expiry_time.strftime("%Y-%m-%d %H:%M:%S")
+            request.session[f'authorization_for_store_{self.signature}_expires_at'] = expiry_time.strftime("%Y-%m-%d %H:%M:%S")
         return authorized
-
-
-    def check_request_is_authorized(self, request: HttpRequest) -> bool:
-        """Checks if a request is authorized to access this store."""
-        if not request.user == self.owner:
-            return False
-        if not self.passkey:
-            return True
-
-        authorized_stores = request.session.get("authorized_stores", [])
-        expiry_time = request.session.get(f'authorization_for_store_{self.pk}_expires_at')
-        if not expiry_time:
-            return False
-        expiry_time = timezone.datetime.strptime(expiry_time, "%Y-%m-%d %H:%M:%S")
-        return (str(self.pk) in authorized_stores) and (timezone.now() < timezone.make_aware(expiry_time))
 
 
     def revoke_authorization(self, request: HttpRequest) -> None:
@@ -93,12 +98,22 @@ class Store(UTZModelMixin, models.Model):
             return
         if not self.passkey:
             return
-
-        authorized_stores = request.session.get("authorized_stores", [])
-        try:
-            authorized_stores.remove(str(self.pk))
-        except ValueError:
-            pass
-        request.session["authorized_stores"] = authorized_stores
-        request.session.pop(f'authorization_for_store_{self.pk}_expires_at', None)
+        request.session.pop(f'authorization_for_store_{self.signature}_expires_at', None)
         return None
+
+
+    def check_request_is_authorized(self, request: HttpRequest) -> bool:
+        """Checks if a request is authorized to access this store."""
+        if not request.user == self.owner:
+            return False
+        # If the store has no passkey, it is always authorized.
+        if not self.passkey:
+            return True
+
+        expiry_time = request.session.get(f'authorization_for_store_{self.signature}_expires_at')
+        if not expiry_time:
+            self.revoke_authorization(request)
+            return False
+        
+        expiry_time = timezone.datetime.strptime(expiry_time, "%Y-%m-%d %H:%M:%S")
+        return timezone.now() < timezone.make_aware(expiry_time)

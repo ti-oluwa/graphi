@@ -44,8 +44,8 @@ createStoreForm.onsubmit = function(e) {
     }
 
     fetch(this.action, options).then((response) => {
-        createStoreButton.onResponse();
         if (!response.ok) {
+            createStoreButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;
                 if (errors){

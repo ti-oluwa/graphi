@@ -32,9 +32,10 @@ storePasskeyForm.onsubmit = function(e) {
     }
 
     fetch(window.location.href, options).then((response) => {
-        authorizeButton.onResponse();
         if (!response.ok) {
-            response.json().then((data) => {
+            authorizeButton.onResponse();
+            response.json().then((response) => {
+                const data = JSON.parse(response.detail);
                 const errorDetail = data.detail ?? null;
 
                 if(!errorDetail) return;
@@ -42,7 +43,8 @@ storePasskeyForm.onsubmit = function(e) {
             });
 
         }else{
-            response.json().then((data) => {
+            response.json().then((response) => {
+                const data = JSON.parse(response.detail);
                 const redirectURL  = data.redirect_url ?? null;
 
                 if(!redirectURL) return;

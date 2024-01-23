@@ -86,7 +86,8 @@ function processFormData(processURL, formData, callback){
 
     fetch(processURL, options).then((response) => {
         if (!response.ok) {
-            response.json().then((data) => {
+            response.json().then((response) => {
+                const data = JSON.parse(response.detail);
                 const errorDetail = data.detail ?? null;
 
                 if(!errorDetail) return;
@@ -94,7 +95,8 @@ function processFormData(processURL, formData, callback){
             });
 
         }else{
-            response.json().then((data) => {
+            response.json().then((response) => {
+                const data = JSON.parse(response.detail);
                 const result  = data.result ?? null;
 
                 if(!result) return;

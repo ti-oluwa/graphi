@@ -48,8 +48,8 @@ signUpForm.onsubmit = (e) => {
     }
 
     fetch(signUpForm.action, options).then((response) => {
-        signUpButton.onResponse();
         if (!response.status === 201) {
+            signUpButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;
                 if (!errors) return;
@@ -60,6 +60,7 @@ signUpForm.onsubmit = (e) => {
                     formFieldHasError(field.parentElement, msg);
                 }
             });
+            
         }else{
             response.json().then((data) => {
                 const redirectURL  = data.redirect_url ?? null
