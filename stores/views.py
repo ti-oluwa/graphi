@@ -1,20 +1,78 @@
-from email import message
 import json
+import re
 from typing import Any
 from django.db.models.query import QuerySet
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
+from django.shortcuts import get_object_or_404, redirect, render
 from djmoney.settings import CURRENCY_CHOICES
 
 
 from .models import Store, StoreTypes
 from .forms import StoreForm
-from .decorators import passkey_authorization_required
+from .decorators import store_authorization_required, to_JsonResponse
 
 
 stores_global_queryset = Store.objects.all().prefetch_related("products").select_related("owner")
+
+
+class StoreAuthorizationView(LoginRequiredMixin, generic.TemplateView):
+    http_method_names = ["get", "post"]
+    template_name = 'stores/store_auth.html'
+
+    def get(self, request, *args, **kwargs) -> HttpResponse:
+        store_id  = request.GET.get('store_id')
+        if not store_id:
+            return HttpResponse(
+                status=400, 
+                content="Store primary key not provided! Expected a query parameter named 'store_id' but none was found."
+            )
+        store = get_object_or_404(Store, pk=store_id)
+        # Check if request is already authorized
+        if store.check_request_is_authorized(request):
+            # Redirect to next view if request is already authorized
+            return redirect(request.GET.get("next", "/"))
+        return super().get(request, *args, **kwargs)
+    
+
+    @to_JsonResponse
+    def post(self, request, *args, **kwargs) -> JsonResponse:
+        store_id_query_param_pattern = r"store_id=(?P<store_id>[a-zA-Z0-9-]+)"
+        next_view_query_param_pattern = r"next=(?P<next>[a-zA-Z0-9-\\/]+)"
+        request_path = request.META.get("HTTP_REFERER", "")
+        store_id_result = re.search(store_id_query_param_pattern, request_path)
+        next_view_result = re.search(next_view_query_param_pattern, request_path)
+
+        if not (store_id_result and next_view_result):
+            return HttpResponse(
+                content="Invalid Request URL!",
+                status=400
+            )
+        
+        data = json.loads(request.body)
+        store_pk = store_id_result.group("store_id")
+        next_url = next_view_result.group("next")
+        store_passkey = data.get("passkey", None)
+        store = get_object_or_404(Store, pk=store_pk)
+
+        if not store.authorize_request(request, store_passkey):
+            return JsonResponse(
+                data={
+                    "status": "error",
+                    "detail": "Invalid Passkey"
+                },
+                status=401
+            )
+        return JsonResponse(
+            data={
+                "status": "success",
+                "detail": "Authorization successful!",
+                "redirect_url": next_url
+            },
+            status=200
+        )
 
 
 
@@ -25,6 +83,7 @@ class AddStoreTypesAndCurrencyChoicesToContextMixin:
         context["store_types"] = StoreTypes.choices
         context["currencies"] = CURRENCY_CHOICES
         return context
+
 
 
 class StoreListView(
@@ -107,10 +166,11 @@ class StoreUpdateView(
     pk_url_kwarg = "store_id"
     template_name = "stores/store_update.html"
 
-    @passkey_authorization_required(
-        message="Unauthorized to update this store! Provide a valid store passkey.", 
-        view_response_type="json"
-    )
+    @store_authorization_required("store_id")
+    def get(self, request, *args, **kwargs) -> HttpResponse:
+        return super().get(request, *args, **kwargs)
+
+
     def post(self, request, *args, **kwargs) -> JsonResponse:
         data = json.loads(request.body)
         store = self.get_object()
@@ -136,6 +196,26 @@ class StoreUpdateView(
         )
 
 
+
+class StoreDeleteView(
+        AddStoreTypesAndCurrencyChoicesToContextMixin,
+        LoginRequiredMixin, 
+        generic.DetailView
+    ):
+    model = Store
+    http_method_names = ["get"]
+    pk_url_kwarg = "store_id"
+
+    @store_authorization_required("store_id")
+    def get(self, request, *args, **kwargs):
+        store = self.get_object()
+        store.delete()
+        return redirect("stores:store_list")
+
+
+
+store_auth_view = StoreAuthorizationView.as_view()
 store_list_view = StoreListView.as_view()
 store_create_view = StoreCreateView.as_view()
 store_update_view = StoreUpdateView.as_view()
+store_delete_view = StoreDeleteView.as_view()

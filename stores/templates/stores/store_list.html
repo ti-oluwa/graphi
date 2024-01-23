@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="card-options">
-                    <a href="{% url 'stores:store_update' store.pk %}" title="Update store details" class="card-option update-store-toggle">
+                    <a href="{% url 'stores:store_update' store.pk %}" title="Update store details" class="card-option update-store-button">
                         <svg 
                             width="24px"
                             height="24px"
@@ -83,7 +83,7 @@
                         </svg>
                     </a>
                     
-                    <a href="" title="Add products to store" class="card-option add-product-toggle">
+                    <a href="" title="Add products to store" class="card-option add-product-button">
                         <svg 
                             width="24px"
                             height="24px"
@@ -95,7 +95,7 @@
                         </svg>
                     </a>
 
-                    <a href="" title="Delete store" class="card-option delete-store-toggle">
+                    <a href="{% url 'stores:store_delete' store.pk %}" title="Delete store" class="card-option delete-store-button">
                         <svg 
                             width="24px"
                             height="24px"
@@ -111,8 +111,8 @@
         </div>
     </div>
 
-    <div id="form-card">
-        <div id="form-header">
+    <div class="form-card">
+        <div class="form-header">
             <h2>Create Store</h2>
             <p>Add a new store to your account</p>
         </div>
@@ -120,7 +120,7 @@
         <!-- Store Creation Form Section -->
         <form action="{% url 'stores:store_create' %}" id="create-store-form">
             {% csrf_token %}
-            <div id="form-fields">
+            <div class="form-fields">
                 <div class="form-field">
                     <label for="name" hidden>Store Name</label>
                     <input
@@ -179,7 +179,7 @@
                         {% for currency in currencies %}
                         <option 
                             value="{{ currency|first }}" 
-                            {% if currency|first == request.user.preferred_currency.symbol %}
+                            {% if currency|first == request.user.preferred_currency %}
                                 selected
                             {% endif %}
                         >
@@ -206,8 +206,8 @@
                 </div>
             </div>
 
-            <div id="submit-btn-wrapper">
-                <button class="btn-primary" id="submit-btn" type="submit">
+            <div class="submit-btn-wrapper">
+                <button class="btn-primary submit-btn" type="submit">
                     Create Store
                 </button>
             </div>

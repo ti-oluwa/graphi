@@ -1,18 +1,14 @@
-const updateStoreFormCard = document.querySelector('#form-card');
 const updateStoreForm = document.querySelector('#update-store-form');
-const updateStoreButton = document.querySelector('#update-store-form #submit-btn');
-const emailField = document.querySelector('#update-store-form #email');
+const updateStoreFormCard = updateStoreForm.parentElement;
+const updateStoreButton = updateStoreForm.querySelector('.submit-btn');
+const emailField = updateStoreForm.querySelector('#email');
 
 
-updateStoreButton.onPost = function(){
-    this.disabled = true;
-    this.innerHTML = 'Updating Store...';
-}
+addOnPostAndOnResponseFuncAttr(updateStoreButton, 'Updating Store...');
 
-updateStoreButton.onResponse = function(){
-    this.disabled = false;
-    this.innerHTML = 'Update Store';
-}
+updateStoreForm.onchange = function(e) {
+    updateStoreButton.disabled = false;
+};
 
 updateStoreForm.onsubmit = function(e) {
     e.stopImmediatePropagation();
@@ -29,32 +25,39 @@ updateStoreForm.onsubmit = function(e) {
     }
 
     updateStoreButton.onPost();
-    $.ajax({
-        url: this.action,
-        type: 'POST',
-        dataType: 'json',
-        data: JSON.stringify(data),
-        headers: {'X-CSRFToken': getCookie('csrftoken')},
-
-        success: (response) => {
-            const data = JSON.parse(response.detail)
-            if(response.status === 'success'){
-                window.location.href = data.redirect_url
-            };
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
         },
-        error: (response) => {
-            updateStoreButton.onResponse();
-            const data = JSON.parse(response.detail)
-            const errors = data.errors ?? null;
-            if (errors){
-                if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
+        mode: 'same-origin',
+        body: JSON.stringify(data),
+    }
 
-                for (const [fieldName, msg] of Object.entries(errors)){
-                    let field = this.querySelector(`input[name=${fieldName}]`);
-                    formFieldHasError(field.parentElement, msg);
+    fetch(this.action, options).then((response) => {
+        if (!response.ok) {
+            updateStoreButton.onResponse();
+            response.json().then((data) => {
+                const errors = data.errors ?? null;
+                if (errors){
+                    if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
+
+                    for (const [fieldName, msg] of Object.entries(errors)){
+                        let field = this.querySelector(`input[name=${fieldName}]`);
+                        formFieldHasError(field.parentElement, msg);
+                    };
                 };
-            };
-            alert(data.detail ?? 'An error occurred while updating store!')
+                alert(data.detail ?? 'An error occurred while updating store!')
+            });
+
+        }else{
+            response.json().then((data) => {
+                const redirectURL  = data.redirect_url ?? null;
+
+                if(!redirectURL) return;
+                window.location.href = redirectURL;
+            });
         }
     });
 };

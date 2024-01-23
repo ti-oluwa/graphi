@@ -223,8 +223,8 @@
 }
 
 
-/* Modifications to store creation form card */
-#form-card{
+/* Modifications to form card */
+.form-card{
     display: none;
     position: absolute;
     top: 50%;
@@ -235,7 +235,7 @@
     isolation: isolate;
 }
 
-#main:has(#form-card.show-block){
+#main:has(.form-card.show-block){
     overflow: hidden !important;
 }
 

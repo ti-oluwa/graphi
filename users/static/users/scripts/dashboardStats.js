@@ -74,24 +74,32 @@ function getAdvancedOptionsFormData(advancedOptionsForm){
  * @returns {object} result
  */
 function processFormData(processURL, formData, callback){
-    $.ajax({
-        url: processURL,
-        type: 'POST',
-        dataType: 'json',
-        data: JSON.stringify(formData),
+    const options = {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
+            'X-CSRFToken': getCookie('csrftoken'),
         },
-        success: (response) => {
-            if(response.status === 'success'){
-                callback(response.data['result']);
-            }else{
-                throw new Error(response.data['detail']);
-            }
-        },
-        error: (error) => {
-            throw new Error(error);
+        mode: 'same-origin',
+        body: JSON.stringify(formData),
+    }
+
+    fetch(processURL, options).then((response) => {
+        if (!response.ok) {
+            response.json().then((data) => {
+                const errorDetail = data.detail ?? null;
+
+                if(!errorDetail) return;
+                throw new Error(errorDetail);
+            });
+
+        }else{
+            response.json().then((data) => {
+                const result  = data.result ?? null;
+
+                if(!result) return;
+                callback(result);
+            });
         }
     });
 };

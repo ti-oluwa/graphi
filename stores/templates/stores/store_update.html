@@ -5,13 +5,12 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
-<link rel="stylesheet" href="{% static 'stores//styles//store_update.css' %}">
 {% endblock stylesheets %}
 
 {% block content %}
-<div id="card-container">
-    <div id="form-card">
-        <div id="form-header">
+<div class="card-container">
+    <div class="form-card">
+        <div class="form-header">
             <h2>Update Store</h2>
             <p>Update store details</p>
         </div>
@@ -19,7 +18,7 @@
         <!-- Store Update Form -->
         <form action="{% url 'stores:store_update' store.pk %}" id="update-store-form">
             {% csrf_token %}
-            <div id="form-fields">
+            <div class="form-fields">
                 <div class="form-field">
                     <label for="name" hidden>Store Name</label>
                     <input
@@ -86,7 +85,7 @@
                         {% for currency in currencies %}
                         <option 
                             value="{{ currency|first }}" 
-                            {% if currency|first == store.default_currency.symbol %}
+                            {% if currency|first == store.default_currency %}
                                 selected
                             {% endif %}
                         >
@@ -98,24 +97,23 @@
                 </div>
     
                 <div class="form-field">
-                    <label for="passkey" hidden>Store Passkey</label>
+                    <label for="store-passkey" hidden>Store Passkey</label>
                     <input 
-                        title="Enter the pass key for {{ store.name }} to confirm the update"
+                        title="Enter next pass key for {{ store.name }}"
                         type="password" 
-                        id="passkey" 
-                        name="passkey" 
+                        id="store-passkey" 
+                        name="store_passkey" 
                         class="form-input" 
-                        placeholder="Enter passkey to confirm update"
+                        placeholder="Enter new store passkey (Optional)"
                         minlength="4" 
                         maxlength="20"
-                        required
                     >
                     <small class="field-message"></small>
                 </div>
             </div>
     
-            <div id="submit-btn-wrapper">
-                <button class="btn-primary" id="submit-btn" type="submit">
+            <div class="submit-btn-wrapper">
+                <button class="btn-primary submit-btn" type="submit" disabled>
                     Update Store
                 </button>
             </div>

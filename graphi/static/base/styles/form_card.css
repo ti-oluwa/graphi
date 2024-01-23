@@ -1,4 +1,13 @@
-#form-card{
+.card-container{
+    margin-top: 20px;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-card{
     display: block;
     width: 100%;
     max-width: 400px;
@@ -8,7 +17,7 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-#form-card > #form-header{
+.form-card > .form-header{
     justify-self: stretch;
     display: flex;
     flex-direction: column;
@@ -19,7 +28,7 @@
     border-bottom: 1px solid var(--bluish-gray);
 }
 
-#form-header > h2{
+.form-header > h2{
     font-size: 24px;
     font-family: 'Raleway';
     font-weight: 700;
@@ -27,14 +36,14 @@
     color: var(--dark-blue);
 }
 
-#form-header > p{
+.form-header > p{
     font-size: 14px;
     font-weight: 500;
     line-height: 1.6;
     color: var(--text-dark);
 }
 
-#form-card > form{
+.form-card > form{
     justify-self: stretch;
     display: flex;
     flex-direction: column;
@@ -44,7 +53,7 @@
     padding: 16px;
 }
 
-form > #form-fields{
+form > .form-fields{
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -53,7 +62,7 @@ form > #form-fields{
     gap: 16px 0;
 }
 
-#form-fields .form-field{
+.form-fields .form-field{
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -110,7 +119,7 @@ form > #form-fields{
     box-shadow: 0px 1.5px 0px var(--teal);
 }
 
-form > #submit-btn-wrapper{
+form > .submit-btn-wrapper{
     width: 100%;
     display: flex;
     justify-content: center;
@@ -118,6 +127,7 @@ form > #submit-btn-wrapper{
     padding: 8px;
 }
 
-#submit-btn-wrapper > #submit-btn{
+.submit-btn-wrapper > .submit-btn{
     width: 100%;
 }
+

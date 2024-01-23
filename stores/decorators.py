@@ -1,7 +1,9 @@
 from typing import Callable
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.urls import reverse
 from django.views.generic import View
-import json
+from django.shortcuts import get_object_or_404, redirect
+from django.conf import settings
 import functools
 
 from .models import Store
@@ -25,39 +27,43 @@ def to_JsonResponse(func: Callable[..., HttpResponse]) -> Callable[..., JsonResp
     return wrapper
 
 
-def passkey_authorization_required(
-        passkey_field: str = "passkey",
-        store_pk_field: str = "store_id",
-        message: str = "Unauthorized access to store!",
-        view_response_type: str = "http"
+def store_authorization_required(
+        store_pk_url_kwarg: str,
+        auth_view: str = settings.STORE_AUTHORIZATION_VIEW,
     ):
     """
-    Returns a decorator that authorizes a request to access a store using a passkey.
+    Returns a decorator that ensures that a request to a view is authorized to access a store.
 
-    :param passkey_field: The name of the field in the request body that contains the passkey.
-    :param store_pk_field: The name of the keyword argument in the view function that contains the store's primary key.
-    :param message: The message to return if the request is not authorized.
-    :param view_response_type: The type of response the view returns. Can be "http" or "json".
+    :param store_pk_url_kwarg: The name of the URL keyword argument that contains the store's primary key.
+    :param auth_view: The name of the view to redirect to if the request is not authorized. Defaults to the value of the
+        STORE_AUTHORIZATION_VIEW setting.
     """
-    def decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpResponse] | Callable[..., JsonResponse]:
+    def decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpResponse]:
         """
-        Authorizes a request to decoratored view for access to a store using a passkey.
+        Ensures that a request to a view is authorized to access a store.
         """
         @functools.wraps(func)
-        def wrapper(view: View, request: HttpRequest, *args, **kwargs) -> HttpResponse | JsonResponse:
-            passkey = json.loads(request.body).pop(passkey_field, None)
-            store_id = kwargs.get(store_pk_field)
-            if not passkey or not store_id:
-                return HttpResponse(status=400)
-
-            store = Store.objects.get(pk=store_id)
-            if not store.check_request_is_authorized(request) and not store.authorize_request(request, passkey):
-                return HttpResponse(status=401, content=message)
+        def wrapper(view: View, request: HttpRequest, *args, **kwargs) -> HttpResponse | HttpResponseRedirect:
+            if not auth_view:
+                return ValueError(
+                    "No authorization view provided! Provide a value for the 'auth_view' argument or set the STORE_AUTHORIZATION_VIEW setting."
+                )
+            
+            store_pk = kwargs.get(store_pk_url_kwarg)
+            if not store_pk:
+                return HttpResponse(
+                    status=400, 
+                    content=f"Store primary key not provided! Expected a keyword argument named \
+                        '{store_pk_url_kwarg or view.pk_url_kwarg}' but none was found."
+                )
+            
+            store = get_object_or_404(Store, pk=store_pk)
+            if not store.check_request_is_authorized(request):
+                auth_url = reverse(auth_view)
+                redirect_url = f"{auth_url}?store_id={store.pk}&next={request.path}"
+                return redirect(redirect_url, permanent=False)
 
             return func(view, request, *args, **kwargs)
-        
-        if view_response_type == "json":
-            return to_JsonResponse(wrapper)
         return wrapper
     
     return decorator

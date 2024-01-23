@@ -54,6 +54,7 @@ class Store(UTZModelMixin, models.Model):
             raise ValueError("Passkey must be at least 4 characters long.")
         self.passkey = passkey
         self.save()
+        return None
     
 
     def authorize_request(self, request: HttpRequest, passkey: str) -> bool:
@@ -65,8 +66,8 @@ class Store(UTZModelMixin, models.Model):
         
         authorized = passkey == self.passkey
         if authorized:
-            request.session["authorized_stores"] = [*request.session.get("authorized_stores", []), self.pk]
-            expiry_time = timezone.now() + timedelta(day=1)
+            request.session["authorized_stores"] = [*request.session.get("authorized_stores", []), str(self.pk)]
+            expiry_time = timezone.now() + timedelta(days=1)
             request.session[f'authorization_for_store_{self.pk}_expires_at'] = expiry_time.strftime("%Y-%m-%d %H:%M:%S")
         return authorized
 
@@ -82,4 +83,22 @@ class Store(UTZModelMixin, models.Model):
         expiry_time = request.session.get(f'authorization_for_store_{self.pk}_expires_at')
         if not expiry_time:
             return False
-        return self.pk in authorized_stores and timezone.now() < timezone.make_aware(expiry_time)
+        expiry_time = timezone.datetime.strptime(expiry_time, "%Y-%m-%d %H:%M:%S")
+        return (str(self.pk) in authorized_stores) and (timezone.now() < timezone.make_aware(expiry_time))
+
+
+    def revoke_authorization(self, request: HttpRequest) -> None:
+        """Revokes authorization for a request to access this store."""
+        if not request.user == self.owner:
+            return
+        if not self.passkey:
+            return
+
+        authorized_stores = request.session.get("authorized_stores", [])
+        try:
+            authorized_stores.remove(str(self.pk))
+        except ValueError:
+            pass
+        request.session["authorized_stores"] = authorized_stores
+        request.session.pop(f'authorization_for_store_{self.pk}_expires_at', None)
+        return None

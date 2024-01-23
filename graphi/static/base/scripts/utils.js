@@ -47,7 +47,7 @@ function formFieldHasError(formField, errorMsg) {
     const msgEl = getMsgEl(formField);
     if (!msgEl) throw new Error('Field must have a message element with class "field-message"');
 
-    const fieldInput = formField.querySelector('form-input');
+    const fieldInput = formField.querySelector('.form-input');
     if (!fieldInput) throw new Error('Field must have a form-input element');
     
     msgEl.innerHTML = errorMsg;
@@ -103,3 +103,20 @@ function validatePassword(passwordInput1, passwordInput2) {
 }
 
 
+/**
+ * Adds the `onPost` and `onResponse` functions to the form submit button
+ * @param {HTMLButtonElement} formCardButton The submit button of the form
+ * @param {string} onClickText The text to display on the button when clicked until the response is received(when `onResponse` is called)
+ */
+function addOnPostAndOnResponseFuncAttr(formCardButton, onClickText){
+    let initialText = formCardButton.innerHTML;
+    formCardButton.onPost = function(){
+        this.disabled = true;
+        this.innerHTML = onClickText;
+    };
+
+    formCardButton.onResponse = function(){
+        this.disabled = false;
+        this.innerHTML = initialText;
+    };
+}

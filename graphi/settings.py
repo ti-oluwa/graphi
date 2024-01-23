@@ -143,3 +143,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'tioluwa.dev@gmail.com'
 
 EMAIL_HOST_PASSWORD = 'pdtkgscfemygmbwc'
+
+
+STORE_AUTHORIZATION_VIEW = 'stores:store_auth'

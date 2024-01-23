@@ -1,8 +1,8 @@
 const createStoreToggle = document.querySelector('#create-store-toggle');
-const createStoreFormCard = document.querySelector('#form-card');
 const createStoreForm = document.querySelector('#create-store-form');
-const createStoreButton = document.querySelector('#create-store-form #submit-btn');
-const emailField = document.querySelector('#create-store-form #email');
+const createStoreFormCard = createStoreForm.parentElement;
+const createStoreButton = createStoreForm.querySelector('.submit-btn');
+const emailField = createStoreForm.querySelector('#email');
 
 
 createStoreToggle.onclick = () => {
@@ -15,15 +15,8 @@ document.addEventListener('click', (e) => {
     };
 });
 
-createStoreButton.onPost = function(){
-    this.disabled = true;
-    this.innerHTML = 'Creating Store...';
-}
+addOnPostAndOnResponseFuncAttr(createStoreButton, 'Creating Store...');
 
-createStoreButton.onResponse = function(){
-    this.disabled = false;
-    this.innerHTML = 'Create Store';
-}
 
 createStoreForm.onsubmit = function(e) {
     e.stopImmediatePropagation();
@@ -40,32 +33,36 @@ createStoreForm.onsubmit = function(e) {
     }
 
     createStoreButton.onPost();
-    $.ajax({
-        url: this.action,
-        type: 'POST',
-        dataType: 'json',
-        data: JSON.stringify(data),
-        headers: {'X-CSRFToken': getCookie('csrftoken')},
-
-        success: (response) => {
-            if(response.status === 'success'){
-                window.location.reload();
-            };
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
         },
-        error: (response) => {
-            createStoreButton.onResponse();
-            const data = JSON.parse(response.detail)
-            const errors = data.errors ?? null;
-            if (errors){
-                if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
+        mode: 'same-origin',
+        body: JSON.stringify(data),
+    }
 
-                for (const [fieldName, msg] of Object.entries(errors)){
-                    let field = this.querySelector(`input[name=${fieldName}]`);
-                    formFieldHasError(field.parentElement, msg);
+    fetch(this.action, options).then((response) => {
+        createStoreButton.onResponse();
+        if (!response.ok) {
+            response.json().then((data) => {
+                const errors = data.errors ?? null;
+                if (errors){
+                    if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
+    
+                    for (const [fieldName, msg] of Object.entries(errors)){
+                        let field = this.querySelector(`input[name=${fieldName}]`);
+                        formFieldHasError(field.parentElement, msg);
+                    };
                 };
-            };
+    
+                alert(data.detail ?? 'An error occurred while creating store!')
+            });
 
-            alert(data.detail ?? 'An error occurred while creating store!')
+        }else{
+            window.location.reload();
         }
     });
 };
+
