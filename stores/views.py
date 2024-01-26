@@ -2,9 +2,10 @@ import json
 import re
 from typing import Any
 from django.db.models.query import QuerySet
+from django.http.response import HttpResponse
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect
 from djmoney.settings import CURRENCY_CHOICES
@@ -13,6 +14,7 @@ from djmoney.settings import CURRENCY_CHOICES
 from .models import Store, StoreTypes
 from .forms import StoreForm
 from .decorators import store_authorization_required, to_JsonResponse
+from users.decorators import requires_password_verification
 
 
 stores_global_queryset = Store.objects.all().prefetch_related("products").select_related("owner")
@@ -167,6 +169,7 @@ class StoreUpdateView(
     template_name = "stores/store_update.html"
 
     @store_authorization_required("store_id")
+    @requires_password_verification
     def get(self, request, *args, **kwargs) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
@@ -211,20 +214,20 @@ class StoreUpdateView(
 
 
 
-class StoreDeleteView(
-        AddStoreTypesAndCurrencyChoicesToContextMixin,
-        LoginRequiredMixin, 
-        generic.DetailView
-    ):
+class StoreDeleteView(LoginRequiredMixin, generic.DetailView):
     model = Store
     http_method_names = ["get"]
     pk_url_kwarg = "store_id"
+    # Define the view to redirect to after deleting a store
+    redirect_to = "stores:store_list"
 
     @store_authorization_required("store_id")
+    @requires_password_verification
     def get(self, request, *args, **kwargs):
         store = self.get_object()
         store.delete()
-        return redirect("stores:store_list")
+        return redirect(self.redirect_to)
+    
 
 
 

@@ -53,8 +53,7 @@ def store_authorization_required(
             if not store_pk:
                 return HttpResponse(
                     status=400, 
-                    content=f"Store primary key not provided! Expected a keyword argument named \
-                        '{store_pk_url_kwarg or view.pk_url_kwarg}' but none was found."
+                    content=f"Store primary key not provided! Expected a keyword argument named '{store_pk_url_kwarg or view.pk_url_kwarg}' but none was found."
                 )
             
             store = get_object_or_404(Store, pk=store_pk)

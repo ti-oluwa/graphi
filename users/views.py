@@ -1,10 +1,13 @@
 import json
+import re
 from typing import Any
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.utils import timezone
 from django.views import generic
+from django.conf import settings
 
 
 from .forms import UserCreationForm
@@ -15,67 +18,6 @@ from .utils import (
     get_products_count, get_stores_count,
     aggregate_sales_count, aggregate_revenue_from_sales
 )
-
-
-
-class DashboardView(LoginRequiredMixin, generic.TemplateView):
-    """View for the user dashboard."""
-    template_name = "users/dashboard.html"
-    http_method_names = ["get"]
-
-    def get_context_data(self, **kwargs: Any) -> dict:
-        context = super().get_context_data(**kwargs)
-        context["stores_count"] = get_stores_count(self.request.user)
-        context["products_count"] = get_products_count(self.request.user)
-        context["sales_count"] = aggregate_sales_count(self.request.user)
-        context["revenue_from_sales"] = aggregate_revenue_from_sales(self.request.user)
-        context["product_categories"] = ProductCategories.labels
-        return context
-    
-
-
-class DashboardStatisticsView(LoginRequiredMixin, generic.View):
-    """View for retrieving dashboard statistics."""
-    http_method_names = ["post"]
-
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
-        """Handles dashboard statistics AJAX/Fetch POST request"""
-        data = json.loads(request.body)
-        stat_type = data.pop("stat_type", None)
-
-        if stat_type == "sales":
-            result = aggregate_sales_count(self.request.user, **data)
-            return JsonResponse(
-                data={
-                    "status": "success",
-                    "detail": "Sales statistics retrieved successfully!",
-                    "data": {
-                        "result": result
-                    }
-                },
-                status=200
-            )
-        
-        elif stat_type == "revenue":
-            result = aggregate_revenue_from_sales(self.request.user, **data)
-            return JsonResponse(
-                data={
-                    "status": "success",
-                    "detail": "Revenue statistics retrieved successfully!",
-                    "data": {
-                        "result": f'{result.currency} {result.amount}'
-                    }
-                },
-                status=200
-            )
-        
-        return JsonResponse(
-            data={
-                "status": "error",
-                "detail": f"Invalid statistics type: {stat_type}"
-            },
-            status=400
-        )
 
 
 
@@ -114,7 +56,7 @@ class UserCreateView(generic.CreateView):
 
 
 
-class UserAuthenticationView(generic.TemplateView):
+class UserLoginView(generic.TemplateView):
     """View for authenticating a user."""
     template_name = "users/signin.html"
 
@@ -190,9 +132,129 @@ class UserLogoutView(generic.RedirectView):
 
 
 
-dashboard_view = DashboardView.as_view()
-dashboard_stats_view = DashboardStatisticsView.as_view()
+class UserPasswordVerificationView(LoginRequiredMixin, generic.TemplateView):
+    """
+    View for verifying a user's password.
+
+    Verifies user for period defined in `settings.PASSWORD_VERIFICATION_VALIDITY_PERIOD`
+    """
+    http_method_names = ["get", "post"]
+    template_name = 'users/password_verification.html'
+
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
+        """Handles password verification AJAX/Fetch POST request"""
+        data = json.loads(request.body)
+        next_view_query_param_pattern = r"next=(?P<next>[a-zA-Z0-9-\\/]+)"
+        request_path = request.META.get("HTTP_REFERER", "")
+
+        password = data.get("password", None)
+        if not password:
+            return JsonResponse(
+                data={
+                    "status": "error",
+                    "detail": "Password not provided!"
+                },
+                status=400
+            )
+        
+        next_view_result = re.search(next_view_query_param_pattern, request_path)
+        if not next_view_result:
+            return JsonResponse(
+                data={
+                    "status": "error",
+                    "detail": "Invalid Request URL!"
+                },
+                status=400
+            )
+
+        password_ok = request.user.check_password(password)
+        if password_ok:
+            expiration_time = timezone.now() + timezone.timedelta(seconds=settings.PASSWORD_VERIFICATION_VALIDITY_PERIOD)
+            request.session["password_verification_expiration_time"] = expiration_time.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            next_url = next_view_result.group("next")
+            return JsonResponse(
+                data={
+                    "status": "success",
+                    "detail": "Password verified successfully!",
+                    "redirect_url": next_url
+                },
+                status=200
+            )
+        
+        return JsonResponse(
+            data={
+                "status": "error",
+                "detail": "Incorrect password!"
+            },
+            status=400
+        )
+
+
+
+class DashboardView(LoginRequiredMixin, generic.TemplateView):
+    """View for the user dashboard."""
+    template_name = "users/dashboard.html"
+    http_method_names = ["get"]
+
+    def get_context_data(self, **kwargs: Any) -> dict:
+        context = super().get_context_data(**kwargs)
+        context["stores_count"] = get_stores_count(self.request.user)
+        context["products_count"] = get_products_count(self.request.user)
+        context["sales_count"] = aggregate_sales_count(self.request.user)
+        context["revenue_from_sales"] = aggregate_revenue_from_sales(self.request.user)
+        context["product_categories"] = ProductCategories.labels
+        return context
+    
+
+
+class DashboardStatisticsView(LoginRequiredMixin, generic.View):
+    """View for retrieving dashboard statistics."""
+    http_method_names = ["post"]
+
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
+        """Handles dashboard statistics AJAX/Fetch POST request"""
+        data = json.loads(request.body)
+        stat_type = data.pop("stat_type", None)
+
+        if stat_type == "sales":
+            result = aggregate_sales_count(self.request.user, **data)
+            return JsonResponse(
+                data={
+                    "status": "success",
+                    "detail": "Sales statistics retrieved successfully!",
+                    "data": {
+                        "result": result
+                    }
+                },
+                status=200
+            )
+        
+        elif stat_type == "revenue":
+            result = aggregate_revenue_from_sales(self.request.user, **data)
+            return JsonResponse(
+                data={
+                    "status": "success",
+                    "detail": "Revenue statistics retrieved successfully!",
+                    "data": {
+                        "result": f'{result.currency} {result.amount}'
+                    }
+                },
+                status=200
+            )
+        
+        return JsonResponse(
+            data={
+                "status": "error",
+                "detail": f"Invalid statistics type: {stat_type}"
+            },
+            status=400
+        )
+
+
 user_create_view = UserCreateView.as_view()
-user_auth_view = UserAuthenticationView.as_view()
+user_login_view = UserLoginView.as_view()
 user_verification_view = UserVerificationView.as_view()
 user_logout_view = UserLogoutView.as_view()
+password_verification_view = UserPasswordVerificationView.as_view()
+dashboard_view = DashboardView.as_view()
+dashboard_stats_view = DashboardStatisticsView.as_view()

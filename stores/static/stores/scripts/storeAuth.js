@@ -3,10 +3,7 @@ const storePasskeyFormCard = storePasskeyForm.parentElement;
 const passkeyField = storePasskeyForm.querySelector('input#passkey');
 const authorizeButton = storePasskeyForm.querySelector('button.submit-btn');
 
-/**
- * Retrieves the passkey from the store passkey form
- * @returns {object} an object containing the passkey
- */
+
 function getStorePasskeyFormData() {
     let formData = new FormData(storePasskeyForm);
     return {

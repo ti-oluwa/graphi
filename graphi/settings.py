@@ -146,3 +146,7 @@ EMAIL_HOST_PASSWORD = 'pdtkgscfemygmbwc'
 
 
 STORE_AUTHORIZATION_VIEW = 'stores:store_auth'
+
+PASSWORD_VERIFICATION_VIEW = "users:password_verification"
+
+PASSWORD_VERIFICATION_VALIDITY_PERIOD = 120.0
