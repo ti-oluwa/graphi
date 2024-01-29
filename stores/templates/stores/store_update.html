@@ -16,7 +16,7 @@
         </div>
     
         <!-- Store Update Form -->
-        <form action="{% url 'stores:store_update' store.pk %}" id="update-store-form">
+        <form action="{% url 'stores:store_update' store.slug %}" id="update-store-form">
             {% csrf_token %}
             <div class="form-fields">
                 <div class="form-field">

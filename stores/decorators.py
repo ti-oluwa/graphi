@@ -28,42 +28,48 @@ def to_JsonResponse(func: Callable[..., HttpResponse]) -> Callable[..., JsonResp
 
 
 def store_authorization_required(
-        store_pk_url_kwarg: str,
+        view_func: Callable = None, 
+        *, 
+        identifier: str = "pk",
+        url_kwarg: str = "store_id",
         auth_view: str = settings.STORE_AUTHORIZATION_VIEW,
     ):
     """
-    Returns a decorator that ensures that a request to a view is authorized to access a store.
+    Decorator that ensures that a request is authorized to access a store.
 
-    :param store_pk_url_kwarg: The name of the URL keyword argument that contains the store's primary key.
+    :param identifier: The key to be used to retrieve the store in the db query. Defaults to 'pk'.
+    :param url_kwarg: The name of the URL keyword argument that contains the value of the store's identifier. Defaults to 'store_id'.
     :param auth_view: The name of the view to redirect to if the request is not authorized. Defaults to the value of the
         STORE_AUTHORIZATION_VIEW setting.
     """
-    def decorator(func: Callable[..., HttpResponse]) -> Callable[..., HttpResponse]:
+    def decorator(view_func: Callable[..., HttpResponse]) -> Callable[..., HttpResponse]:
         """
         Ensures that a request to a view is authorized to access a store.
         """
-        @functools.wraps(func)
+        @functools.wraps(view_func)
         def wrapper(view: View, request: HttpRequest, *args, **kwargs) -> HttpResponse | HttpResponseRedirect:
             if not auth_view:
                 return ValueError(
                     "No authorization view provided! Provide a value for the 'auth_view' argument or set the STORE_AUTHORIZATION_VIEW setting."
                 )
             
-            store_pk = kwargs.get(store_pk_url_kwarg)
-            if not store_pk:
+            identifier_value = kwargs.get(url_kwarg)
+            if not identifier_value:
                 return HttpResponse(
                     status=400, 
-                    content=f"Store primary key not provided! Expected a keyword argument named '{store_pk_url_kwarg or view.pk_url_kwarg}' but none was found."
+                    content=f"Store identifier '{url_kwarg}' not found! Expected a URL keyword argument named '{url_kwarg}' but none was found."
                 )
             
-            store = get_object_or_404(Store, pk=store_pk)
+            store = get_object_or_404(Store, **{identifier: identifier_value})
             if not store.check_request_is_authorized(request):
                 auth_url = reverse(auth_view)
-                redirect_url = f"{auth_url}?store_id={store.pk}&next={request.path}"
+                redirect_url = f"{auth_url}?{identifier}={identifier_value}&next={request.path}"
                 return redirect(redirect_url, permanent=False)
 
-            return func(view, request, *args, **kwargs)
+            return view_func(view, request, *args, **kwargs)
         return wrapper
     
+    if view_func:
+        return decorator(view_func)
     return decorator
 

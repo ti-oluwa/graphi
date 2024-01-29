@@ -1,12 +1,16 @@
-from django.conf.locale import he
 from django.db import models
 import uuid
 from django.http import HttpRequest
 from datetime import timedelta
 from django.utils import timezone
+from django.utils.text import slugify
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 from django_utz.models.mixins import UTZModelMixin
 from djmoney.models.fields import CurrencyField
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
 
 
 class StoreTypes(models.TextChoices):
@@ -29,6 +33,7 @@ class StoreTypes(models.TextChoices):
 class Store(UTZModelMixin, models.Model):
     """Model representing a store."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    slug = models.SlugField(unique=True, null=True, editable=False)
     name = models.CharField(max_length=150)
     type = models.CharField(max_length=50, choices=StoreTypes.choices, default=StoreTypes.OTHER)
     email = models.EmailField(blank=True)
@@ -49,6 +54,43 @@ class Store(UTZModelMixin, models.Model):
 
     def __str__(self):
         return self.name
+    
+
+    def save(self, *args, **kwargs):
+        """Saves this store to the database."""
+        if not self.pk or not self.slug:
+            self.slug = f"{slugify(self.name)}-{self.id.hex[:8]}"
+
+        # Update stores products if the default currency of the store changes
+        if self.pk and self.default_currency != self.__class__.objects.get(pk=self.pk).default_currency:
+            # self._update_store_products_prices(self.default_currency)
+            pass
+        return super().save(*args, **kwargs)
+    
+
+    def _update_store_products_prices(self, new_currency: str) -> None:
+        """
+        Updates the prices of all products in this store to the new currency.
+
+        This is an internal method. It is called when the default currency of the store changes.
+        """
+        executor = ThreadPoolExecutor(10)
+        loop = asyncio.new_event_loop()
+
+        async def update_product_prices(product):
+            try:
+                product.price = await loop.run_in_executor(
+                    executor, convert_money, 
+                    product.price, new_currency
+                )
+                await product.asave()
+            except MissingRate:
+                raise asyncio.CancelledError
+            return None
+        
+        tasks = [loop.create_task(update_product_prices(product)) for product in self.products.all()]
+        loop.run_until_complete(asyncio.gather(*tasks))
+        return None
     
 
     def change_signature(self) -> None:
@@ -77,8 +119,14 @@ class Store(UTZModelMixin, models.Model):
         return None
     
 
-    def authorize_request(self, request: HttpRequest, passkey: str) -> bool:
-        """Authorizes a request to access this store."""
+    def authorize_request(self, request: HttpRequest, passkey: str, authorize_for_days: int = 1) -> bool:
+        """
+        Authorizes a request to access this store.
+
+        :param request: The request to authorize.
+        :param passkey: The passkey to use for authorization.
+        :param authorize_for_days: The number of days for which the request authorization should be valid.
+        """
         if not request.user == self.owner:
             return False
         # If the store has no passkey, it is always authorized.
@@ -87,7 +135,7 @@ class Store(UTZModelMixin, models.Model):
         
         authorized = passkey == self.passkey
         if authorized:
-            expiry_time = timezone.now() + timedelta(days=1)
+            expiry_time = timezone.now() + timedelta(days=authorize_for_days)
             request.session[f'authorization_for_store_{self.signature}_expires_at'] = expiry_time.strftime("%Y-%m-%d %H:%M:%S")
         return authorized
 

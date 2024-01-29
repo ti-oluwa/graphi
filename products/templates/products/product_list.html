@@ -1,0 +1,273 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block page_title %}{{ store.name | title }}{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//content_container.css' %}">
+<link rel="stylesheet" href="{% static 'products//styles//product_list.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<section id="content-container">
+    <div id="content-header">
+        <div id="header-text">
+            <h1>{{ store.name | title }}</h1>
+            <p>{{ store.products.count }} Product{{ store.products.count | pluralize:"s" }}</p>
+            <small>Click on the filters options to filter by brand, category, colour, ...</small>
+        </div>
+
+        <div id="header-buttons">
+            <button id="add-product-toggle" class="header-button btn-secondary">
+                Add Product
+            </button>
+        </div>
+    </div>
+
+    <div id="content-body">
+        <p id="filters-toggle">
+            Filters
+        </p>
+
+        <div id="content-wrapper">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-card-main">
+                    <div class="product-card-main-top">
+                        <p class="product-name">{{ product.name }}</p>
+                        <p class="product-price">{{ product.price }}</p>
+                    </div>
+
+                    <div class="product-card-main-bottom">
+                        <p class="product-quantity">Quantity - {{ product.quantity }}</p>
+
+                        {% if product.color %}
+                        <div class="product-color">
+                            <p>{{ product.color | upper }}</p>
+                            <span style="background: {{ product.color }} !important;"></span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="product-card-extras">
+                    <div class="card-options">
+                        <a href="{% url 'stores:products:product_update' store.slug product.pk %}">Update</a>
+                        <a href="{% url 'stores:products:product_delete' store.slug product.pk %}">Delete</a>
+                    </div>
+
+                    <p>Description - {{ product.description | default:"No Info" | linebreaks }}</p>
+                    <p>Size - {{ product.size | default:"No Info" }}</p>
+                    <p>Weight - {{ product.weight | default:"No Info" }}</p>
+                    <p>Group - {{ product.group | default:"No Info" | title }}</p>
+                    <p>Brand - {{ product.brand | default:"No Info" | title }}</p>
+                    <p>Category - {{ product.category | title }}</p>
+                    <p>Product ID - {{ product.id }}</p>
+                    <p>Last Sale - {{ product.last_sold_at | default:"No Info" }}</p>
+                    <p>Date Added - {{ product.added_at }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="form-card form-card-modal">
+        <div class="form-header">
+            <h2> Add a Product</h2>
+            <p>Add a new Product to {{ store.name | title }}</p>
+        </div>
+
+        <!-- Product Add Form Section -->
+        <form action="{% url 'stores:products:product_add' store.slug %}" id="add-product-form">
+            {% csrf_token %}
+            <div class="form-fields">
+                <div class="form-field">
+                    <label for="name" hidden>Product Name</label>
+                    <input
+                        title="Enter the product's name" 
+                        id="name" 
+                        name="name" 
+                        class="form-input"
+                        placeholder="Product name" 
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="description" hidden>Product Description</label>
+                    <input 
+                        title="Describe the product in detail."
+                        type="text" 
+                        id="description" 
+                        name="description" 
+                        class="form-input" 
+                        placeholder="Product description (Optional)"
+                        maxlength="100"
+                    >
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="price" hidden>Product Price</label>
+                    <input 
+                        title="How much does this product cost in the store's currency?"
+                        type="number" 
+                        id="price" 
+                        name="price" 
+                        class="form-input" 
+                        placeholder="Product price ({{ store.default_currency }})"
+                        min="0.00"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="quantity" hidden>Product Quantity</label>
+                    <input 
+                        title="How many of this product is available to be added?"
+                        type="number" 
+                        id="quantity" 
+                        name="quantity" 
+                        class="form-input" 
+                        placeholder="Product quantity"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="color" hidden>Product Color</label>
+                    <input 
+                        title="What color is the product?"
+                        type="text" 
+                        id="color" 
+                        name="color" 
+                        class="form-input" 
+                        placeholder="Product color (Optional)"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="size" hidden>Product Size</label>
+                    <input 
+                        title="What size is the product?"
+                        type="text" 
+                        id="size" 
+                        name="size" 
+                        class="form-input" 
+                        placeholder="Product size (Optional)"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="weight" hidden>Product Weight (in Grammes)</label>
+                    <input 
+                        title="What is the product's weight?"
+                        type="number" 
+                        id="weight" 
+                        name="weight" 
+                        class="form-input" 
+                        placeholder="Product weight in grammes (Optional)"
+                        min="0.00"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="category" hidden>Product Category</label>
+                    <select 
+                        title="Choose the category of the product you are adding belongs to"
+                        id="category" 
+                        name="category" 
+                        required 
+                        class="form-select"
+                    >
+                        <option value="">Select the product's category</option>
+                        {% for category in product_categories %}
+                        <option value="{{ category | first }}">{{ category | last }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="brand" hidden>Product Brand</label>
+                    <select 
+                        title="Choose the brand of the product"
+                        id="brand" 
+                        name="brand" 
+                        class="form-select"
+                    >
+                        <option value="">Select the product's brand (Optional)</option>
+                        {% for brand in store.product_brands.all %}
+                        <option value="{{ brand.pk }}">{{ brand.name | title }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="new-brand" hidden>New Product Brand</label>
+                    <input 
+                        title="Add brand here if you can't find the brand in the list above."
+                        type="text" 
+                        id="new-brand"
+                        name="new-brand" 
+                        class="form-input add-new-field" 
+                        placeholder="Enter product brand (If not found)"
+                        maxlength="50"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="group" hidden>Product Group</label>
+                    <select 
+                        id="group" 
+                        name="group" 
+                        class="form-select"
+                    >
+                        <option value="">Select the product's group (Optional)</option>
+                        {% for group in store.product_groups.all %}
+                        <option value="{{ group.pk }}">{{ group | title }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="new-group" hidden>New Product Group</label>
+                    <input 
+                        title="Add a new product group if you can't find the group in the list above."
+                        type="text" 
+                        id="new-group"
+                        name="new-group"
+                        class="form-input add-new-field" 
+                        placeholder="Enter product group (If not found)"
+                        maxlength="50"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+            </div>
+
+            <div class="submit-btn-wrapper">
+                <button class="btn-primary submit-btn" type="submit">
+                    Add Product
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% include 'base/paginator.html' %}
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'products//scripts//productList.js' %}"></script>
+{% endblock scripts %}
+

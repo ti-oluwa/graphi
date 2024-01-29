@@ -1,0 +1,205 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block page_title %}Update Product - {{ product.name }}{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="card-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Update Product</h2>
+            <p>Update product details</p>
+        </div>
+    
+        <!-- Store Update Form -->
+        <form action="{% url 'stores:products:product_update' product.store.slug product.id %}" id="update-product-form">
+            {% csrf_token %}
+            <div class="form-fields">
+                <div class="form-field">
+                    <label for="name" hidden>Product Name</label>
+                    <input
+                        title="Enter the product's name" 
+                        id="name" 
+                        name="name" 
+                        class="form-input"
+                        placeholder="Product name" 
+                        value="{{ product.name }}"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="description" hidden>Product Description</label>
+                    <input 
+                        title="Describe the product in detail."
+                        type="text" 
+                        id="description" 
+                        name="description" 
+                        class="form-input" 
+                        placeholder="Product description (Optional)"
+                        value="{{ product.description }}"
+                    >
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="price" hidden>Product Price</label>
+                    <input 
+                        title="How much does this product cost in the store's currency?"
+                        type="number" 
+                        id="price" 
+                        name="price" 
+                        class="form-input" 
+                        placeholder="Product price"
+                        value="{{ product.price.amount }}"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="quantity" hidden>Product Quantity</label>
+                    <input 
+                        title="How many of this product is available to be added?"
+                        type="number" 
+                        id="quantity" 
+                        name="quantity" 
+                        class="form-input" 
+                        placeholder="Product quantity"
+                        value="{{ product.quantity }}"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="color" hidden>Product Color</label>
+                    <input 
+                        title="What color is the product?"
+                        type="text" 
+                        id="color" 
+                        name="color" 
+                        class="form-input" 
+                        placeholder="Product color (Optional)"
+                        value="{{ product.color }}"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="size" hidden>Product Size</label>
+                    <input 
+                        title="What size is the product?"
+                        type="text" 
+                        id="size" 
+                        name="size" 
+                        class="form-input" 
+                        placeholder="Product size (Optional)"
+                        value="{{ product.size }}"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="weight" hidden>Product Weight</label>
+                    <input 
+                        title="What is the product's weight?"
+                        type="text" 
+                        id="weight" 
+                        name="weight" 
+                        class="form-input" 
+                        placeholder="Product weight (Optional)"
+                        value="{{ product.weight | default_if_none:'' }}"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="category" hidden>Product Category</label>
+                    <select 
+                        title="Choose the category of the product you are adding belongs to"
+                        id="category" 
+                        name="category" 
+                        required 
+                        class="form-select"
+                    >
+                        <option value="">Select the product's category</option>
+                        {% for category in product_categories %}
+                        <option 
+                            value="{{ category | first }}"
+                            {% if category|first == product.category %}
+                                selected
+                            {% endif %}
+                        >
+                        {{ category | last }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="brand" hidden>Product Brand</label>
+                    <select 
+                        title="Choose the brand of the product"
+                        id="brand" 
+                        name="brand" 
+                        class="form-select"
+                    >
+                        <option value="">Select the product's brand (Optional)</option>
+                        {% for brand in product.store.product_brands.all %}
+                        <option 
+                            value="{{ brand.pk }}"
+                            {% if brand == product.brand %}
+                                selected
+                            {% endif %}
+                        >
+                        {{ brand.name | title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="group" hidden>Product Group</label>
+                    <select 
+                        id="group" 
+                        name="group" 
+                        class="form-select"
+                    >
+                        <option value="">Select the product's group (Optional)</option>
+                        {% for group in product.store.product_groups.all %}
+                        <option 
+                            value="{{ group.pk }}"
+                            {% if group == product.group %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ group | title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div>
+            </div>
+    
+            <div class="submit-btn-wrapper">
+                <button class="btn-primary submit-btn" type="submit" disabled>
+                    Update Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'products//scripts//productUpdate.js' %}"></script>
+{% endblock scripts %}
+

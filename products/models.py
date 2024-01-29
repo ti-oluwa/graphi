@@ -1,4 +1,5 @@
 from __future__ import annotations
+from django.core import validators
 
 from django.db import models
 import uuid
@@ -6,6 +7,7 @@ from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
 from django.utils.translation import gettext_lazy as _
 from django_utz.models.mixins import UTZModelMixin
+from decimal import Decimal
 
 
 class ProductCategories(models.TextChoices):
@@ -28,9 +30,11 @@ class Product(UTZModelMixin, models.Model):
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True)
     price = MoneyField(
-        max_digits=10, decimal_places=2, 
+        max_digits=14, 
+        decimal_places=2, 
         default_currency="NGN", 
-        validators=[MinMoneyValidator(0)]
+        default=Decimal("0.00"),
+        validators=[MinMoneyValidator(Decimal("0.00"))]
     )
     quantity = models.IntegerField(default=0)
     color = models.CharField(max_length=50, blank=True)
@@ -48,13 +52,16 @@ class Product(UTZModelMixin, models.Model):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
-        ordering = ["name"]
+        ordering = ("name", "-added_at")
 
     def __str__(self):
         return self.name
     
-    def __eq__(self, other: Product):
-        return isinstance(other, self.__class__) and self.pk == other.pk
+    @property
+    def last_sold_at(self):
+        """The last date the product was sold"""
+        latest_sale = self.sales.latest("made_at")
+        return latest_sale.made_at if latest_sale else None
     
 
 
@@ -71,7 +78,8 @@ class ProductGroup(UTZModelMixin, models.Model):
     class Meta:
         verbose_name = "Product Group"
         verbose_name_plural = "Product Groups"
-        ordering = ["name"]
+        ordering = ("name", "-created_at")
+        unique_together = ("name", "store")
 
     def __str__(self):
         return self.name
@@ -91,7 +99,8 @@ class ProductBrand(UTZModelMixin, models.Model):
     class Meta:
         verbose_name = "Product Brand"
         verbose_name_plural = "Product Brands"
-        ordering = ["name"]
+        ordering = ("name", "-created_at")
+        unique_together = ("name", "store")
 
     def __str__(self):
         return self.name

@@ -44,11 +44,13 @@ updateStoreForm.onsubmit = function(e) {
                     if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
 
                     for (const [fieldName, msg] of Object.entries(errors)){
-                        let field = this.querySelector(`input[name=${fieldName}]`);
+                        let field = this.querySelector(`*[name=${fieldName}]`);
                         formFieldHasError(field.parentElement, msg);
                     };
+
+                }else{
+                    alert(data.detail ?? 'An error occurred!');
                 };
-                alert(data.detail ?? 'An error occurred while updating store!')
             });
 
         }else{

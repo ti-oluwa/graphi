@@ -7,12 +7,13 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//content_container.css' %}">
 <link rel="stylesheet" href="{% static 'stores//styles//store_list.css' %}">
 {% endblock stylesheets %}
 
 {% block content %}
-<section id="stores-container">
-    <div id="stores-header">
+<section id="content-container">
+    <div id="content-header">
         <div id="header-text">
             <h1>Stores</h1>
             <p>All stores you own</p>
@@ -20,7 +21,7 @@
         </div>
 
         <div id="header-buttons">
-            <button id="create-store-toggle" class="btn-secondary">
+            <button id="create-store-toggle" class="header-button btn-secondary">
                 Create Store
             </button>
         </div>
@@ -58,13 +59,13 @@
                         </p>
                     </div>
 
-                    <a href="" class="view-products-link">
+                    <a href="{% url 'stores:products:product_list' store.slug %}" class="view-products-link">
                         View Products
                     </a>
                 </div>
 
                 <div class="card-options">
-                    <a href="{% url 'stores:store_update' store.pk %}" title="Update store details" class="card-option update-store-button">
+                    <a href="{% url 'stores:store_update' store.slug %}" title="Update store details" class="card-option update-store-button">
                         <svg 
                             width="24px"
                             height="24px"
@@ -82,20 +83,8 @@
                             </g></g>
                         </svg>
                     </a>
-                    
-                    <a href="" title="Add products to store" class="card-option add-product-button">
-                        <svg 
-                            width="24px"
-                            height="24px"
-                            viewBox="0 0 48 48" 
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path d="M0 0h48v48H0zm36.62 12L31.1 22z" fill="none"/>
-                            <path fill="currentColor" d="M22 18h4v-6h6V8h-6V2h-4v6h-6v4h6v6zm-8 18c-2.21 0-3.98 1.79-3.98 4s1.77 4 3.98 4 4-1.79 4-4-1.79-4-4-4zm20 0c-2.21 0-3.98 1.79-3.98 4s1.77 4 3.98 4 4-1.79 4-4-1.79-4-4-4zm-19.65-6.5c0-.09.02-.17.06-.24l1.8-3.26h14.9c1.5 0 2.81-.83 3.5-2.06l7.72-14.02L38.83 8h-.01l-2.21 4-5.51 10H17.07l-.26-.54L12.32 12l-1.9-4-1.89-4H2v4h4l7.2 15.17-2.71 4.9c-.31.58-.49 1.23-.49 1.93 0 2.21 1.79 4 4 4h24v-4H14.85c-.28 0-.5-.22-.5-.5z"/>
-                        </svg>
-                    </a>
 
-                    <a href="{% url 'stores:store_delete' store.pk %}" title="Delete store" class="card-option delete-store-button">
+                    <a href="{% url 'stores:store_delete' store.slug %}" title="Delete store" class="card-option delete-store-button">
                         <svg 
                             width="24px"
                             height="24px"
@@ -111,7 +100,7 @@
         </div>
     </div>
 
-    <div class="form-card">
+    <div class="form-card form-card-modal">
         <div class="form-header">
             <h2>Create Store</h2>
             <p>Add a new store to your account</p>
@@ -193,12 +182,12 @@
                 <div class="form-field">
                     <label for="passkey" hidden>Store Passkey</label>
                     <input 
-                        title="Set a passkey to protect your store"
+                        title="Set an access key to protect your store"
                         type="password" 
                         id="passkey" 
                         name="passkey" 
                         class="form-input" 
-                        placeholder="Pass key"
+                        placeholder="Pass key (Optional)"
                         minlength="4" 
                         maxlength="20"
                     >

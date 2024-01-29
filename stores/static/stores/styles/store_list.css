@@ -1,61 +1,5 @@
-#stores-container{
-    width: 100%;
-    padding: 40px 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 20px 0;
-}
 
-#stores-container > #stores-header{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
-#stores-header > #header-text{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    gap: 5px 0;
-}
-
-#header-text > h1{
-    font-size: clamp(24px, 2vw, 36px);
-    font-weight: 700;
-    font-family: 'Raleway';
-    color: var(--text-dark);
-}
-
-#header-text > p{
-    font-size: 14px;
-    font-weight: 600;
-    font-family: 'Manrope';
-    color: var(--text-dark);
-}
-
-#header-text > small{
-    font-size: 12px;
-    font-weight: 500;
-    font-family: 'Manrope';
-    color: var(--cambridge-blue);
-}
-
-#stores-header > #header-buttons{
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-}
-
-#header-buttons #create-store-toggle{
-    font-size: clamp(12px, 2vw, 14px);
-    padding: 10px 10px;
-}
-
-#stores-container > #stores-body{
+#stores-body{
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -223,25 +167,3 @@
 }
 
 
-/* Modifications to form card */
-.form-card{
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    z-index: 10000;
-    isolation: isolate;
-}
-
-#main:has(.form-card.show-block){
-    overflow: hidden !important;
-}
-
-/* Media Queries */
-@media screen and (max-width: 768px) {
-    #stores-container{
-        padding: 40px 10px;
-    }
-}

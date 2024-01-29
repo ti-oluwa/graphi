@@ -51,7 +51,7 @@ def _check_password_verification_validity(request: HttpRequest, expiration_time_
 def requires_password_verification(
         view_func: Callable = None, 
         *, 
-        verification_view: Callable | str = None,
+        verification_view: Callable | str = settings.PASSWORD_VERIFICATION_VIEW,
         expiration_time_key: str = 'password_verification_expiration_time'
     ):
     """
@@ -78,7 +78,7 @@ def requires_password_verification(
             if _check_password_verification_validity(request, expiration_time_key):
                 return view_func(view, request, *args, **kwargs)
             
-            v_view = verification_view or getattr(settings, 'PASSWORD_VERIFICATION_VIEW', None)
+            v_view = verification_view
             if not v_view:
                 raise ValueError(
                     "A password verification view is required for password verification to work. "

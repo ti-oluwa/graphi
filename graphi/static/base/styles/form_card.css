@@ -17,6 +17,30 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
 }
 
+/* Modal Variant */
+.form-card.form-card-modal{
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    z-index: 10000;
+    isolation: isolate;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1),
+                0px 0px 0px 100vmax rgba(0, 0, 0, 0.5);
+}
+
+.form-card-modal{
+    max-height: calc(100vh - 8%);
+    overflow-y: scroll;
+}
+
+#main:has(.form-card-modal.show-block){
+    overflow: hidden !important;
+}
+
+
 .form-card > .form-header{
     justify-self: stretch;
     display: flex;

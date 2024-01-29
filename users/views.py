@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Any
+from typing import Any, Dict
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,10 +14,10 @@ from .forms import UserCreationForm
 from .models import UserAccount
 from products.models import ProductCategories
 from .decorators import redirect_authenticated
-from .utils import (
-    get_products_count, get_stores_count,
-    aggregate_sales_count, aggregate_revenue_from_sales
-)
+from stores.utils import get_stores_count
+from products.utils import get_products_count
+from sales.utils import aggregate_sales_count, aggregate_revenue_from_sales
+from .utils import parse_query_params_from_request
 
 
 
@@ -28,7 +28,7 @@ class UserCreateView(generic.CreateView):
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         """Handles user creation AJAX/Fetch POST request"""
-        data = json.loads(request.body)
+        data: Dict = json.loads(request.body)
         form = self.get_form_class()(data)
 
         if form.is_valid():
@@ -67,7 +67,7 @@ class UserLoginView(generic.TemplateView):
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         """Handles user authentication AJAX/Fetch POST request"""
-        data = json.loads(request.body)
+        data: Dict = json.loads(request.body)
         email = data.get('email', None)
         password = data.get('password', None)
         user = authenticate(request, username=email, password=password)
@@ -143,9 +143,17 @@ class UserPasswordVerificationView(LoginRequiredMixin, generic.TemplateView):
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         """Handles password verification AJAX/Fetch POST request"""
-        data = json.loads(request.body)
-        next_view_query_param_pattern = r"next=(?P<next>[a-zA-Z0-9-\\/]+)"
-        request_path = request.META.get("HTTP_REFERER", "")
+        data: Dict = json.loads(request.body)
+        query_params = parse_query_params_from_request(request)
+        next_url = query_params.get("next", None)
+        if not next_url:
+            return JsonResponse(
+                data={
+                    "status": "error",
+                    "detail": "Invalid Request URL! Expected a query parameter named 'next' but none was found."
+                },
+                status=400
+            )
 
         password = data.get("password", None)
         if not password:
@@ -156,22 +164,11 @@ class UserPasswordVerificationView(LoginRequiredMixin, generic.TemplateView):
                 },
                 status=400
             )
-        
-        next_view_result = re.search(next_view_query_param_pattern, request_path)
-        if not next_view_result:
-            return JsonResponse(
-                data={
-                    "status": "error",
-                    "detail": "Invalid Request URL!"
-                },
-                status=400
-            )
 
         password_ok = request.user.check_password(password)
         if password_ok:
             expiration_time = timezone.now() + timezone.timedelta(seconds=settings.PASSWORD_VERIFICATION_VALIDITY_PERIOD)
             request.session["password_verification_expiration_time"] = expiration_time.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-            next_url = next_view_result.group("next")
             return JsonResponse(
                 data={
                     "status": "success",
@@ -213,7 +210,7 @@ class DashboardStatisticsView(LoginRequiredMixin, generic.View):
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         """Handles dashboard statistics AJAX/Fetch POST request"""
-        data = json.loads(request.body)
+        data: Dict = json.loads(request.body)
         stat_type = data.pop("stat_type", None)
 
         if stat_type == "sales":

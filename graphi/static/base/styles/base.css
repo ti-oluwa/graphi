@@ -131,9 +131,8 @@ body::-webkit-scrollbar{
     overflow-y: auto;
 }
 
-#main::-webkit-scrollbar{
-    width: 8px;
-    height: 8px;
+#main > #main-content::-webkit-scrollbar{
+    display: none !important;
 }
 
 #main > header{

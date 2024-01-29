@@ -1,38 +1,49 @@
-const createStoreToggle = document.querySelector('#create-store-toggle');
-const createStoreForm = document.querySelector('#create-store-form');
-const createStoreFormCard = createStoreForm.parentElement;
-const createStoreButton = createStoreForm.querySelector('.submit-btn');
-const emailField = createStoreForm.querySelector('#email');
+const productCards = document.querySelectorAll('.product-card');
+const addProductToggle = document.querySelector('#add-product-toggle');
+const addProductForm = document.querySelector('#add-product-form');
+const addProductFormCard = addProductForm.parentElement;
+const addProductButton = addProductForm.querySelector('.submit-btn');
 
 
-createStoreToggle.onclick = () => {
-    createStoreFormCard.classList.add('show-block');
+productCards.forEach((card) => {
+    let cardMain = card.querySelector('.product-card-main');
+    let cardExtras = card.querySelector('.product-card-extras');
+
+    cardMain.addEventListener('click', () => {
+        cardExtras.classList.toggle('show-flex');
+        for(let i = 0; i < productCards.length; i++) {
+            if(productCards[i] !== card) {
+                productCards[i].querySelector('.product-card-extras').classList.remove('show-flex');
+            }
+        }
+    });
+});
+
+
+addProductToggle.onclick = () => {
+    addProductFormCard.classList.add('show-block');
 };
 
 document.addEventListener('click', (e) => {
-    if (!createStoreToggle.contains(e.target) && !createStoreFormCard.contains(e.target)){
-        createStoreFormCard.classList.remove('show-block');
+    if (!addProductToggle.contains(e.target) && !addProductFormCard.contains(e.target)){
+        addProductFormCard.classList.remove('show-block');
     };
 });
 
-addOnPostAndOnResponseFuncAttr(createStoreButton, 'Creating Store...');
+addOnPostAndOnResponseFuncAttr(addProductButton, 'Adding Product...');
 
 
-createStoreForm.onsubmit = function(e) {
+addProductForm.onsubmit = function(e) {
     e.stopImmediatePropagation();
     e.preventDefault();
 
-    if (!isValidEmail(emailField.value)) {
-        formFieldHasError(emailField.parentElement, 'Invalid email address!');
-        return;
-    }
     const formData = new FormData(this);
     const data = {};
     for (const [key, value] of formData.entries()) {
         data[key] = value;
     }
 
-    createStoreButton.onPost();
+    addProductButton.onPost();
     const options = {
         method: 'POST',
         headers: {
@@ -45,7 +56,7 @@ createStoreForm.onsubmit = function(e) {
 
     fetch(this.action, options).then((response) => {
         if (!response.ok) {
-            createStoreButton.onResponse();
+            addProductButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;
                 if (errors){

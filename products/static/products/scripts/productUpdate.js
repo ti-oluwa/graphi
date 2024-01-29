@@ -1,38 +1,25 @@
-const createStoreToggle = document.querySelector('#create-store-toggle');
-const createStoreForm = document.querySelector('#create-store-form');
-const createStoreFormCard = createStoreForm.parentElement;
-const createStoreButton = createStoreForm.querySelector('.submit-btn');
-const emailField = createStoreForm.querySelector('#email');
+const updateProductForm = document.querySelector('#update-product-form');
+const updateProductFormCard = updateProductForm.parentElement;
+const updateProductButton = updateProductForm.querySelector('.submit-btn');
 
 
-createStoreToggle.onclick = () => {
-    createStoreFormCard.classList.add('show-block');
+addOnPostAndOnResponseFuncAttr(updateProductButton, 'Updating Product...');
+
+updateProductForm.onchange = function(e) {
+    updateProductButton.disabled = false;
 };
 
-document.addEventListener('click', (e) => {
-    if (!createStoreToggle.contains(e.target) && !createStoreFormCard.contains(e.target)){
-        createStoreFormCard.classList.remove('show-block');
-    };
-});
-
-addOnPostAndOnResponseFuncAttr(createStoreButton, 'Creating Store...');
-
-
-createStoreForm.onsubmit = function(e) {
+updateProductForm.onsubmit = function(e) {
     e.stopImmediatePropagation();
     e.preventDefault();
 
-    if (!isValidEmail(emailField.value)) {
-        formFieldHasError(emailField.parentElement, 'Invalid email address!');
-        return;
-    }
     const formData = new FormData(this);
     const data = {};
     for (const [key, value] of formData.entries()) {
         data[key] = value;
     }
 
-    createStoreButton.onPost();
+    updateProductButton.onPost();
     const options = {
         method: 'POST',
         headers: {
@@ -45,19 +32,20 @@ createStoreForm.onsubmit = function(e) {
 
     fetch(this.action, options).then((response) => {
         if (!response.ok) {
-            createStoreButton.onResponse();
+            updateProductButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;
                 if (errors){
                     if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
-    
+
                     for (const [fieldName, msg] of Object.entries(errors)){
+                        console.log(fieldName)
                         let field = this.querySelector(`*[name=${fieldName}]`);
                         formFieldHasError(field.parentElement, msg);
                     };
-
+                    
                 }else{
-                    alert(data.detail ?? 'An error occurred!');
+                    alert(data.detail ?? 'An error occured!');
                 };
             });
 
@@ -71,4 +59,3 @@ createStoreForm.onsubmit = function(e) {
         }
     });
 };
-

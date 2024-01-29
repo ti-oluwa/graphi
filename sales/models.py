@@ -23,7 +23,7 @@ class Sale(UTZModelMixin, models.Model):
     class Meta:
         verbose_name = "Sale"
         verbose_name_plural = "Sales"
-        ordering = ["-made_at"]
+        ordering = ("-made_at",)
 
     @property
     def revenue(self) -> Money:

@@ -1,0 +1,134 @@
+#content-body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px 0;
+}
+
+#content-body > #filters-toggle{
+    font-family: "DM Sans";
+    color: var(--teal);
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+#filters-toggle:hover{
+    opacity: 0.8;
+}
+
+#content-body > #content-wrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px 0;
+}   
+
+#content-wrapper > .product-card{
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 5px;
+    background: var(--white);
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
+}
+
+.product-card > .product-card-main{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.product-card-main:hover{
+    background: var(--light-gray) !important;
+}
+
+.product-card-main > *{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.product-name{
+    font-family: "DM Sans";
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.product-price{
+    font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.product-quantity{
+    font-family: "Manrope";
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.product-color{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 5px;
+}
+
+.product-color > p{
+    font-family: "Manrope";
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.product-color > span{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.product-card > .product-card-extras{
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+}
+
+.product-card-extras > .card-options{
+    align-self: flex-end;
+    display: flex;
+    gap: 0 10px;
+}
+
+.card-options > a{
+    font-family: "Manrope";
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+    text-decoration: underline;
+}
+
+.card-options > a:last-of-type{
+    color: red;
+}
+
+.product-card-extras > p{
+    font-family: "Manrope";
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.product-card:has(.product-card-extras.show-flex) > .product-card-main{
+    background: var(--light-gray) !important;
+}
+
+
