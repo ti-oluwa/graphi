@@ -111,24 +111,23 @@ class UserVerificationView(LoginRequiredMixin, generic.View):
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         token = kwargs.get("token")
-        user = UserAccount.objects.filter(pk__hex=token).first()
-        if user:
-            if user.is_active:
-                return HttpResponse(
-                    content="Your account has already been verified!",
-                    status=200
-                )
-            
-            user.is_active = True
-            user.save()
+        if not request.user.id.hex == token:
             return HttpResponse(
-                content="Your account has been verified successfully!",
+            content="Invalid verification link!",
+            status=400
+        )
+        
+        if request.user.is_active:
+            return HttpResponse(
+                content="Your account has already been verified!",
                 status=200
             )
         
+        request.user.is_active = True
+        request.user.save()
         return HttpResponse(
-            content="Invalid verification link!",
-            status=400
+            content="Your account has been verified successfully!",
+            status=200
         )
 
 
