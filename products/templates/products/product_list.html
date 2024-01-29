@@ -57,15 +57,15 @@
                         <a href="{% url 'stores:products:product_delete' store.slug product.pk %}">Delete</a>
                     </div>
 
-                    <p>Description - {{ product.description | default:"No Info" | linebreaks }}</p>
-                    <p>Size - {{ product.size | default:"No Info" }}</p>
-                    <p>Weight - {{ product.weight | default:"No Info" }}</p>
-                    <p>Group - {{ product.group | default:"No Info" | title }}</p>
-                    <p>Brand - {{ product.brand | default:"No Info" | title }}</p>
-                    <p>Category - {{ product.category | title }}</p>
-                    <p>Product ID - {{ product.id }}</p>
-                    <p>Last Sale - {{ product.last_sold_at | default:"No Info" }}</p>
-                    <p>Date Added - {{ product.added_at }}</p>
+                    <p><b>Description</b> - {{ product.description | default:"No Info" | linebreaks }}</p>
+                    <p><b>Size</b> - {{ product.size | default:"No Info" }}</p>
+                    <p><b>Weight</b> - {{ product.weight | default:"No Info" }}</p>
+                    <p><b>Group</b> - {{ product.group | default:"No Info" | title }}</p>
+                    <p><b>Brand</b> - {{ product.brand | default:"No Info" | title }}</p>
+                    <p><b>Category</b> - {{ product.category | title }}</p>
+                    <p><b>Product ID</b> - {{ product.id }}</p>
+                    <p><b>Last Sale</b> - {{ product.last_sold_at | default:"No sale made yet" }}</p>
+                    <p><b>Date Added</b> - {{ product.added_at }}</p>
                 </div>
             </div>
             {% endfor %}

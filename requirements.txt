@@ -1,5 +1,5 @@
 django==5.0.1
-djsm>=0.1.2
+djsm==0.1.5
 django-money
 django_utz
 django-crispy-forms

@@ -6,6 +6,7 @@ app_name = "users"
 
 urlpatterns = [
     # User authentication URLs
+    path("", views.user_index_view, name="index"),
     path("signup/", views.user_create_view, name="signup"),
     path("signin/", views.user_login_view, name="signin"),
     path("signout/", views.user_logout_view, name="signout"),

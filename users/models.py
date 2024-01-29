@@ -1,10 +1,13 @@
-from django.db import models
+from django.conf import settings
+from django.db import connection, models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 import uuid
 from django.utils.translation import gettext_lazy as _
 from django_utz.models.mixins import UTZUserModelMixin, UTZModelMixin
 from timezone_field import TimeZoneField
 from djmoney.models.fields import CurrencyField
+from django.core.mail import EmailMessage, get_connection as get_smtp_connection
+from django.urls import reverse
 
 from .managers import UserAccountManager
 
@@ -52,4 +55,31 @@ class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBa
 
     def send_verification_email(self):
         """Send verification email to user."""
-        pass    
+        if self.is_active:
+            return
+        connection = get_smtp_connection()
+        email = EmailMessage(
+            subject="Graphi - Verify your email address",
+            body=construct_verification_email_body(self),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[self.email],
+            connection=connection
+        )
+        email.content_subtype = "html"
+        email.send(fail_silently=False)
+           
+           
+
+def construct_verification_email_body(user: UserAccount) -> str:
+    """Construct the verification email body."""
+    return f"""
+    <div style="font-family: Roboto;">
+        <h3>Verify your email address</h3>
+        <br>
+        <p>Hi {user.firstname},</p>
+        <p>Thanks for signing up on Graphi. Please click the link below to verify your email address.</p>
+        <p>
+            <a href="{settings.BASE_URL}/{reverse("users:account_verification", kwargs={"token": user.id.hex})}">Verify email address</a>
+        </p>
+    </div>
+    """

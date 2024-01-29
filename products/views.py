@@ -14,7 +14,8 @@ from stores.mixins import StoreQuerySetMixin
 from users.mixins import RequestUserQuerySetMixin
 from stores.decorators import store_authorization_required
 from users.decorators import requires_password_verification
-from .forms import ProductForm, ProductGroupForm, ProductBrandForm
+from .forms import ProductForm
+from .utils import _fetch_existing_product_copy, _update_product_data_with_new_brand_and_group
 
 product_queryset = Product.objects.all().select_related("store", "brand", "group")
 
@@ -68,31 +69,24 @@ class ProductAddView(LoginRequiredMixin, generic.CreateView):
         data["price_1"] = store.default_currency
         data["store"] = store.pk
 
-        new_brand_name = data.pop("new-brand", None)
-        new_group_name = data.pop("new-group", None)
-        errors = {}
-        if not data.get("brand", None) and new_brand_name:
-            brand_form = ProductBrandForm(data={"name": new_brand_name, "store": store.pk})
-            if brand_form.is_valid():
-                new_brand = brand_form.save(commit=True)
-                data["brand"] = new_brand.pk
-            else:
-                errors["new-brand"] = list(brand_form.errors.values())[0]
+        # Check if product already exists and update its quantity instead
+        existing_copy = _fetch_existing_product_copy(data)
+        if existing_copy:
+            existing_copy.quantity += int(data.get("quantity", 0))
+            existing_copy.save()
+            return JsonResponse(
+                data={
+                    "status": "success",
+                    "detail": "Product already exists!",
+                    "redirect_url": reverse("stores:products:product_list", kwargs={"store_slug": existing_copy.store.slug})
+                },
+                status=200
+            )
 
-        if not data.get("group", None) and new_group_name:
-            group_form = ProductGroupForm(data={"name": new_group_name, "store": store.pk})
-            if group_form.is_valid():
-                new_group = group_form.save(commit=True)
-                data["group"] = new_group.pk
-            else:
-                errors["new-group"] = list(group_form.errors.values())[0]   
+        # Update product data with new brand and group
+        data, errors = _update_product_data_with_new_brand_and_group(data)
 
         form = self.get_form_class()(data=data)
-        # If an exact copy of the new product already exists but with a different quantity
-        # exact_product = Product.objects.filter(**data).first()
-        # if exact_product:
-        #     form.instance = exact_product
-
         if form.is_valid() and not errors:
             product: Product = form.save(commit=True)
             return JsonResponse(
@@ -143,9 +137,12 @@ class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
         data["price_0"] = Decimal(data.pop("price", 0))
         data["price_1"] = product.price.currency
         data["store"] = product.store.pk
+
+        # Update product data with new brand and group
+        data, errors = _update_product_data_with_new_brand_and_group(data)
+
         form = self.get_form_class()(data=data, instance=product)
-        
-        if form.is_valid():
+        if form.is_valid() and not errors:
             product = form.save(commit=True)
             return JsonResponse(
                 data={
@@ -160,7 +157,7 @@ class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
             data={
                 "status": "error",
                 "detail": "An error occurred while updating product!",
-                "errors": form.errors,
+                "errors": {**form.errors, **errors}
             },
             status=400
         )

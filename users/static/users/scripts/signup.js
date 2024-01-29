@@ -48,7 +48,7 @@ signUpForm.onsubmit = (e) => {
     }
 
     fetch(signUpForm.action, options).then((response) => {
-        if (!response.status === 201) {
+        if (response.status !== 201) {
             signUpButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;

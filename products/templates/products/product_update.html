@@ -167,6 +167,20 @@
                 </div>
 
                 <div class="form-field">
+                    <label for="new-brand" hidden>New Product Brand</label>
+                    <input 
+                        title="Add brand here if you can't find the brand in the list above."
+                        type="text" 
+                        id="new-brand"
+                        name="new-brand" 
+                        class="form-input add-new-field" 
+                        placeholder="Enter product brand (If not found)"
+                        maxlength="50"
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
                     <label for="group" hidden>Product Group</label>
                     <select 
                         id="group" 
@@ -185,6 +199,20 @@
                         </option>
                         {% endfor %}
                     </select>
+                    <small class="field-message"></small>
+                </div>
+
+                <div class="form-field">
+                    <label for="new-group" hidden>New Product Group</label>
+                    <input 
+                        title="Add a new product group if you can't find the group in the list above."
+                        type="text" 
+                        id="new-group"
+                        name="new-group"
+                        class="form-input add-new-field" 
+                        placeholder="Enter product group (If not found)"
+                        maxlength="50"
+                    >
                     <small class="field-message"></small>
                 </div>
             </div>

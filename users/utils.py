@@ -15,3 +15,4 @@ def parse_query_params_from_request(request: HttpRequest) -> Dict[str, str]:
     if not results:
         return {}
     return {param_name: param_value for param_name, param_value in results}
+

@@ -1,9 +1,11 @@
 from __future__ import annotations
+
 from typing import Any
 from django.db import models
 from django_utz.models.mixins import UTZModelMixin
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
+
 
 
 class Sale(UTZModelMixin, models.Model):
@@ -37,11 +39,11 @@ class Sale(UTZModelMixin, models.Model):
 
     
     def __str__(self) -> str:
-        return f"{self.store.name} - {self.product.name} - {self.quantity} - {self.amount}"
+        return f"{self.store.name} - {self.product.name} - {self.quantity} - {self.revenue}"
 
 
     def __add__(self, other: Sale) -> Sale:
-        """Add two sales."""
+        """Add two sales together."""
         if self.product != other.product:
             raise ValueError("Cannot add sales of different products")
         return Sale(
@@ -50,7 +52,9 @@ class Sale(UTZModelMixin, models.Model):
             quantity=self.quantity + other.quantity,
             amount=self.amount + other.amount,
         )
-
+    
+    __iadd__ = __add__
+    __radd__ = __add__
 
     def save(self, *args: str, **kwargs: Any) -> None:
         """Save the sale."""

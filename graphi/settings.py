@@ -130,8 +130,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-LOGIN_URL = 'users:signin'
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -140,13 +138,19 @@ EMAIL_USE_TLS = True
 
 EMAIL_PORT = 587
 
-EMAIL_HOST_USER = 'tioluwa.dev@gmail.com'
+EMAIL_HOST_USER = djsm_manager.get_secret("project_email")
 
-EMAIL_HOST_PASSWORD = 'pdtkgscfemygmbwc'
+EMAIL_HOST_PASSWORD = djsm_manager.get_secret("project_email_password")
 
+DEFAULT_FROM_EMAIL = djsm_manager.get_secret("project_email")
+
+
+LOGIN_URL = 'users:signin'
 
 STORE_AUTHORIZATION_VIEW = 'stores:store_auth'
 
 PASSWORD_VERIFICATION_VIEW = "users:password_verification"
 
-PASSWORD_VERIFICATION_VALIDITY_PERIOD = 120.0
+PASSWORD_VERIFICATION_VALIDITY_PERIOD = 120.0 # in seconds
+
+BASE_URL = "https://graphi.pythonanywhere.com"

@@ -1,5 +1,4 @@
 import json
-import re
 from typing import Any, Dict
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -9,7 +8,6 @@ from django.utils import timezone
 from django.views import generic
 from django.conf import settings
 
-
 from .forms import UserCreationForm
 from .models import UserAccount
 from products.models import ProductCategories
@@ -18,6 +16,11 @@ from stores.utils import get_stores_count
 from products.utils import get_products_count
 from sales.utils import aggregate_sales_count, aggregate_revenue_from_sales
 from .utils import parse_query_params_from_request
+
+
+class UserIndexView(generic.RedirectView):
+    """View for redirecting to the user dashboard."""
+    url = "/dashboard/"
 
 
 
@@ -34,8 +37,18 @@ class UserCreateView(generic.CreateView):
         if form.is_valid():
             user: UserAccount = form.save(commit=False)
             user.is_active = False
+            try:
+                user.send_verification_email()
+            except Exception:
+                return JsonResponse(
+                    data={
+                        "status": "error",
+                        "detail": "Failed to send verification email! Please try again!"
+                    },
+                    status=500
+                )
+            
             user.save()
-            user.send_verification_email()
             return JsonResponse(
                 data={
                     "status": "success",
@@ -44,7 +57,7 @@ class UserCreateView(generic.CreateView):
                 },
                 status=201
             )
-            
+
         return JsonResponse(
             data={
                 "status": "error",
@@ -92,30 +105,29 @@ class UserLoginView(generic.TemplateView):
  
 
 
-class UserVerificationView(LoginRequiredMixin, generic.TemplateView):
+class UserVerificationView(LoginRequiredMixin, generic.View):
     """View for verifying a user's account."""
-    template_name = "users/verification.html"
+    # template_name = "users/verification.html"
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         token = kwargs.get("token")
-        user = UserAccount.objects.filter(pk=token).first()
+        user = UserAccount.objects.filter(pk__hex=token).first()
         if user:
+            if user.is_active:
+                return HttpResponse(
+                    content="Your account has already been verified!",
+                    status=200
+                )
+            
             user.is_active = True
             user.save()
-            return JsonResponse(
-                data={
-                    "status": "success",
-                    "detail": "Account verified successfully!",
-                    "redirect_url": reverse("users:signin")
-                },
+            return HttpResponse(
+                content="Your account has been verified successfully!",
                 status=200
             )
         
-        return JsonResponse(
-            data={
-                "status": "error",
-                "detail": "Invalid verification token!"
-            },
+        return HttpResponse(
+            content="Invalid verification link!",
             status=400
         )
 
@@ -248,6 +260,7 @@ class DashboardStatisticsView(LoginRequiredMixin, generic.View):
         )
 
 
+user_index_view = UserIndexView.as_view()
 user_create_view = UserCreateView.as_view()
 user_login_view = UserLoginView.as_view()
 user_verification_view = UserVerificationView.as_view()
