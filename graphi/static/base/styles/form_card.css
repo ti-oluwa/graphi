@@ -33,7 +33,7 @@
 
 .form-card-modal{
     max-height: calc(100vh - 8%);
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #main:has(.form-card-modal.show-block){

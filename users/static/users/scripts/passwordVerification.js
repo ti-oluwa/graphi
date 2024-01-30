@@ -33,13 +33,12 @@ passwordVerificationForm.onsubmit = function(e) {
             verifyButton.onResponse();
             response.json().then((data) => {
                 const errorDetail = data.detail ?? null;
-
-                if(!errorDetail) return;
-                formFieldHasError(passwordField.parentElement, errorDetail);
+                pushNotification("error", errorDetail ?? 'An error occurred!');
             });
 
         }else{
             response.json().then((data) => {
+                pushNotification("success", data.detail ?? 'Password verification successful!');
                 const redirectURL  = data.redirect_url ?? null;
 
                 if(!redirectURL) return;

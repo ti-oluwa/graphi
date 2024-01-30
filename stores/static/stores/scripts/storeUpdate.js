@@ -49,12 +49,13 @@ updateStoreForm.onsubmit = function(e) {
                     };
 
                 }else{
-                    alert(data.detail ?? 'An error occurred!');
+                    pushNotification("error", data.detail ?? 'An error occurred!');
                 };
             });
 
         }else{
             response.json().then((data) => {
+                pushNotification("success", data.detail ?? 'Store updated successfully!');
                 const redirectURL  = data.redirect_url ?? null;
 
                 if(!redirectURL) return;

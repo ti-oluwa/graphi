@@ -120,3 +120,39 @@ function addOnPostAndOnResponseFuncAttr(formCardButton, onClickText){
         this.innerHTML = initialText;
     };
 }
+
+
+/**
+ * Shows a notification using Noty.js
+ * @param {string} type The type of notification to show. Can be 'success', 'error', 'warning', 'info'
+ * @param {string} text The text to display in the notification
+ * @param {number} timeout The duration of the notification in milliseconds
+ * @param {boolean} progressBar Whether to show the progress bar or not
+ * @param {boolean} hoverPause Whether to pause the timeout when the notification is hovered over
+ * @param {string} theme The theme to use for the notification. Available themes are 'mint', 'nest', 'relax', 'sunset', 'metroui', 'semanticui', 'bootstrap-v4'
+ * @param {string} layout The layout to use for the notification
+ * @param {string[]} closeWith The events that close the notification. Can be 'click', 'button', 'hover', 'backdrop'
+ */
+function pushNotification(
+    type, 
+    text, 
+    timeout=3000, 
+    progressBar=true,
+    hoverPause=true,
+    theme='semanticui', 
+    layout='topRight', 
+    closeWith=['click', 'button']
+) {
+    new Noty({
+        type: type,
+        text: text,
+        timeout: timeout,
+        progressBar: progressBar,
+        closeWith: closeWith,
+        theme: theme,
+        layout: layout,
+        killer: true,
+        pauseOnHover: hoverPause
+    }).show();
+}
+

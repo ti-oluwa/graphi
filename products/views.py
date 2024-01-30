@@ -12,8 +12,8 @@ from .models import Product, ProductCategories
 from stores.models import Store
 from stores.mixins import StoreQuerySetMixin
 from users.mixins import RequestUserQuerySetMixin
-from stores.decorators import store_authorization_required
-from users.decorators import requires_password_verification
+from stores.decorators import requires_store_authorization, to_JsonResponse
+from users.decorators import requires_password_verification, requires_account_verification
 from .forms import ProductForm
 from .utils import _fetch_existing_product_copy, _update_product_data_with_new_brand_and_group
 
@@ -49,7 +49,7 @@ class ProductListView(
         return context
     
 
-    @store_authorization_required(identifier="slug", url_kwarg="store_slug")
+    @requires_store_authorization(identifier="slug", url_kwarg="store_slug")
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
@@ -61,7 +61,8 @@ class ProductAddView(LoginRequiredMixin, generic.CreateView):
     form_class = ProductForm
     http_method_names = ["post"]
 
-    @store_authorization_required(identifier="slug", url_kwarg="store_slug")
+    @to_JsonResponse
+    @requires_account_verification
     def post(self, request, *args, **kwargs) -> JsonResponse:
         store = Store.objects.get(slug=kwargs.get("store_slug"))
         data: Dict = json.loads(request.body)
@@ -77,7 +78,7 @@ class ProductAddView(LoginRequiredMixin, generic.CreateView):
             return JsonResponse(
                 data={
                     "status": "success",
-                    "detail": "Product already exists!",
+                    "detail": "Product already exists but its quantity has been updated!",
                     "redirect_url": reverse("stores:products:product_list", kwargs={"store_slug": existing_copy.store.slug})
                 },
                 status=200
@@ -125,12 +126,13 @@ class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
         return context
     
 
-    @store_authorization_required(identifier="slug", url_kwarg="store_slug")
+    @requires_store_authorization(identifier="slug", url_kwarg="store_slug")
     def get(self, request, *args, **kwargs) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
 
-    @store_authorization_required(identifier="slug", url_kwarg="store_slug")
+    @to_JsonResponse
+    @requires_account_verification
     def post(self, request, *args, **kwargs) -> JsonResponse:
         data: Dict = json.loads(request.body)
         product: Product = self.get_object()
@@ -171,7 +173,6 @@ class ProductDeleteView(LoginRequiredMixin, generic.DetailView):
     http_method_names = ["get"]
     pk_url_kwarg = "product_id"
 
-    @store_authorization_required(identifier="slug", url_kwarg="store_slug")
     @requires_password_verification
     def get(self, request, *args, **kwargs):
         product = self.get_object()

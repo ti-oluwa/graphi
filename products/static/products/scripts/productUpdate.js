@@ -45,12 +45,13 @@ updateProductForm.onsubmit = function(e) {
                     };
                     
                 }else{
-                    alert(data.detail ?? 'An error occured!');
+                    pushNotification("error", data.detail ?? 'An error occured!');
                 };
             });
 
         }else{
             response.json().then((data) => {
+                pushNotification("success", data.detail ?? 'Product updated successfully!');
                 const redirectURL  = data.redirect_url ?? null;
 
                 if(!redirectURL) return;

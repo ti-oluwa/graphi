@@ -14,20 +14,22 @@ def to_JsonResponse(func: Callable[..., HttpResponse]) -> Callable[..., JsonResp
     @functools.wraps(func)
     def wrapper(request: HttpRequest, *args, **kwargs) -> JsonResponse:
         response = func(request, *args, **kwargs)
-        if isinstance(response, HttpResponse):
-            return JsonResponse(
-                data={
-                    "status": "error" if response.status_code >= 400 else "success",
-                    "detail": response.content.decode(),
-                }, 
-                status=response.status_code
-            )
-        return response
+
+        if isinstance(response, JsonResponse):
+            return response
+        
+        return JsonResponse(
+            data={
+                "status": "error" if response.status_code >= 400 else "success",
+                "detail": response.content.decode(),
+            }, 
+            status=response.status_code
+        )
     
     return wrapper
 
 
-def store_authorization_required(
+def requires_store_authorization(
         view_func: Callable = None, 
         *, 
         identifier: str = "pk",

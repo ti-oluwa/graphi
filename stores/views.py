@@ -11,9 +11,9 @@ from djmoney.settings import CURRENCY_CHOICES
 
 from .models import Store, StoreTypes
 from .forms import StoreForm
-from .decorators import store_authorization_required, to_JsonResponse
+from .decorators import to_JsonResponse
 from users.utils import parse_query_params_from_request
-from users.decorators import requires_password_verification
+from users.decorators import requires_password_verification, requires_account_verification
 from users.mixins import RequestUserQuerySetMixin
 
 
@@ -120,14 +120,16 @@ class StoreCreateView(LoginRequiredMixin, generic.CreateView):
     form_class = StoreForm
     http_method_names = ["post"]
     
+    @to_JsonResponse
+    @requires_account_verification
     def post(self, request, *args, **kwargs) -> JsonResponse:
         data: Dict = json.loads(request.body)
         passkey = data.pop("passkey", None)
+        data["owner"] = request.user.pk
         form = self.get_form_class()(data=data)
 
         if form.is_valid():
             store: Store = form.save(commit=False)
-            store.owner = request.user
             if passkey:
                 try:
                     store.set_passkey(passkey)
@@ -139,7 +141,7 @@ class StoreCreateView(LoginRequiredMixin, generic.CreateView):
                         },
                         status=400
                     )
-            
+
             store.save()
             return JsonResponse(
                 data={
@@ -172,17 +174,19 @@ class StoreUpdateView(
     slug_url_kwarg = "store_slug"
     template_name = "stores/store_update.html"
 
-    @store_authorization_required(identifier="slug", url_kwarg="store_slug")
     @requires_password_verification
     def get(self, request, *args, **kwargs) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
-    
-    @store_authorization_required(identifier="slug", url_kwarg="store_slug")
+
+    @to_JsonResponse
+    @requires_account_verification
     def post(self, request, *args, **kwargs) -> JsonResponse:
         data: Dict = json.loads(request.body)
         passkey = data.pop("passkey", None)
+        data["owner"] = request.user.pk
         store: Store = self.get_object()
+
         form = self.get_form_class()(data=data, instance=store)
         if form.is_valid():
             store = form.save(commit=False)
@@ -224,7 +228,6 @@ class StoreDeleteView(LoginRequiredMixin, generic.DetailView):
     http_method_names = ["get"]
     slug_url_kwarg = "store_slug"
 
-    @store_authorization_required(identifier="slug", url_kwarg="store_slug")
     @requires_password_verification
     def get(self, request, *args, **kwargs):
         store = self.get_object()

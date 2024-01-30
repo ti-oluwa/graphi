@@ -48,21 +48,26 @@ createStoreForm.onsubmit = function(e) {
             createStoreButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;
-                if (errors){
+                if(errors){
                     if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
     
                     for (const [fieldName, msg] of Object.entries(errors)){
                         let field = this.querySelector(`*[name=${fieldName}]`);
+                        if(!field){
+                            pushNotification("error", msg);
+                            continue;
+                        }
                         formFieldHasError(field.parentElement, msg);
                     };
 
                 }else{
-                    alert(data.detail ?? 'An error occurred!');
+                    pushNotification("error", data.detail ?? 'An error occurred!');
                 };
             });
 
         }else{
             response.json().then((data) => {
+                pushNotification("success", data.detail);
                 const redirectURL  = data.redirect_url ?? null;
 
                 if(!redirectURL) return;

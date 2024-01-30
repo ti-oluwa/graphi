@@ -1,16 +1,15 @@
+{% extends 'base/main.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{% static 'base//styles//main.css' %}">
-    <link rel="stylesheet" href="{% static 'users//styles//signup.css' %}">
 
-    <title>Graphi | Create an account</title>
-</head>
+{% block mainstylesheets %}
+<link rel="stylesheet" href="{% static 'users//styles//signup.css' %}">
+{% endblock mainstylesheets %}
 
+
+{% block page_title %}Create an account{% endblock page_title %}
+
+{% block html_body %}
 <body>
     <div class="container">
         <main>
@@ -122,7 +121,10 @@
         </main>
     </div>
 </body>
+{% endblock html_body %}
 
-<script src="{% static 'base//scripts//utils.js' %}"></script>
+
+{% block mainscripts %}
 <script src="{% static 'users//scripts//signup.js' %}"></script>
-</html>
+{% endblock mainscripts %}
+

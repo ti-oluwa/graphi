@@ -1,16 +1,16 @@
+{% extends 'base/main.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{% static 'base//styles//main.css' %}">
-    <link rel="stylesheet" href="{% static 'users//styles//signin.css' %}">
+{% block mainstylesheets %}
+<link rel="stylesheet" href="{% static 'users//styles//signin.css' %}">
+{% endblock mainstylesheets %}
 
-    <title>Graphi | Sign In</title>
-</head>
+
+{% block page_title %}Sign In{% endblock page_title %}
+
+
+{% block html_body %}
 <body>
     <div class="container">
         <main>
@@ -78,7 +78,10 @@
         </main>
     </div>
 </body>
+{% endblock html_body %}
 
-<script src="{% static 'base//scripts//utils.js' %}"></script>
+
+{% block mainscripts %}
 <script src="{% static 'users//scripts//signin.js' %}"></script>
-</html>
+{% endblock mainscripts %}
+

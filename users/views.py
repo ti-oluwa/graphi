@@ -1,4 +1,5 @@
 import json
+import re
 from typing import Any, Dict
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -36,7 +37,6 @@ class UserCreateView(generic.CreateView):
 
         if form.is_valid():
             user: UserAccount = form.save(commit=False)
-            user.is_active = False
             try:
                 user.send_verification_email()
             except Exception:
@@ -83,6 +83,7 @@ class UserLoginView(generic.TemplateView):
         data: Dict = json.loads(request.body)
         email = data.get('email', None)
         password = data.get('password', None)
+        
         user = authenticate(request, username=email, password=password)
         if user:
             login(request, user)
@@ -105,25 +106,25 @@ class UserLoginView(generic.TemplateView):
  
 
 
-class UserVerificationView(LoginRequiredMixin, generic.View):
+class UserAccountVerificationView(LoginRequiredMixin, generic.View):
     """View for verifying a user's account."""
     # template_name = "users/verification.html"
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         token = kwargs.get("token")
-        if not request.user.id.hex == token:
+        if request.user.id.hex != token:
             return HttpResponse(
             content="Invalid verification link!",
             status=400
         )
         
-        if request.user.is_active:
+        if request.user.is_verified:
             return HttpResponse(
                 content="Your account has already been verified!",
                 status=200
             )
         
-        request.user.is_active = True
+        request.user.is_verified = True
         request.user.save()
         return HttpResponse(
             content="Your account has been verified successfully!",
@@ -259,10 +260,11 @@ class DashboardStatisticsView(LoginRequiredMixin, generic.View):
         )
 
 
+
 user_index_view = UserIndexView.as_view()
 user_create_view = UserCreateView.as_view()
 user_login_view = UserLoginView.as_view()
-user_verification_view = UserVerificationView.as_view()
+account_verification_view = UserAccountVerificationView.as_view()
 user_logout_view = UserLogoutView.as_view()
 password_verification_view = UserPasswordVerificationView.as_view()
 dashboard_view = DashboardView.as_view()

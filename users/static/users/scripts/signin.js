@@ -49,12 +49,12 @@ signInForm.onsubmit = (e) => {
             signInButton.onResponse();
             response.json().then((data) => {
                 const errorDetail = data.detail ?? null
-                if(!errorDetail) return;
-                formFieldHasError(passwordField.parentElement, errorDetail);
+                pushNotification("error", errorDetail ?? 'An error occurred!');
             });
             
         }else{
             response.json().then((data) => {
+                pushNotification("success", data.detail ?? 'Sign in successful!');
                 const redirectURL  = data.redirect_url ?? null
                 if(!redirectURL) return;
                 window.location.href = redirectURL;

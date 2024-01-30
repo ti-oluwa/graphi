@@ -10,7 +10,7 @@ urlpatterns = [
     path("signup/", views.user_create_view, name="signup"),
     path("signin/", views.user_login_view, name="signin"),
     path("signout/", views.user_logout_view, name="signout"),
-    path("account-verification/<str:token>/", views.user_verification_view, name="account_verification"),
+    path("account-verification/<str:token>/", views.account_verification_view, name="account_verification"),
     path("password-verification/", views.password_verification_view, name="password_verification"),
     
     # Dashboard URLs

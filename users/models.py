@@ -24,6 +24,7 @@ class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBa
     is_admin = models.BooleanField(_("admin") ,default=False)
     is_staff = models.BooleanField(_("staff") ,default=False)
     is_superuser = models.BooleanField(_("superuser") ,default=False)
+    is_verified = models.BooleanField(_("verified") ,default=False)
     registered_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

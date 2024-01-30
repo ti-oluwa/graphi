@@ -1,22 +1,25 @@
+{% extends 'base/main.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {% block meta %}
-    {% endblock meta %}
 
-    <title>
-        Graphi | {% block page_title %}{% endblock page_title %}
-    </title>
 
-    <link rel="stylesheet" href="{% static 'base//styles//main.css' %}">
-    <link rel="stylesheet" href="{% static 'base//styles//base.css' %}">
-    {% block stylesheets %}
-    {% endblock stylesheets %}
-</head>
+{% block mainmeta %}
+
+{% block meta %}
+{% endblock meta %}
+
+{% endblock mainmeta %}
+
+
+{% block mainstylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//base.css' %}">
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% endblock mainstylesheets %}
+
+
+{% block html_body %}
 <body>
     <!-- Sidebar Section -->
     <aside id="sidebar">
@@ -160,15 +163,20 @@
             </ul>
         </header>
         
-    <div id="main-content">
-        {% block content %}
-        {% endblock content %}
-    </div>
+        <div id="main-content">
+            {% block content %}
+            {% endblock content %}
+        </div>
     </main>
 </body>
+{% endblock html_body %}
 
+
+{% block mainscripts %}
 <script src="{% static 'base//scripts//base.js' %}"></script>
-<script src="{% static 'base//scripts//utils.js' %}"></script>
+
 {% block scripts %}
 {% endblock scripts %}
-</html>
+
+{% endblock mainscripts %}
+

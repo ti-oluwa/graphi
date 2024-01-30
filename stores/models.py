@@ -51,6 +51,8 @@ class Store(UTZModelMixin, models.Model):
 
     class Meta:
         ordering = ("name", "-created_at")
+        unique_together = ("name", "owner")
+
 
     def __str__(self):
         return self.name
@@ -62,22 +64,24 @@ class Store(UTZModelMixin, models.Model):
             self.slug = f"{slugify(self.name)}-{self.id.hex[:8]}"
 
         # Update stores products if the default currency of the store changes
-        if self.pk and self.default_currency != self.__class__.objects.get(pk=self.pk).default_currency:
-            # self._update_store_products_prices(self.default_currency)
-            pass
+        if self.pk:
+            existing_store = self.__class__.objects.filter(pk=self.pk).first()
+            if existing_store and self.default_currency != existing_store.default_currency:
+                self.update_products_prices(self.default_currency)
+                pass
         return super().save(*args, **kwargs)
     
 
-    def _update_store_products_prices(self, new_currency: str) -> None:
+    def update_products_prices(self, new_currency: str) -> None:
         """
         Updates the prices of all products in this store to the new currency.
 
-        This is an internal method. It is called when the default currency of the store changes.
+        :param new_currency: The new currency to convert the prices to.
         """
         executor = ThreadPoolExecutor(10)
         loop = asyncio.new_event_loop()
 
-        async def update_product_prices(product):
+        async def aupdate_product_prices(product):
             try:
                 product.price = await loop.run_in_executor(
                     executor, convert_money, 
@@ -88,7 +92,7 @@ class Store(UTZModelMixin, models.Model):
                 raise asyncio.CancelledError
             return None
         
-        tasks = [loop.create_task(update_product_prices(product)) for product in self.products.all()]
+        tasks = [loop.create_task(aupdate_product_prices(product)) for product in self.products.all()]
         loop.run_until_complete(asyncio.gather(*tasks))
         return None
     

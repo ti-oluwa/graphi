@@ -52,17 +52,26 @@ signUpForm.onsubmit = (e) => {
             signUpButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;
-                if (!errors) return;
-                if(!typeof errors === Object) throw new TypeError("Invalid response type for 'errors'")
+                if(errors){
+                    if(!typeof errors === Object) throw new TypeError("Invalid response type for 'errors'")
 
-                for (const [fieldName, msg] of Object.entries(errors)){
-                    let field = signUpForm.querySelector(`input[name=${fieldName}]`);
-                    formFieldHasError(field.parentElement, msg);
+                    for (const [fieldName, msg] of Object.entries(errors)){
+                        let field = signUpForm.querySelector(`input[name=${fieldName}]`);
+                        if(!field){
+                            pushNotification("error", msg);
+                            continue;
+                        }
+                        formFieldHasError(field.parentElement, msg);
+                    };
+
+                }else{
+                    pushNotification("error", data.detail ?? 'An error occurred!');
                 }
             });
             
         }else{
             response.json().then((data) => {
+                pushNotification("success", data.detail ?? 'Sign up successful!');
                 const redirectURL  = data.redirect_url ?? null
                 if(!redirectURL) return;
                 window.location.href = redirectURL;

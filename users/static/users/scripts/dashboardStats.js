@@ -88,16 +88,13 @@ function processFormData(processURL, formData, callback){
         if (!response.ok) {
             response.json().then((data) => {
                 const errorDetail = data.detail ?? null;
-
-                if(!errorDetail) return;
-                throw new Error(errorDetail);
+                pushNotification("error", errorDetail ?? 'An error occurred!');
             });
 
         }else{
             response.json().then((data) => {
-                const result  = data.result ?? null;
-
-                if(!result) return;
+                const result  = data.data.result ?? null;
+                if(result === null) return;
                 callback(result);
             });
         }

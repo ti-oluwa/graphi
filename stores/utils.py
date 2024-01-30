@@ -28,5 +28,3 @@ def filter_store_pks_for_user(user: UserAccount, store_pks: List[str] = None) ->
         return Store.objects.filter(owner=user).values_list("pk", flat=True)
     return Store.objects.filter(owner=user, pk__in=store_pks).values_list("pk", flat=True)
 
-
-
