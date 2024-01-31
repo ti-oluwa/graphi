@@ -87,11 +87,12 @@ class UserLoginView(generic.TemplateView):
         user = authenticate(request, username=email, password=password)
         if user:
             login(request, user)
+            query_params = parse_query_params_from_request(request)
             return JsonResponse(
                 data={
                     "status": "success",
                     "detail": f"Welcome {user.fullname}!",
-                    "redirect_url": reverse("users:dashboard")
+                    "redirect_url": query_params.get("next", None) or reverse("users:dashboard")
                 },
                 status=200
             )
