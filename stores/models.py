@@ -93,6 +93,7 @@ class Store(UTZModelMixin, models.Model):
             return None
         
         tasks = [loop.create_task(aupdate_product_prices(product)) for product in self.products.all()]
+        asyncio.set_event_loop(loop)
         loop.run_until_complete(asyncio.gather(*tasks))
         return None
     
