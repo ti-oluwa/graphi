@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db import connection, models
+from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 import uuid
 from django.utils.translation import gettext_lazy as _
@@ -56,7 +56,7 @@ class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBa
 
     def send_verification_email(self):
         """Send verification email to user."""
-        if self.is_active:
+        if self.is_verified:
             return
         connection = get_smtp_connection()
         email = EmailMessage(

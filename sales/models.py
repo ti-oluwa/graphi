@@ -50,11 +50,25 @@ class Sale(UTZModelMixin, models.Model):
             store=self.store,
             product=self.product,
             quantity=self.quantity + other.quantity,
-            amount=self.amount + other.amount,
         )
     
     __iadd__ = __add__
     __radd__ = __add__
+    
+
+    def __sub__(self, other: Sale) -> Sale:
+        """Subtract two sales."""
+        if self.product != other.product:
+            raise ValueError("Cannot subtract sales of different products")
+        return Sale(
+            store=self.store,
+            product=self.product,
+            quantity=self.quantity - other.quantity,
+        )
+    
+    __isub__ = __sub__
+    __rsub__ = __sub__
+
 
     def save(self, *args: str, **kwargs: Any) -> None:
         """Save the sale."""
@@ -64,6 +78,8 @@ class Sale(UTZModelMixin, models.Model):
             raise ValueError("Sale quantity cannot be greater than product quantity")
         
         self.product.quantity -= self.quantity
+        # Save the sale first before saving the product. This is to avoid reducing the product quantity
+        # without a corresponding sale.
         super().save(*args, **kwargs)
         self.product.save()
 
