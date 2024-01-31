@@ -73,7 +73,7 @@ class ProductGroup(UTZModelMixin, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ("created_at", "updated_at")
+    datetime_fields = ["created_at", "updated_at"]
 
     class Meta:
         verbose_name = "Product Group"
@@ -94,7 +94,7 @@ class ProductBrand(UTZModelMixin, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ("created_at", "updated_at")
+    datetime_fields = ["created_at", "updated_at"]
 
     class Meta:
         verbose_name = "Product Brand"
