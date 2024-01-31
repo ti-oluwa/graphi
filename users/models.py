@@ -68,6 +68,7 @@ class UserAccount(UTZModelMixin, UTZUserModelMixin, PermissionsMixin, AbstractBa
         )
         email.content_subtype = "html"
         email.send(fail_silently=False)
+
            
            
 

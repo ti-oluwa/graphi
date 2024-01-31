@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 
 
 class StoreQuerySetMixin:
@@ -13,7 +14,7 @@ class StoreQuerySetMixin:
     store_url_kwarg = "store_id"
     store_identifier = "pk"
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
         store_identifier_value = self.kwargs.get(self.store_url_kwarg)
         return super().get_queryset(*args, **kwargs).filter(
             **{f"{self.store_fieldname}__{self.store_identifier}": store_identifier_value}

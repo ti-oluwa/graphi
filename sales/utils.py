@@ -6,7 +6,7 @@ from .models import Sale
 from stores.utils import filter_store_pks_for_user
 
 
-def _process_aggregation_filters(
+def get_aggregation_filters(
         store_pks: List[str] = None,
         categories: List[str] = None,
         date: str = None,
@@ -16,8 +16,7 @@ def _process_aggregation_filters(
         to_time: str = None,
     ) -> dict:
     """
-    Processes the given aggregation filters and returns a dictionary of filters
-    that can be used to filter sales.
+    Returns a dictionary of filters to be used to aggregate sales based on the given parameters.
 
     :param store_pks: A list of primary keys of the stores whose sales will be used during aggregation.
     If not provided, all the stores owned by the user will be used.
@@ -47,8 +46,8 @@ def _process_aggregation_filters(
 
     if categories:
         filters["product__category__in"] = [category.lower() for category in categories]
-
     return filters
+
 
 
 def aggregate_revenue_from_sales(
@@ -78,7 +77,7 @@ def aggregate_revenue_from_sales(
     :return: The aggregated total revenue made from sales.
     """
     store_pks = filter_store_pks_for_user(user, store_pks)
-    sales_filters = _process_aggregation_filters(store_pks, categories, date, from_date, to_date, from_time, to_time)
+    sales_filters = get_aggregation_filters(store_pks, categories, date, from_date, to_date, from_time, to_time)
     return Sale.get_total_revenue(currency=user.preferred_currency, **sales_filters)
 
 
@@ -110,5 +109,5 @@ def aggregate_sales_count(
     :return: The aggregated total number of sales made.
     """
     store_pks = filter_store_pks_for_user(user, store_pks)
-    sales_filters = _process_aggregation_filters(store_pks, categories, date, from_date, to_date, from_time, to_time)
+    sales_filters = get_aggregation_filters(store_pks, categories, date, from_date, to_date, from_time, to_time)
     return Sale.get_count(**sales_filters)

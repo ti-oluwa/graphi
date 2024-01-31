@@ -1,15 +1,18 @@
 from __future__ import annotations
 
 from typing import Any
+import uuid
 from django.db import models
 from django_utz.models.mixins import UTZModelMixin
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
+from django.core.exceptions import ValidationError
 
 
 
 class Sale(UTZModelMixin, models.Model):
     """Model for a product sale."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     store = models.ForeignKey(
         "stores.Store", on_delete=models.CASCADE, related_name="sales"
     )
@@ -73,9 +76,9 @@ class Sale(UTZModelMixin, models.Model):
     def save(self, *args: str, **kwargs: Any) -> None:
         """Save the sale."""
         if self.quantity == 0:
-            raise ValueError("Sale quantity cannot be zero")
+            raise ValidationError("Sale quantity cannot be zero")
         if self.quantity > self.product.quantity:
-            raise ValueError("Sale quantity cannot be greater than product quantity")
+            raise ValidationError("Sale quantity cannot be greater than available product quantity")
         
         self.product.quantity -= self.quantity
         # Save the sale first before saving the product. This is to avoid reducing the product quantity

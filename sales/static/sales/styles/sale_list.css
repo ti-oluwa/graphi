@@ -1,0 +1,59 @@
+#content-wrapper > .sale-record{
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    background: var(--white);
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
+}
+
+.sale-record > *{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.sale-product{
+    font-family: "DM Sans";
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.sale-product > a{
+    color: var(--jasper);
+    text-decoration: none;
+}
+
+.sale-product > a:hover{
+    text-decoration: underline;
+}
+
+.sale-revenue{
+    font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.sale-options{
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-family: "Manrope";
+    font-size: 12px;
+    font-weight: 500;
+
+}
+
+.sale-time{
+    font-family: "Manrope";
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+

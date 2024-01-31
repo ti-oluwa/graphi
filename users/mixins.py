@@ -1,3 +1,4 @@
+from django.db.models import QuerySet
 
 
 class RequestUserQuerySetMixin:
@@ -10,7 +11,7 @@ class RequestUserQuerySetMixin:
     """
     user_fieldname = "user"
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
         return super().get_queryset(*args, **kwargs).filter(
             **{self.user_fieldname: self.request.user}
         )

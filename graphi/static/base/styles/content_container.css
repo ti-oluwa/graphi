@@ -57,6 +57,35 @@
     padding: 10px 10px;
 }
 
+/* Optional */
+#content-body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px 0;
+}
+
+#content-body > #filters-toggle{
+    font-family: "DM Sans";
+    color: var(--teal);
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+#filters-toggle:hover{
+    opacity: 0.8;
+}
+
+#content-body > #content-wrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px 0;
+}
+
 /* Media Queries */
 @media screen and (max-width: 768px) {
     #content-container{

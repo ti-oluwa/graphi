@@ -63,7 +63,7 @@ def requires_store_authorization(
                 )
             
             store = get_object_or_404(Store, **{identifier: identifier_value})
-            if not store.check_request_is_authorized(request):
+            if store.check_request_is_authorized(request) is False:
                 auth_url = reverse(auth_view)
                 redirect_url = f"{auth_url}?{identifier}={identifier_value}&next={request.path}"
                 return redirect(redirect_url, permanent=False)

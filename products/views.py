@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.views import generic
 from django.http import JsonResponse
@@ -48,6 +49,14 @@ class ProductListView(
         context["product_categories"] = ProductCategories.choices
         return context
     
+
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
+        qs = super().get_queryset(*args, **kwargs)
+        product_pk = self.request.GET.get("product")
+        if product_pk:
+            qs = qs.filter(pk=product_pk)
+        return qs
+
 
     @requires_store_authorization(identifier="slug", url_kwarg="store_slug")
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
