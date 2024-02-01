@@ -78,7 +78,7 @@ class Sale(UTZModelMixin, models.Model):
         if self.quantity == 0:
             raise ValidationError("Sale quantity cannot be zero")
         if self.quantity > self.product.quantity:
-            raise ValidationError("Sale quantity cannot be greater than available product quantity")
+            raise ValidationError(f"Sale quantity cannot be greater than available product quantity ({self.product.quantity})")
         
         self.product.quantity -= self.quantity
         # Save the sale first before saving the product. This is to avoid reducing the product quantity

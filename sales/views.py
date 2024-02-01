@@ -31,6 +31,7 @@ class SaleListView(
     context_object_name = "sales"
     template_name = "sales/sale_list.html"
     http_method_names = ["get"]
+    paginate_by = 30
     # For the StoreQuerySetMixin
     store_fieldname = "store"
     store_identifier = "slug"
@@ -101,7 +102,7 @@ class SaleAddView(LoginRequiredMixin, generic.CreateView):
 
 
 
-class SaleUpdateView(LoginRequiredMixin, generic.UpdateView):
+class SaleUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateView):
     """Handles AJAX/Fetch requests to update a sale record in a store."""
     model = Sale
     queryset = sale_queryset
@@ -109,8 +110,13 @@ class SaleUpdateView(LoginRequiredMixin, generic.UpdateView):
     http_method_names = ["get", "post"]
     pk_url_kwarg = "sale_id"
     template_name = "sales/sale_update.html"
+    context_object_name = "sale"
+    # For the StoreQuerySetMixin
+    store_fieldname = "store"
+    store_identifier = "slug"
+    store_url_kwarg = "store_slug"
 
-    @requires_password_verification
+    @requires_store_authorization(identifier="slug", url_kwarg="store_slug")
     def get(self, request, *args, **kwargs) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
@@ -119,18 +125,26 @@ class SaleUpdateView(LoginRequiredMixin, generic.UpdateView):
     @requires_account_verification
     def post(self, request, *args, **kwargs) -> JsonResponse:
         data: Dict = json.loads(request.body)
-        passkey = data.pop("passkey", None)
-        data["owner"] = request.user.pk
-        store: Store = self.get_object()
+        sale: Sale = self.get_object()
+        data["store"] = sale.store.pk
 
-        form = self.get_form_class()(data=data, instance=store)
+        form = self.get_form_class()(data=data, instance=sale)
         if form.is_valid():
-            sale = form.save(commit=True)
+            try:
+                sale: Sale = form.save(commit=True)
+            except Exception as exc:
+                return JsonResponse(
+                    data={
+                        "status": "error",
+                        "detail": exc.args[0] if exc.args else str(exc)
+                    },
+                    status=400
+                )
             return JsonResponse(
                 data={
                     "status": "success",
-                    "detail": "Store updated successfully!",
-                    "redirect_url": reverse("stores:store_list")
+                    "detail": "Sale updated successfully!",
+                    "redirect_url": reverse("stores:sales:sale_list", kwargs={"store_slug": sale.store.slug})
                 },
                 status=200
             )
@@ -138,7 +152,7 @@ class SaleUpdateView(LoginRequiredMixin, generic.UpdateView):
         return JsonResponse(
             data={
                 "status": "error",
-                "detail": "An error occurred while updating store!",
+                "detail": "An error occurred while updating sale!",
                 "errors": form.errors,
             },
             status=400
@@ -146,12 +160,16 @@ class SaleUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 
 
-class SaleDeleteView(LoginRequiredMixin, generic.DetailView):
+class SaleDeleteView(StoreQuerySetMixin, LoginRequiredMixin, generic.DetailView):
     """View for deleting a sale record from a store."""
     model = Sale
     queryset = sale_queryset
     http_method_names = ["get"]
     pk_url_kwarg = "sale_id"
+    # For the StoreQuerySetMixin
+    store_fieldname = "store"
+    store_identifier = "slug"
+    store_url_kwarg = "store_slug"
 
     @requires_password_verification
     def get(self, request, *args, **kwargs):

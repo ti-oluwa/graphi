@@ -31,7 +31,8 @@ signInForm.onsubmit = (e) => {
     for (const [key, value] of formData.entries()) {
         data[key] = value;
     }
-
+    data['timezone'] = getClientTimezone();
+    
     signInButton.onPost();
 
     const options = {

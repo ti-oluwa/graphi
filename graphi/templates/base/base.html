@@ -32,7 +32,13 @@
         <nav id="side-menu" class="floating-card">
             <ul>
                 <li>
-                    <a href="{% url 'users:dashboard' %}" id="dashboard" class="current-tab">
+                    <a 
+                        href="{% url 'users:dashboard' %}" 
+                        id="dashboard" 
+                        {% if 'dashboard' in request.path %}
+                        class="current-tab"
+                        {% endif %}
+                    >
                         <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
                             <g>
                                 <path d="M0 0h24v24H0z" fill="none"/>
@@ -45,7 +51,13 @@
                 </li>
 
                 <li>
-                    <a href="{% url 'stores:store_list' %}" id="stores">
+                    <a 
+                        href="{% url 'stores:store_list' %}" 
+                        id="stores"
+                        {% if 'stores' in request.path %}
+                        class="current-tab"
+                        {% endif %}
+                    >
                         <svg height="24" viewBox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
                             <path fill="currentColor" d="M14 36c-2.21 0-3.98 1.79-3.98 4s1.77 4 3.98 4 4-1.79 4-4-1.79-4-4-4zm-12-32v4h4l7.19 15.17-2.7 4.9c-.31.58-.49 1.23-.49 1.93 0 2.21 1.79 4 4 4h24v-4h-23.15c-.28 0-.5-.22-.5-.5 0-.09.02-.17.06-.24l1.79-3.26h14.9c1.5 0 2.81-.83 3.5-2.06l7.15-12.98c.16-.28.25-.61.25-.96 0-1.11-.9-2-2-2h-29.57l-1.9-4h-6.53zm32 32c-2.21 0-3.98 1.79-3.98 4s1.77 4 3.98 4 4-1.79 4-4-1.79-4-4-4z"/>
                             <path d="M0 0h48v48h-48z" fill="none"/>
@@ -77,7 +89,13 @@
                 </li> -->
 
                 <li>
-                    <a href="#" id="account">
+                    <a 
+                        href="#" 
+                        id="account"
+                        {% if 'account' in request.path %}
+                        class="current-tab"
+                        {% endif %}
+                    >
                         <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                             <path 
                                 d="M12 14C14.2091 14 16 12.2091 16 10C16 7.79086 14.2091 6 12 6C9.79086 6 8 7.79086 8 10C8 12.2091 9.79086 14 12 14ZM12 14C9.79086 14 8 15.7909 8 18V20H16V18C16 15.7909 14.2091 14 12 14ZM12 14V12C7.58172 12 4 13.7909 4 16V18H20V16C20 13.7909 16.4183 12 12 12Z" 

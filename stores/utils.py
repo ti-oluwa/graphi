@@ -2,6 +2,7 @@ from typing import List
 
 from users.models import UserAccount
 from stores.models import Store
+import uuid
 
 
 def get_stores_count(user: UserAccount) -> int:
@@ -12,7 +13,7 @@ def get_stores_count(user: UserAccount) -> int:
     return Store.objects.filter(owner=user).count()
 
 
-def filter_store_pks_for_user(user: UserAccount, store_pks: List[str] = None) -> List[str]:
+def filter_store_pks_for_user(user: UserAccount, store_pks: List[str | uuid.UUID] = None) -> List[uuid.UUID]:
     """
     Filters the given store primary keys to only include the primary keys of the stores
     owned by the given user.
@@ -25,6 +26,6 @@ def filter_store_pks_for_user(user: UserAccount, store_pks: List[str] = None) ->
     if not isinstance(user, UserAccount):
         raise TypeError("user must be an instance of UserAccount")
     if not store_pks:
-        return Store.objects.filter(owner=user).values_list("pk", flat=True)
-    return Store.objects.filter(owner=user, pk__in=store_pks).values_list("pk", flat=True)
+        return list(Store.objects.filter(owner=user).values_list("pk", flat=True))
+    return list(Store.objects.filter(owner=user, pk__in=store_pks).values_list("pk", flat=True))
 

@@ -119,7 +119,7 @@ class ProductAddView(LoginRequiredMixin, generic.CreateView):
     
 
 
-class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
+class ProductUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateView):
     """Handles AJAX/Fetch requests to update a product in a store."""
     model = Product
     queryset = product_queryset
@@ -128,6 +128,10 @@ class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
     context_object_name = "product"
     pk_url_kwarg = "product_id"
     template_name = "products/product_update.html"
+    # For the StoreQuerySetMixin
+    store_fieldname = "store"
+    store_identifier = "slug"
+    store_url_kwarg = "store_slug"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -175,12 +179,16 @@ class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 
 
-class ProductDeleteView(LoginRequiredMixin, generic.DetailView):
+class ProductDeleteView(StoreQuerySetMixin, LoginRequiredMixin, generic.DetailView):
     """View for deleting a product in a store."""
     model = Product
     queryset = product_queryset
     http_method_names = ["get"]
     pk_url_kwarg = "product_id"
+    # For the StoreQuerySetMixin
+    store_fieldname = "store"
+    store_identifier = "slug"
+    store_url_kwarg = "store_slug"
 
     @requires_password_verification
     def get(self, request, *args, **kwargs):

@@ -5,7 +5,7 @@ const advancedOptionsProcessURL = window.location.href + 'stats/advanced-options
 
 /**
  * Parses advanced options form and returns the form data
- * @param {*} advancedOptionsForm 
+ * @param {HTMLFormElement} advancedOptionsForm 
  * @returns {object} The form data
  */
 function getAdvancedOptionsFormData(advancedOptionsForm){
@@ -69,7 +69,7 @@ function getAdvancedOptionsFormData(advancedOptionsForm){
 /**
  * Sends form data to the server and returns the result
  * @param {string} processURL The url to send the form data to for processing
- * @param {*} formData The form data to send to the server
+ * @param {object} formData The form data to send to the server
  * @param {function} callback The callback function to run after processing the form
  * @returns {object} result
  */

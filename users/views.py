@@ -83,9 +83,14 @@ class UserLoginView(generic.TemplateView):
         data: Dict = json.loads(request.body)
         email = data.get('email', None)
         password = data.get('password', None)
+        current_timezone = data.get('timezone', None)
         
         user = authenticate(request, username=email, password=password)
         if user:
+            if current_timezone:
+                user.timezone = current_timezone
+                user.save()
+                
             login(request, user)
             query_params = parse_query_params_from_request(request)
             return JsonResponse(
@@ -246,7 +251,7 @@ class DashboardStatisticsView(LoginRequiredMixin, generic.View):
                     "status": "success",
                     "detail": "Revenue statistics retrieved successfully!",
                     "data": {
-                        "result": f'{result.currency} {result.amount}'
+                        "result": f'{result.currency}{result.amount:,}'
                     }
                 },
                 status=200
