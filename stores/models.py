@@ -7,7 +7,7 @@ from django.utils.text import slugify
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 
-from django_utz.models.mixins import UTZModelMixin
+from django_utz.decorators import model
 from djmoney.models.fields import CurrencyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
@@ -30,7 +30,8 @@ class StoreTypes(models.TextChoices):
     OTHER = "other", "Other"
 
 
-class Store(UTZModelMixin, models.Model):
+@model
+class Store(models.Model):
     """Model representing a store."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     slug = models.SlugField(unique=True, null=True, editable=False)
@@ -47,11 +48,12 @@ class Store(UTZModelMixin, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ["created_at", "updated_at"]
-
     class Meta:
         ordering = ("name", "-created_at")
         unique_together = ("name", "owner")
+
+    class UTZMeta:
+        datetime_fields = ["created_at", "updated_at"]
 
 
     def __str__(self):

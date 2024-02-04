@@ -3,14 +3,14 @@ from __future__ import annotations
 from typing import Any
 import uuid
 from django.db import models
-from django_utz.models.mixins import UTZModelMixin
+from django_utz.decorators import model
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
 from django.core.exceptions import ValidationError
 
 
-
-class Sale(UTZModelMixin, models.Model):
+@model
+class Sale(models.Model):
     """Model for a product sale."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     store = models.ForeignKey(
@@ -23,12 +23,14 @@ class Sale(UTZModelMixin, models.Model):
     made_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ["made_at", "updated_at"]
-
     class Meta:
         verbose_name = "Sale"
         verbose_name_plural = "Sales"
         ordering = ("-made_at",)
+
+    class UTZMeta:
+        datetime_fields = ["made_at", "updated_at"]
+
 
     @property
     def revenue(self) -> Money:

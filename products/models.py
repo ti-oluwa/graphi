@@ -1,12 +1,11 @@
 from __future__ import annotations
-from django.core import validators
 
 from django.db import models
 import uuid
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator
 from django.utils.translation import gettext_lazy as _
-from django_utz.models.mixins import UTZModelMixin
+from django_utz.decorators import model
 from decimal import Decimal
 
 
@@ -24,7 +23,9 @@ class ProductCategories(models.TextChoices):
     OTHERS = "others", _("Others")
 
 
-class Product(UTZModelMixin, models.Model):
+
+@model
+class Product(models.Model):
     """Model representing a product in a store."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=150)
@@ -47,12 +48,14 @@ class Product(UTZModelMixin, models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ["added_at", "updated_at"]
-
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
         ordering = ("name", "-added_at")
+    
+    class UTZMeta:
+        datetime_fields = "__all__"
+
 
     def __str__(self):
         return self.name
@@ -64,8 +67,8 @@ class Product(UTZModelMixin, models.Model):
         return latest_sale.made_at if latest_sale else None
     
 
-
-class ProductGroup(UTZModelMixin, models.Model):
+@model
+class ProductGroup(models.Model):
     """Model representing a product group in a store."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=150)
@@ -73,20 +76,21 @@ class ProductGroup(UTZModelMixin, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ["created_at", "updated_at"]
-
     class Meta:
         verbose_name = "Product Group"
         verbose_name_plural = "Product Groups"
         ordering = ("name", "-created_at")
         unique_together = ("name", "store")
 
+    class UTZMeta:
+        datetime_fields = ["created_at", "updated_at"]
+
     def __str__(self):
         return self.name
 
 
-
-class ProductBrand(UTZModelMixin, models.Model):
+@model
+class ProductBrand(models.Model):
     """Model representing a product brand in a store."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=150)
@@ -94,13 +98,15 @@ class ProductBrand(UTZModelMixin, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ["created_at", "updated_at"]
-
     class Meta:
         verbose_name = "Product Brand"
         verbose_name_plural = "Product Brands"
         ordering = ("name", "-created_at")
         unique_together = ("name", "store")
+
+    class UTZMeta:
+        datetime_fields = ["created_at", "updated_at"]
+
 
     def __str__(self):
         return self.name
