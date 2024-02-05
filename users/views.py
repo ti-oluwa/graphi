@@ -215,8 +215,9 @@ class DashboardView(LoginRequiredMixin, generic.TemplateView):
         context = super().get_context_data(**kwargs)
         context["stores_count"] = get_stores_count(self.request.user)
         context["products_count"] = get_products_count(self.request.user)
-        context["sales_count"] = aggregate_sales_count(self.request.user)
-        context["revenue_from_sales"] = aggregate_revenue_from_sales(self.request.user)
+        todays_date_for_user = self.request.user.to_local_timezone(timezone.now()).date()
+        context["sales_count_today"] = aggregate_sales_count(self.request.user, date=todays_date_for_user)
+        context["revenue_from_sales_today"] = aggregate_revenue_from_sales(self.request.user, date=todays_date_for_user)
         context["product_categories"] = ProductCategories.labels
         return context
     
@@ -229,7 +230,7 @@ class DashboardStatisticsView(LoginRequiredMixin, generic.View):
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         """Handles dashboard statistics AJAX/Fetch POST request"""
         data: Dict = json.loads(request.body)
-        stat_type = data.pop("stat_type", None)
+        stat_type = data.pop("statType", None)
 
         if stat_type == "sales":
             result = aggregate_sales_count(self.request.user, **data)

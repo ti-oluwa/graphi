@@ -53,7 +53,7 @@ class Store(models.Model):
         unique_together = ("name", "owner")
 
     class UTZMeta:
-        datetime_fields = ["created_at", "updated_at"]
+        datetime_fields = "__all__"
 
 
     def __str__(self):

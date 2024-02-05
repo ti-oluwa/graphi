@@ -83,7 +83,7 @@ class ProductGroup(models.Model):
         unique_together = ("name", "store")
 
     class UTZMeta:
-        datetime_fields = ["created_at", "updated_at"]
+        datetime_fields = "__all__"
 
     def __str__(self):
         return self.name
@@ -105,7 +105,7 @@ class ProductBrand(models.Model):
         unique_together = ("name", "store")
 
     class UTZMeta:
-        datetime_fields = ["created_at", "updated_at"]
+        datetime_fields = "__all__"
 
 
     def __str__(self):

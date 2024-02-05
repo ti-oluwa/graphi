@@ -1,68 +1,68 @@
-const advancedOptionsToggles = document.querySelectorAll('.stat-card .more-options')
-const advancedOptionsCards = document.querySelectorAll('.stat-card .options-card')
-const advancedOptionsProcessURL = window.location.href + 'stats/advanced-options/'
+const storeFieldset = filtersCardForm.querySelector('fieldset.store-filters');
+const storeFieldsetCheckboxes = storeFieldset.querySelectorAll('input[type=checkbox]');
+
+const filtersCardToggles = document.querySelectorAll('.stat-card .more-options');
+const filtersProcessURL = window.location.href + 'stats/advanced-options/';
+
+
+filtersCardToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+        updateFiltersCardTitle(toggle.dataset.title);
+        filtersCard.show();
+    });
+});
 
 
 /**
- * Parses advanced options form and returns the form data
- * @param {HTMLFormElement} advancedOptionsForm 
- * @returns {object} The form data
+ * Disable all input in the filters card except those in excludedFieldset
+ * @param {boolean} disable Disables inputs if true;
+ * @param {*} excludeFieldset fieldset whose input will be excluded
  */
-function getAdvancedOptionsFormData(advancedOptionsForm){
-    const data = {};
-    const storeOptionsFieldset = advancedOptionsForm.querySelector('fieldset.store-options');
-    const categoryOptionsFieldset = advancedOptionsForm.querySelector('fieldset.category-options');
-    const dateOptionFieldset = advancedOptionsForm.querySelector('fieldset.date-option');
-    const timeRangeOptionFieldset = advancedOptionsForm.querySelector('fieldset.time-range-option');
-    const dateRangeOptionFieldset = advancedOptionsForm.querySelector('fieldset.date-range-option');
-
-    // For store options
-    let storeOptions = [];
-    const storeOptionsFieldsetInputs = storeOptionsFieldset.querySelectorAll('input');
-    storeOptionsFieldsetInputs.forEach(input => {
-        if(input.checked){
-            storeOptions.push(input.name);
-        }
+function disableFiltersCardInputs(disable, excludedFieldset){
+    filtersCardFormFieldsets.forEach(fieldset => {
+        if (fieldset != excludedFieldset){
+            const fieldsetInputs = fieldset.querySelectorAll('input');
+            fieldsetInputs.forEach(input => {
+                input.disabled = disable;
+            });
+        };
     });
-    data['store_pks'] = storeOptions;
+};
 
-    // For category options
-    let categoryOptions = [];
-    const categoryOptionsFieldsetInputs = categoryOptionsFieldset.querySelectorAll('input');
-    categoryOptionsFieldsetInputs.forEach(input => {
-        if(input.checked){
-            categoryOptions.push(input.value);
+
+filtersCardForm.addEventListener("change", () => {
+    let hasStoreChecked = false;
+    for (let i = 0; i < storeFieldsetCheckboxes.length; i++){
+        hasStoreChecked = storeFieldsetCheckboxes[i].checked;
+        if (hasStoreChecked) break;
+    };
+
+    if(!hasStoreChecked){
+        disableFiltersCardInputs(true, storeFieldset);
+    }else{
+        disableFiltersCardInputs(false, storeFieldset);
+    }
+});
+
+
+/**
+ * Returns a a form data that is ready to be sent to the filters processing URL
+ * @param {object} formData The filters form data
+ * @returns {object} form data ready for processing
+ */
+function cleanFiltersFormData(formData){
+    const cleanedData = {};
+    for (let key in formData){
+        let value = formData[key];
+
+        if (!Array.isArray(value)){
+            let newValue = underScoreObjectKeys(value);
+            Object.assign(cleanedData, newValue)
+        }else{
+            cleanedData[key] = value;
         }
-    });
-    data['categories'] = categoryOptions;
-
-    // For date option
-    let dateInput = dateOptionFieldset.querySelector('input');
-    if (dateInput.value){
-        data['date'] = dateInput.value;
-    };
-
-    // For time range option
-    let fromTimeInput = timeRangeOptionFieldset.querySelector('input#from-time');
-    let toTimeInput = timeRangeOptionFieldset.querySelector('input#to-time');
-    if (fromTimeInput.value){
-        data['from_time'] = fromTimeInput.value;
-    };
-    if (toTimeInput.value){
-        data['to_time'] = toTimeInput.value;
-    };
-
-    // For date range option
-    let fromDateInput = dateRangeOptionFieldset.querySelector('input#from-date');
-    let toDateInput = dateRangeOptionFieldset.querySelector('input#to-date');
-    if (fromDateInput.value){
-        data['from_date'] = fromDateInput.value;
-    };
-    if (toDateInput.value){
-        data['to_date'] = toDateInput.value;
-    };
-
-    return data;
+    }
+    return cleanedData;
 }
 
 
@@ -103,78 +103,52 @@ function processFormData(processURL, formData, callback){
 
 
 /**
- * Processes advanced options form and returns the result
+ * Processes filters selected in the filters form and returns the result
  * @param {string} processURL The url to send the form data to for processing
- * @param {HTMLFormElement} advancedOptionsForm The advanced options form to process
- * @param {function} callback The callback function to run after processing the form
+ * @param {HTMLFormElement} filtersForm The filters form to process
+ * @param {function} callback The callback function to pass the result of the form processing to
  * @returns {object} result 
  */
-function processadvancedOptionsForm(processURL, advancedOptionsForm, callback){
-    advancedOptionsForm.checkValidity();
+function processFilters(processURL, filtersForm, callback){
     
-    const formData = getAdvancedOptionsFormData(advancedOptionsForm);
-    if (advancedOptionsForm.id === 'sales-stat-form'){
-        formData['stat_type'] = "sales";
+    const formData = cleanFiltersFormData(filtersForm.getData());
+    if (filtersForm.dataset.stattype === 'sales'){
+        formData['statType'] = "sales";
     }else{
-        formData['stat_type'] = "revenue";
+        formData['statType'] = "revenue";
     }
 
     return processFormData(processURL, formData, callback);
 }
 
 
-advancedOptionsToggles.forEach(toggle => {
-    let advancedOptionsCard = toggle.parentElement.nextElementSibling
-    toggle.addEventListener('click', () => {
-        advancedOptionsCard.classList.add('show-flex');
-        advancedOptionsCard.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-        });
-    });
-
-    let cardClosetoggle = advancedOptionsCard.querySelector('.close-card');
-    cardClosetoggle.addEventListener('click', () => {
-        advancedOptionsCard.classList.remove('show-flex');
-    });
-});
-
-
-advancedOptionsCards.forEach(card => {
-    let resultElement = card.previousElementSibling.querySelector('h1')
-    let applyBtn = card.querySelector('.apply-btn');
-    let advancedOptionsForm = applyBtn.parentElement.nextElementSibling;
-    let dateInput = advancedOptionsForm.querySelector('fieldset.date-option input');
-    let dateRangeInputs = advancedOptionsForm.querySelectorAll('fieldset.date-range-option input');
-
-    let callback = (result) => {
+/**
+ * Makes a result callback function that updates the result element with the result
+ * @param {HTMLElement} resultElement The element whose text content will be updated with the result
+ * @returns callback function
+ */
+function makeResultCallback(resultElement){
+    return (result) => {
         resultElement.textContent = result;
+    };
+}
+
+filtersCardApplyBtn.addEventListener('click', () => {
+    filtersCardForm.checkValidity();
+    filtersCardForm.reportValidity();
+    if (!filtersCardForm.checkValidity()) return;
+
+    let resultElement;
+    if(filtersCard.getTitle().includes("sales")){
+        filtersCardForm.dataset.stattype = "sales";
+        resultElement = document.querySelector('.stat-card#sales-card .stat-value');
+    }else{
+        filtersCardForm.dataset.stattype = "revenue";
+        resultElement = document.querySelector('.stat-card#revenue-card .stat-value');
     }
 
-    applyBtn.addEventListener('click', () => {
-        processadvancedOptionsForm(advancedOptionsProcessURL, advancedOptionsForm, callback);
-    });
-
-    dateRangeInputs.forEach(input => {
-        input.addEventListener('input', () => {
-            if(input.value){
-                dateInput.value = null;
-                dateInput.disabled = true;
-            }else{
-                dateInput.disabled = false;
-            }
-        });
-    });
-
-})
-
-
-document.addEventListener('click', (e) => {
-
-    advancedOptionsCards.forEach(card => {
-        if (!card.contains(e.target) && !card.parentElement.contains(e.target)) {
-            card.classList.remove('show-flex');
-        }
-    });
-    
+    const callback = makeResultCallback(resultElement);
+    processFilters(filtersProcessURL, filtersCardForm, callback);
+    filtersCard.close();
 });
+

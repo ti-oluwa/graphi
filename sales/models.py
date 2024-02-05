@@ -29,7 +29,7 @@ class Sale(models.Model):
         ordering = ("-made_at",)
 
     class UTZMeta:
-        datetime_fields = ["made_at", "updated_at"]
+        datetime_fields = "__all__"
 
 
     @property

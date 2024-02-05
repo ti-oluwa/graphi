@@ -156,3 +156,16 @@ function pushNotification(
     }).show();
 }
 
+
+/**
+ * Ensures that hyphens in all keys in the given object are changed to underscores
+ * @param {object} obj object with possible hyphenated keys
+ * @returns {object} The object with underscored keys
+ */
+function underScoreObjectKeys(obj){
+    const newObj = {};
+    for (let key in obj){
+        newObj[key.replace('-', '_')] = obj[key];
+    };
+    return newObj;
+};

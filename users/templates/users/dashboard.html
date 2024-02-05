@@ -7,6 +7,7 @@ Dashboard
 {% endblock page_title %}
 
 {% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//filters_card.css' %}">
 <link rel="stylesheet" href="{% static 'users//styles//dashboard.css' %}">
 {% endblock stylesheets %}
 
@@ -39,188 +40,109 @@ Dashboard
             </div>
         </div>
 
-        <div class="stat-card floating-card">
+        <div id="sales-card" class="stat-card floating-card">
             <div class="stat-card-header">
                 <h3>Sales</h3>
-                <p>Number of sales made</p>
+                <p>Total number of sales made (Today)</p>
             </div>
 
             <div class="stat-card-body">
-                <h1>{{ sales_count }}</h1>
+                <h1 class="stat-value">{{ sales_count_today }}</h1>
 
-                {% if sales_count %}
-                    <span class="more-options">Advanced options</span>
-                {% endif %}
-            </div>
-
-            <!-- More Options for Sales Stats -->
-            <div class="floating-card options-card">
-                <div class="card-header">
-                    <h4>Advanced Options</h4>
-                    <img class="close-card" width="16" height="16" src="{% static 'icons//close-icon.svg' %}">
-                </div>
-
-                <div class="card-body">
-                    <div class="card-body-head">
-                        <h3>Show sales by</h3>
-                        <button class="apply-btn btn-secondary">Apply</button>
-                    </div>
-
-                    <form id="sales-stat-form">
-                        {% csrf_token %}
-                        <fieldset class="store-options">
-                            <legend>Store</legend>
-
-                            {% for store in request.user.stores.all %}
-                            <div class="form-field">
-                                <input type="checkbox" name="{{ store.pk }}" id="{{ store.pk }}" checked>
-                                <label for="{{ store.pk }}">{{ store.name }}</label>
-                            </div>
-                            {% endfor %}
-                        </fieldset>
-
-                        <fieldset class="category-options">
-                            <legend>Product Category</legend>
-
-                            {% for category in product_categories %}
-                            <div class="form-field">
-                                <input type="checkbox" name="{{ category }}" id="{{ category }}" value="{{ category }}" checked>
-                                <label for="{{ category }}">{{ category }}</label>
-                            </div>
-                            {% endfor %}
-                        </fieldset>
-
-                        <fieldset class="date-option">
-                            <legend>Date</legend>
-
-                            <div class="form-field">
-                                <input type="date" name="date" id="date" value="{% now 'Y-m-d' %}" max="{% now 'Y-m-d' %}">
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="time-range-option">
-                            <legend>Time Range</legend>
-
-                            <div class="form-field">
-                                <label for="from-time">From</label>
-                                <input type="time" name="from-time" id="from-time" value="00:00">
-                            </div>
-
-                            <div class="form-field">
-                                <label for="to-time">To</label>
-                                <input type="time" name="to-time" id="to-time" value="23:59">
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="date-range-option">
-                            <legend>Date Range</legend>
-
-                            <div class="form-field">
-                                <label for="from-date">From</label>
-                                <input type="date" name="from-date" id="from-date" value="" max="{% now 'Y-m-d' %}">
-                            </div>
-
-                            <div class="form-field">
-                                <label for="to-date">To</label>
-                                <input type="date" name="to-date" id="to-date" value="" max="{% now 'Y-m-d' %}">
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
+                <span class="more-options" data-title="Filter sales by">Advanced options</span>
             </div>
         </div>
 
-        <div class="stat-card floating-card">
+        <div id="revenue-card" class="stat-card floating-card">
             <div class="stat-card-header">
                 <h3>Revenue</h3>
-                <p>Total revenue</p>
+                <p>Total revenue (Today)</p>
             </div>
 
             <div class="stat-card-body">
-                <h1>{{ revenue_from_sales }}</h1>
+                <h1 class="stat-value">{{ revenue_from_sales_today }}</h1>
 
-                {% if revenue_from_sales %}
-                    <span class="more-options">Advanced options</span>
-                {% endif %}
-            </div>
-
-            <!-- More Options for Revenue Stats -->
-            <div class="floating-card options-card">
-                <div class="card-header">
-                    <h4>Advanced Options</h4>
-                    <img class="close-card" width="16" height="16" src="{% static 'icons/close-icon.svg' %}">
-                </div>
-
-                <div class="card-body">
-                    <div class="card-body-head">
-                        <h3>Show revenue by</h3>
-                        <button class="apply-btn btn-secondary">Apply</button>
-                    </div>
-
-                    <form id="revenue-stat-form">
-                        {% csrf_token %}
-                        <fieldset class="store-options">
-                            <legend>Store</legend>
-
-                            {% for store in request.user.stores.all %}
-                            <div class="form-field">
-                                <input type="checkbox" name="{{ store.pk }}" id="{{ store.pk }}" checked>
-                                <label for="{{ store.pk }}">{{ store.name }}</label>
-                            </div>
-                            {% endfor %}
-                        </fieldset>
-
-                        <fieldset class="category-options">
-                            <legend>Product Category</legend>
-
-                            {% for category in product_categories %}
-                            <div class="form-field">
-                                <input type="checkbox" name="{{ category }}" id="{{ category }}" value="{{ category }}" checked>
-                                <label for="{{ category }}">{{ category }}</label>
-                            </div>
-                            {% endfor %}
-                        </fieldset>
-
-                        <fieldset class="date-option">
-                            <legend>Date</legend>
-
-                            <div class="form-field">
-                                <input type="date" name="date" id="date" value="{% now 'Y-m-d' %}" max="{% now 'Y-m-d' %}">
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="time-range-option">
-                            <legend>Time Range</legend>
-
-                            <div class="form-field">
-                                <label for="from-time">From</label>
-                                <input type="time" name="from-time" id="from-time" value="00:00">
-                            </div>
-
-                            <div class="form-field">
-                                <label for="to-time">To</label>
-                                <input type="time" name="to-time" id="to-time" value="23:59">
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="date-range-option">
-                            <legend>Date Range</legend>
-
-                            <div class="form-field">
-                                <label for="from-date">From</label>
-                                <input type="date" name="from-date" id="from-date" value="" max="{% now 'Y-m-d' %}">
-                            </div>
-
-                            <div class="form-field">
-                                <label for="to-date">To</label>
-                                <input type="date" name="to-date" id="to-date" value="" max="{% now 'Y-m-d' %}">
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
+                <span class="more-options" data-title="Filter revenue by">Advanced options</span>
             </div>
         </div>
     </div>
+
+
+    <div class="floating-card filters-card">
+        <div class="card-header">
+            <h4>Filters</h4>
+            <img class="close-card" width="16" height="16" src="{% static 'icons/close-icon.svg' %}">
+        </div>
+
+        <div class="card-body">
+            <div class="card-body-head">
+                <h3 class="card-title"></h3>
+                <button class="apply-btn btn-secondary">Apply</button>
+            </div>
+
+            <form id="filter-form">
+                {% csrf_token %}
+                <fieldset class="store-filters" data-name="store_pks">
+                    <legend>Store</legend>
+
+                    {% for store in request.user.stores.all %}
+                    <div class="form-field">
+                        <input type="checkbox" name="{{ store.pk }}" id="{{ store.pk }}" checked>
+                        <label for="{{ store.pk }}">{{ store.name }}</label>
+                    </div>
+                    {% endfor %}
+                </fieldset>
+
+                <fieldset class="category-filters" data-name="categories">
+                    <legend>Product Category</legend>
+
+                    {% for category in product_categories %}
+                    <div class="form-field">
+                        <input type="checkbox" name="{{ category }}" id="{{ category }}" value="{{ category }}" checked>
+                        <label for="{{ category }}">{{ category }}</label>
+                    </div>
+                    {% endfor %}
+                </fieldset>
+
+                <fieldset class="date-filter" data-name="date">
+                    <legend>Date</legend>
+
+                    <div class="form-field">
+                        <input type="date" name="date" id="date" value="{% now 'Y-m-d' %}" max="{% now 'Y-m-d' %}">
+                    </div>
+                </fieldset>
+
+                <fieldset class="time-range-filter" data-name="time-range">
+                    <legend>Time Range</legend>
+
+                    <div class="form-field">
+                        <label for="from-time">From</label>
+                        <input type="time" name="from-time" id="from-time" value="00:00">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="to-time">To</label>
+                        <input type="time" name="to-time" id="to-time" value="23:59">
+                    </div>
+                </fieldset>
+
+                <fieldset class="date-range-filter" data-name="date-range">
+                    <legend>Date Range</legend>
+
+                    <div class="form-field">
+                        <label for="from-date">From</label>
+                        <input type="date" name="from-date" id="from-date" value="" max="{% now 'Y-m-d' %}">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="to-date">To</label>
+                        <input type="date" name="to-date" id="to-date" value="" max="{% now 'Y-m-d' %}">
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
 </section>
 
 <!-- Charts and Graphs Section -->
@@ -228,6 +150,7 @@ Dashboard
 {% endblock content %}
 
 {% block scripts %}
+<script src="{% static 'base//scripts//filtersCard.js' %}"></script>
 <script src="{% static 'users//scripts//dashboardStats.js' %}"></script>
 {% endblock scripts %}
 

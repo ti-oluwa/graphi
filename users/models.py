@@ -42,7 +42,7 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
     
     class UTZMeta:
         timezone_field = "timezone"
-        datetime_fields = ["registered_at", "updated_at"]
+        datetime_fields = "__all__"
     
 
     def __str__(self) -> str:
