@@ -54,7 +54,8 @@ function cleanFiltersFormData(formData){
     const cleanedData = {};
     for (let key in formData){
         let value = formData[key];
-
+        if(!value) continue;
+        
         if (!Array.isArray(value)){
             let newValue = underScoreObjectKeys(value);
             Object.assign(cleanedData, newValue)
