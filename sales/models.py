@@ -80,10 +80,12 @@ class Sale(models.Model):
         if self.quantity == 0:
             raise ValidationError("Sale quantity cannot be zero")
         
-        if self.pk is not None:
+        try:
             # If the sale is being updated, add the old sale quantity back to the product quantity
             old_sale = Sale.objects.get(pk=self.pk)
             self.product.quantity += old_sale.quantity
+        except Sale.DoesNotExist:
+            pass
 
         if self.quantity > self.product.quantity:
             raise ValidationError(f"Sale quantity cannot be greater than available product quantity ({self.product.quantity})")

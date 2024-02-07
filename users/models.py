@@ -1,13 +1,16 @@
+import time
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 import uuid
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_utz.decorators import model, usermodel
 from timezone_field import TimeZoneField
 from djmoney.models.fields import CurrencyField
 from django.core.mail import EmailMessage, get_connection as get_smtp_connection
 from django.urls import reverse
+from django.template.loader import render_to_string
 
 from .managers import UserAccountManager
 
@@ -64,8 +67,8 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
         connection = get_smtp_connection()
         email = EmailMessage(
             subject="Graphi - Verify your email address",
-            body=construct_verification_email_body(self),
-            from_email=settings.DEFAULT_FROM_EMAIL,
+            body=construct_verification_email(self),
+            from_email=f"Graphi <{settings.DEFAULT_FROM_EMAIL}>",
             to=[self.email],
             connection=connection
         )
@@ -73,18 +76,13 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
         email.send(fail_silently=False)
 
            
-           
 
-def construct_verification_email_body(user: UserAccount) -> str:
+def construct_verification_email(user: UserAccount) -> str:
     """Construct the verification email body."""
-    return f"""
-    <div style="font-family: Roboto;">
-        <h3>Verify your email address</h3>
-        <br>
-        <p>Hi {user.firstname},</p>
-        <p>Thanks for signing up on Graphi. Please click the link below to verify your email address.</p>
-        <p>
-            <a href="{settings.BASE_URL}/{reverse("users:account_verification", kwargs={"token": user.id.hex})}">Verify email address</a>
-        </p>
-    </div>
-    """
+    verification_link = f"{settings.BASE_URL}/{reverse("users:account_verification", kwargs={"token": user.id.hex})}"
+    context = {
+        "username": user.firstname,
+        "verification_link": verification_link,
+        "current_year": timezone.now().year
+    }
+    return render_to_string("emails/verification_email.html", context)

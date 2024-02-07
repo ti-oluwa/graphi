@@ -87,7 +87,7 @@ Dashboard
 
                     {% for store in request.user.stores.all %}
                     <div class="form-field">
-                        <input type="checkbox" name="{{ store.pk }}" id="{{ store.pk }}" checked>
+                        <input type="checkbox" name="{{ store.pk }}" id="{{ store.pk }}">
                         <label for="{{ store.pk }}">{{ store.name }}</label>
                     </div>
                     {% endfor %}
@@ -98,7 +98,7 @@ Dashboard
 
                     {% for category in product_categories %}
                     <div class="form-field">
-                        <input type="checkbox" name="{{ category }}" id="{{ category }}" value="{{ category }}" checked>
+                        <input type="checkbox" name="{{ category }}" id="{{ category }}" value="{{ category }}">
                         <label for="{{ category }}">{{ category }}</label>
                     </div>
                     {% endfor %}

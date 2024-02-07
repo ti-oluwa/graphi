@@ -1,7 +1,7 @@
 import json
-import re
 from typing import Any, Dict
 from django.urls import reverse
+from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -112,30 +112,29 @@ class UserLoginView(generic.TemplateView):
  
 
 
-class UserAccountVerificationView(LoginRequiredMixin, generic.View):
+class UserAccountVerificationView(LoginRequiredMixin, generic.TemplateView):
     """View for verifying a user's account."""
-    # template_name = "users/verification.html"
+    template_name = "users/user_verification.html"
 
-    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
-        token = kwargs.get("token")
-        if request.user.id.hex != token:
-            return HttpResponse(
-            content="Invalid verification link!",
-            status=400
-        )
-        
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        token = self.kwargs.get("token", None)
+        if token != self.request.user.id.hex:
+            context["verification_status"] = "error"
+            context["verification_detail"] = "Invalid verification link!"
+        else:
+            self.request.user.is_verified = True
+            self.request.user.save()
+            context["verification_status"] = "success"
+            context["verification_detail"] = "Your account has been verified successfully!"
+        return context
+    
+
+    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         if request.user.is_verified:
-            return HttpResponse(
-                content="Your account has already been verified!",
-                status=200
-            )
-        
-        request.user.is_verified = True
-        request.user.save()
-        return HttpResponse(
-            content="Your account has been verified successfully!",
-            status=200
-        )
+            return redirect("users:dashboard")
+        return super().get(request, *args, **kwargs)
 
 
 
