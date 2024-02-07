@@ -116,7 +116,7 @@ class SupportsQuerySetFiltering:
             invalid.append(param)
 
         if invalid:
-            raise ValueError(f"Invalid filter params, '{", ".join(param)}', in filter_mappings!")
+            raise ValueError(f'''Invalid filter params, "{', '.join(param)}", in filter_mappings!''')
         return None
     
 
