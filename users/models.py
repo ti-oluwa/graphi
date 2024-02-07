@@ -79,7 +79,7 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
 
 def construct_verification_email(user: UserAccount) -> str:
     """Construct the verification email body."""
-    verification_link = f"{settings.BASE_URL}/{reverse("users:account_verification", kwargs={"token": user.id.hex})}"
+    verification_link = f"{settings.BASE_URL}/{reverse('users:account_verification', kwargs={'token': user.id.hex})}"
     context = {
         "username": user.firstname,
         "verification_link": verification_link,
