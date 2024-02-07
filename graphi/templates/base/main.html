@@ -17,6 +17,10 @@
     <!-- Noty.js Themes-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty/lib/noty.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noty/lib/themes/semanticui.css">
+
+    <!-- Selectize.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/css/selectize.min.css">
+
     {% block mainstylesheets %}
     {% endblock mainstylesheets %}
 </head>
@@ -26,9 +30,21 @@
 {% endblock html_body %}
 </body>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <!-- Noty.js -->
 <script src="https://cdn.jsdelivr.net/npm/noty/lib/noty.min.js"></script>
 <script src="{% static 'base//scripts//utils.js' %}"></script>
+
+<!-- Selectize.js -->
+<script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('select').selectize({
+            sortField: 'text'
+        });
+    });
+</script>
 {% block mainscripts %}
 {% endblock mainscripts %}
 </html>

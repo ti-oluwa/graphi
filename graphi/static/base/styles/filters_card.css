@@ -17,7 +17,15 @@
 }
 
 body:has(.filters-card.show-flex){
-    overflow: hidden;
+    overflow: hidden !important;
+}
+
+#main:has(.filters-card.show-flex){
+    overflow: hidden !important;
+}
+
+#main-content:has(.filters-card.show-flex){
+    overflow: hidden !important;
 }
 
 .filters-card > .card-header{

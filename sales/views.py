@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.shortcuts import redirect
 import json
+from urllib.parse import urlencode as urllib_urlencode
 
 from .models import Sale
 from .forms import SaleForm
@@ -15,6 +16,7 @@ from stores.mixins import StoreQuerySetMixin, SupportsQuerySetFiltering
 from stores.decorators import requires_store_authorization, to_JsonResponse
 from users.decorators import requires_account_verification, requires_password_verification
 from users.mixins import RequestUserQuerySetMixin
+from users.utils import parse_query_params_from_request
 
 
 sale_queryset = Sale.objects.all().select_related("store", "product")
@@ -103,11 +105,13 @@ class SaleAddView(LoginRequiredMixin, generic.CreateView):
                     status=400
                 )
             
+            sale_list_url = reverse("stores:sales:sale_list", kwargs={"store_slug": sale.store.slug})
+            redirect_url = f'{sale_list_url}?date={sale.made_at_utz.date()}'
             return JsonResponse(
                 data={
                     "status": "success",
                     "detail": "Sale recorded successfully!",
-                    "redirect_url": reverse("stores:sales:sale_list", kwargs={"store_slug": sale.store.slug})
+                    "redirect_url": redirect_url
                 },
                 status=201
             )
@@ -162,11 +166,14 @@ class SaleUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateView)
                     },
                     status=400
                 )
+            
+            sale_list_url = reverse("stores:sales:sale_list", kwargs={"store_slug": sale.store.slug})
+            redirect_url = f'{sale_list_url}?date={sale.made_at_utz.date()}'
             return JsonResponse(
                 data={
                     "status": "success",
                     "detail": "Sale updated successfully!",
-                    "redirect_url": f'{reverse("stores:sales:sale_list", kwargs={"store_slug": sale.store.slug})}?date={sale.made_at_utz.date()}'
+                    "redirect_url": redirect_url
                 },
                 status=200
             )
@@ -197,8 +204,10 @@ class SaleDeleteView(StoreQuerySetMixin, LoginRequiredMixin, generic.DetailView)
     @requires_password_verification
     def get(self, request, *args, **kwargs):
         sale = self.get_object()
+        sale_list_url = reverse("stores:sales:sale_list", kwargs={"store_slug": sale.store.slug})
+        redirect_url = f'{sale_list_url}?date={sale.made_at_utz.date()}'
         sale.delete()
-        return redirect("stores:sales:sale_list", store_slug=self.kwargs.get("store_slug"))
+        return redirect(redirect_url)
 
 
 

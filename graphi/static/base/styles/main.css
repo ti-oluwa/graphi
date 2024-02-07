@@ -40,6 +40,7 @@ body{
     -moz-osx-font-smoothing: grayscale !important;
     font-smooth: always !important;
     -webkit-text-size-adjust: none;
+    -webkit-tap-highlight-color: transparent !important;
     color: var(--text-dark);
     background: var(--white);
     overflow-x: hidden !important;
