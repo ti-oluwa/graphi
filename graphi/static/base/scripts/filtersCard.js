@@ -66,6 +66,28 @@ function getFieldsetData(fieldset){
 
 
 /**
+ * Returns a form data that is ready to be sent for processing
+ * @param {object} formData The filters form data
+ * @returns {object} form data ready for processing
+ */
+function cleanFiltersFormData(formData){
+    const cleanedData = {};
+    for (let key in formData){
+        let value = formData[key];
+        if(!value) continue;
+        
+        if (!Array.isArray(value) || !typeof value === "string"){
+            let newValue = underScoreObjectKeys(value);
+            Object.assign(cleanedData, newValue)
+        }else{
+            cleanedData[key] = value;
+        }
+    }
+    return cleanedData;
+}
+
+
+/**
  * Returns the filters form data
  */
 filtersCardForm.getData = () => {
@@ -73,7 +95,7 @@ filtersCardForm.getData = () => {
     filtersCardFormFieldsets.forEach(fieldset => {
         data[fieldset.dataset.name] = getFieldsetData(fieldset);
     });
-    return data;
+    return cleanFiltersFormData(data);
 };
 
 
@@ -82,14 +104,17 @@ filtersCardCloseBtn.addEventListener('click', () => {
 });
 
 
-filtersCardDateRangeInputs.forEach(input => {
-    input.addEventListener('input', () => {
-        if(input.value){
-            filtersCardDateInput.value = null;
-            filtersCardDateInput.disabled = true;
-        }else{
-            filtersCardDateInput.disabled = false;
-        }
+if (filtersCardDateInput){
+    filtersCardDateRangeInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            if(input.value){
+                filtersCardDateInput.value = null;
+                filtersCardDateInput.disabled = true;
+            }else{
+                filtersCardDateInput.disabled = false;
+            }
+        });
     });
-});
+};
+
 

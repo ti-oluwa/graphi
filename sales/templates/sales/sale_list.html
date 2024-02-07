@@ -2,12 +2,12 @@
 {% load static %}
 {% load django_utz %}
 
-
 {% block page_title %}{{ store.name | title }} Sales Record{% endblock page_title %}
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{% static 'base//styles//content_container.css' %}">
 <link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//filters_card.css' %}">
 <link rel="stylesheet" href="{% static 'sales//styles//sale_list.css' %}">
 {% endblock stylesheets %}
 
@@ -23,7 +23,7 @@
 
     <div id="content-body">
         <p id="filters-toggle">
-            Filters
+            Filter sales
         </p>
 
         <div id="content-wrapper">
@@ -99,10 +99,13 @@
     </div>
 </section>
 
+{% include 'base/filters_card.html' %}
 {% include 'base/paginator.html' %}
 {% endblock content %}
 
 {% block scripts %}
 <script src="{% static 'sales//scripts//saleList.js' %}"></script>
+<script src="{% static 'base//scripts//filtersCard.js' %}"></script>
+<script src="{% static 'base//scripts//usesFiltersCard.js' %}"></script>
 {% endblock scripts %}
 

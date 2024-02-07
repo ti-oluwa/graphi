@@ -15,3 +15,4 @@ class RequestUserQuerySetMixin:
         return super().get_queryset(*args, **kwargs).filter(
             **{self.user_fieldname: self.request.user}
         )
+

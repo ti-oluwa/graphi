@@ -1,5 +1,7 @@
 {% extends 'base/base.html' %}
 {% load static %}
+{% load tz %}
+{% load django_utz %}
 
 {% load custom_filters %}
 
@@ -65,12 +67,14 @@
                 </div>
 
                 <div class="card-options">
-                    <a href="{% url 'stores:sales:sale_list' store.slug %}" title="Record store sales" class="card-option sales-record-button">
+                    {% usertimezone request.user %}
+                    <a href="{% url 'stores:sales:sale_list' store.slug %}?date={% now 'Y-m-d' %}" title="Record store sales" class="card-option sales-record-button">
                         <svg height="24" viewBox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M0 0h48v48H0z" fill="none"/>
                             <path fill="currentColor" d="M8 12H4v28c0 2.21 1.79 4 4 4h28v-4H8V12zm32-8H16c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h24c2.21 0 4-1.79 4-4V8c0-2.21-1.79-4-4-4zm-2 18H18v-4h20v4zm-8 8H18v-4h12v4zm8-16H18v-4h20v4z"/>
                         </svg>
                     </a>
+                    {% endusertimezone %}
 
                     <a href="{% url 'stores:store_update' store.slug %}" title="Update store details" class="card-option update-store-button">
                         <svg 

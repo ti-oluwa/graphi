@@ -5,8 +5,9 @@
 {% block page_title %}{{ store.name | title }}{% endblock page_title %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
 <link rel="stylesheet" href="{% static 'base//styles//content_container.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//filters_card.css' %}">
 <link rel="stylesheet" href="{% static 'products//styles//product_list.css' %}">
 {% endblock stylesheets %}
 
@@ -28,7 +29,7 @@
 
     <div id="content-body">
         <p id="filters-toggle">
-            Filters
+            Filter products
         </p>
 
         <div id="content-wrapper">
@@ -85,6 +86,7 @@
         <!-- Product Add Form Section -->
         <form action="{% url 'stores:products:product_add' store.slug %}" id="add-product-form">
             {% csrf_token %}
+
             <div class="form-fields">
                 <div class="form-field">
                     <label for="name" hidden>Product Name</label>
@@ -122,7 +124,7 @@
                         name="price" 
                         class="form-input" 
                         placeholder="Product price ({{ store.default_currency }})"
-                        min="0.00"
+                        min="0"
                         required
                     >
                     <small class="field-message"></small>
@@ -177,7 +179,7 @@
                         name="weight" 
                         class="form-input" 
                         placeholder="Product weight in grammes (Optional)"
-                        min="0.00"
+                        min="0"
                     >
                     <small class="field-message"></small>
                 </div> 
@@ -268,10 +270,13 @@
     </div>
 </section>
 
+{% include 'base/filters_card.html' %}
 {% include 'base/paginator.html' %}
 {% endblock content %}
 
 {% block scripts %}
 <script src="{% static 'products//scripts//productList.js' %}"></script>
+<script src="{% static 'base//scripts//filtersCard.js' %}"></script>
+<script src="{% static 'base//scripts//usesFiltersCard.js' %}"></script>
 {% endblock scripts %}
 

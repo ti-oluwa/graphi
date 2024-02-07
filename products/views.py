@@ -1,3 +1,4 @@
+from re import S
 from typing import Any, Dict
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
@@ -11,7 +12,7 @@ from decimal import Decimal
 
 from .models import Product, ProductCategories
 from stores.models import Store
-from stores.mixins import StoreQuerySetMixin
+from stores.mixins import StoreQuerySetMixin, SupportsQuerySetFiltering
 from users.mixins import RequestUserQuerySetMixin
 from stores.decorators import requires_store_authorization, to_JsonResponse
 from users.decorators import requires_password_verification, requires_account_verification
@@ -22,6 +23,7 @@ product_queryset = Product.objects.all().select_related("store", "brand", "group
 
 
 class ProductListView(
+        SupportsQuerySetFiltering,
         RequestUserQuerySetMixin, 
         StoreQuerySetMixin, 
         LoginRequiredMixin, 
@@ -32,12 +34,33 @@ class ProductListView(
     context_object_name = "products"
     template_name = "products/product_list.html"
     paginate_by = 40
+
     # For the StoreQuerySetMixin
     store_fieldname = "store"
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
+
     # For the RequestUserQuerySetMixin
     user_fieldname = "store__owner"
+
+    # For the SupportsQuerySetFiltering mixin
+    filter_mappings = {
+        "color": "color__iexact",
+        "size": "size",
+        "weight": "weight",
+        "categories": "category__in",
+        "brands": "brand__pk__in",
+        "groups": "group__pk__in",
+        "min_price": "price__gte",
+        "max_price": "price__lte",
+        "min_quantity": "quantity__gte",
+        "max_quantity": "quantity__lte",
+        "date": "added_at__date",
+        "from_date": "added_at__date__gte",
+        "to_date": "added_at__date__lte",
+        "from_time": "added_at__time__gte",
+        "to_time": "added_at__time__lte",
+    }
 
     def get_store(self) -> Any:
         return Store.objects.get(slug=self.kwargs.get("store_slug"))

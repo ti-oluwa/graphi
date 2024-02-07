@@ -1,3 +1,4 @@
+from math import e
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -10,7 +11,7 @@ import json
 from .models import Sale
 from .forms import SaleForm
 from stores.models import Store
-from stores.mixins import StoreQuerySetMixin
+from stores.mixins import StoreQuerySetMixin, SupportsQuerySetFiltering
 from stores.decorators import requires_store_authorization, to_JsonResponse
 from users.decorators import requires_account_verification, requires_password_verification
 from users.mixins import RequestUserQuerySetMixin
@@ -20,6 +21,7 @@ sale_queryset = Sale.objects.all().select_related("store", "product")
 
 
 class SaleListView(
+    SupportsQuerySetFiltering,
     RequestUserQuerySetMixin,
     StoreQuerySetMixin,
     LoginRequiredMixin, 
@@ -31,13 +33,32 @@ class SaleListView(
     context_object_name = "sales"
     template_name = "sales/sale_list.html"
     http_method_names = ["get"]
-    paginate_by = 30
+    paginate_by = 20
+
     # For the StoreQuerySetMixin
     store_fieldname = "store"
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
+
     # For the RequestUserQuerySetMixin
     user_fieldname = "store__owner"
+
+    # For the SupportsQuerySetFiltering mixin
+    filter_mappings = {
+        "color": "product__color__iexact",
+        "size": "product__size",
+        "weight": "product__weight",
+        "categories": "product__category__in",
+        "brands": "product__brand__pk__in",
+        "groups": "product__group__pk__in",
+        "min_quantity": "quantity__gte",
+        "max_quantity": "quantity__lte",
+        "date": "made_at__date",
+        "from_date": "made_at__date__gte",
+        "to_date": "made_at__date__lte",
+        "from_time": "made_at__time__gte",
+        "to_time": "made_at__time__lte",
+    }
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -111,6 +132,7 @@ class SaleUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateView)
     pk_url_kwarg = "sale_id"
     template_name = "sales/sale_update.html"
     context_object_name = "sale"
+
     # For the StoreQuerySetMixin
     store_fieldname = "store"
     store_identifier = "slug"
@@ -144,7 +166,7 @@ class SaleUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateView)
                 data={
                     "status": "success",
                     "detail": "Sale updated successfully!",
-                    "redirect_url": reverse("stores:sales:sale_list", kwargs={"store_slug": sale.store.slug})
+                    "redirect_url": f'{reverse("stores:sales:sale_list", kwargs={"store_slug": sale.store.slug})}?date={sale.made_at_utz.date()}'
                 },
                 status=200
             )
@@ -166,6 +188,7 @@ class SaleDeleteView(StoreQuerySetMixin, LoginRequiredMixin, generic.DetailView)
     queryset = sale_queryset
     http_method_names = ["get"]
     pk_url_kwarg = "sale_id"
+
     # For the StoreQuerySetMixin
     store_fieldname = "store"
     store_identifier = "slug"

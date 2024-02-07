@@ -18,7 +18,6 @@
 
 body:has(.filters-card.show-flex){
     overflow: hidden;
-    height: 100%;
 }
 
 .filters-card > .card-header{

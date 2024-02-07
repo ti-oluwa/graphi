@@ -46,28 +46,6 @@ filtersCardForm.addEventListener("change", () => {
 
 
 /**
- * Returns a a form data that is ready to be sent to the filters processing URL
- * @param {object} formData The filters form data
- * @returns {object} form data ready for processing
- */
-function cleanFiltersFormData(formData){
-    const cleanedData = {};
-    for (let key in formData){
-        let value = formData[key];
-        if(!value) continue;
-        
-        if (!Array.isArray(value)){
-            let newValue = underScoreObjectKeys(value);
-            Object.assign(cleanedData, newValue)
-        }else{
-            cleanedData[key] = value;
-        }
-    }
-    return cleanedData;
-}
-
-
-/**
  * Sends form data to the server and returns the result
  * @param {string} processURL The url to send the form data to for processing
  * @param {object} formData The form data to send to the server
@@ -111,14 +89,13 @@ function processFormData(processURL, formData, callback){
  * @returns {object} result 
  */
 function processFilters(processURL, filtersForm, callback){
-    
-    const formData = cleanFiltersFormData(filtersForm.getData());
+    const formData = filtersForm.getData();
+
     if (filtersForm.dataset.stattype === 'sales'){
         formData['statType'] = "sales";
     }else{
         formData['statType'] = "revenue";
     }
-
     return processFormData(processURL, formData, callback);
 }
 
