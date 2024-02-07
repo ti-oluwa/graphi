@@ -49,7 +49,7 @@ function getFieldsetData(fieldset){
         data = [];
         fieldsetInputs.forEach(checkbox => {
             if (checkbox.checked){
-                data.push(checkbox.name);
+                data.push(checkbox.value);
             };
         });
 
