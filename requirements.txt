@@ -1,6 +1,7 @@
 django==5.0.1
-djsm==0.1.2
-djmoney
+djsm==0.1.5
+django-money
 django_utz
 django-crispy-forms
 django-timezone-field
+python-dateutil==2.8.2

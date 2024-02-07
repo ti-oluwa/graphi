@@ -1,0 +1,130 @@
+{% extends 'base/main.html' %}
+{% load static %}
+
+
+{% block mainstylesheets %}
+<link rel="stylesheet" href="{% static 'users//styles//signup.css' %}">
+{% endblock mainstylesheets %}
+
+
+{% block page_title %}Create an account{% endblock page_title %}
+
+{% block html_body %}
+<body>
+    <div class="container">
+        <main>
+            <section id="main-text">
+                <h1>Graphi</h1>
+                <p>
+                    Create an account to start using Graphi.
+                </p>
+            </section>
+
+            <section id="form-wrapper">
+                <div id="form-card">
+                    <div id="form-header">
+                        <h2>Sign Up</h2>
+                        <p>
+                            Let's set up your account.
+                        </p>
+                    </div>
+                    <!-- Account Creation Form Section -->
+                    <form action="{% url 'users:signup' %}" id="signup-form">
+                        {% csrf_token %}
+                        <div id="form-fields">
+                            <div id="users-names">
+                                <div class="form-field">
+                                    <label for="firstname" hidden>First Name</label>
+                                    <input 
+                                        type="text" 
+                                        id="firstname" 
+                                        name="firstname" 
+                                        class="form-input" 
+                                        placeholder="First name" 
+                                        maxlength="50" 
+                                        required
+                                    >
+                                    <small class="field-message"></small>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="lastname" hidden>Last Name</label>
+                                    <input 
+                                        type="text" 
+                                        id="lastname" 
+                                        name="lastname" 
+                                        class="form-input"
+                                        placeholder="Last name" 
+                                        maxlength="50" 
+                                        required
+                                    >
+                                    <small class="field-message"></small>
+                                </div>
+                            </div>
+                            
+                            <div class="form-field">
+                                <label for="email" hidden>Email Address</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="form-input"
+                                    placeholder="Email address" 
+                                    required
+                                >
+                                <small class="field-message"></small>
+                            </div>
+                            
+                            <div class="form-field">
+                                <label for="password1" hidden>Password</label>
+                                <input 
+                                    type="password" 
+                                    id="password1" 
+                                    name="password1" 
+                                    class="form-input" 
+                                    placeholder="Password"
+                                    minlength="8" 
+                                    required
+                                >
+                                <small class="field-message"></small>
+                            </div>
+                            
+                            <div class="form-field">
+                                <label for="password2" hidden>Confirm Password</label>
+                                <input 
+                                    type="password" 
+                                    id="password2" 
+                                    name="password2" 
+                                    class="form-input"
+                                    placeholder="Confirm password" 
+                                    minlength="8" 
+                                    required
+                                >
+                                <small class="field-message"></small>
+                            </div>
+                        </div>
+
+                        <div id="submit-btn-wrapper">
+                            <button class="btn-primary" id="submit-btn" type="submit">
+                                Sign Up
+                            </button>
+                        </div>
+
+                        <small>
+                            Already have an account?
+                            <a href="{% url 'users:signin' %}">Sign in</a>
+                        </small>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+{% endblock html_body %}
+
+
+{% block mainscripts %}
+<script src="{% static 'users//scripts//signup.js' %}"></script>
+{% endblock mainscripts %}
+

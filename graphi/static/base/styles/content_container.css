@@ -1,0 +1,94 @@
+#content-container{
+    width: 100%;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px 0;
+}
+
+#content-container > #content-header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#content-header > #header-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 5px 0;
+}
+
+#header-text > h1{
+    font-size: clamp(24px, 2vw, 36px);
+    font-weight: 700;
+    font-family: 'Raleway';
+    color: var(--text-dark);
+}
+
+#header-text > p{
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Manrope';
+    color: var(--text-dark);
+}
+
+#header-text > small{
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Manrope';
+    color: var(--cambridge-blue);
+}
+
+#content-header > #header-buttons{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+#header-buttons .header-button{
+    font-size: clamp(12px, 2vw, 14px);
+    padding: 10px 10px;
+}
+
+/* Optional */
+#content-body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px 0;
+}
+
+#content-body > #filters-toggle{
+    font-family: "DM Sans";
+    color: var(--teal);
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+#filters-toggle:hover{
+    opacity: 0.8;
+}
+
+#content-body > #content-wrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px 0;
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+    #content-container{
+        padding: 40px 10px;
+    }
+}

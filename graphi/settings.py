@@ -1,14 +1,14 @@
 from pathlib import Path
 import os
-import djsm 
+import djsm
 
+djsm_manager = djsm.get_djsm(quiet=True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "zsrextryuygiojpretyuio"
+SECRET_KEY = djsm_manager.get_or_create_secret_key()
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -26,7 +26,6 @@ INSTALLED_APPS = [
 
     'timezone_field',
     'django_utz',
-    'rest_framework',
     'djsm',
     'djmoney.contrib.exchange',
 
@@ -52,7 +51,9 @@ ROOT_URLCONF = 'graphi.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': [
+            os.path.join(BASE_DIR, "graphi/templates"),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -117,8 +118,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "graphi/static"),
 ]
 
 # Default primary key field type
@@ -126,8 +129,6 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-LOGIN_URL = 'signin'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -137,6 +138,28 @@ EMAIL_USE_TLS = True
 
 EMAIL_PORT = 587
 
-EMAIL_HOST_USER = 'tioluwa.dev@gmail.com'
+EMAIL_HOST_USER = djsm_manager.get_secret("project_email")
 
-EMAIL_HOST_PASSWORD = 'pdtkgscfemygmbwc'
+EMAIL_HOST_PASSWORD = djsm_manager.get_secret("project_email_password")
+
+DEFAULT_FROM_EMAIL = djsm_manager.get_secret("project_email")
+
+
+LOGIN_URL = 'users:signin'
+
+STORE_AUTHORIZATION_VIEW = 'stores:store_auth'
+
+PASSWORD_VERIFICATION_VIEW = "users:password_verification"
+
+PASSWORD_VERIFICATION_VALIDITY_PERIOD = 120.0 # in seconds
+
+BASE_URL = "https://graphi.pythonanywhere.com"
+
+
+# DJMONEY
+
+EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.OpenExchangeRatesBackend'
+
+OPEN_EXCHANGE_RATES_APP_ID = djsm_manager.get_secret("openexchangerates_app_id")
+
+

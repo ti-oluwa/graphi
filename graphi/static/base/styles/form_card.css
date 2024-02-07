@@ -1,0 +1,157 @@
+.card-container{
+    margin-top: 20px;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-card{
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    height: max-content;
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal Variant */
+.form-card.form-card-modal{
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    z-index: 10000;
+    isolation: isolate;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1),
+                0px 0px 0px 100vmax rgba(0, 0, 0, 0.5);
+}
+
+.form-card-modal{
+    max-height: calc(100vh - 8%);
+    overflow-y: auto;
+}
+
+#main:has(.form-card-modal.show-block){
+    overflow: hidden !important;
+}
+
+
+.form-card > .form-header{
+    justify-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px 0;
+    padding: 16px;
+    border-bottom: 1px solid var(--bluish-gray);
+}
+
+.form-header > h2{
+    font-size: 24px;
+    font-family: 'Raleway';
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--dark-blue);
+}
+
+.form-header > p{
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text-dark);
+}
+
+.form-card > form{
+    justify-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px 0;
+    padding: 16px;
+}
+
+form > .form-fields{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px 0;
+}
+
+.form-fields .form-field{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px 0;
+}
+
+.form-field .field-message{
+    color: var(--jasper);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.6;
+    display: none;
+}
+
+.form-field:has(.invalid-field) .field-message{
+    display: block;
+}
+
+.form-field .form-input{
+    width: 100%;
+    display: block;
+    border: none;
+    border-radius: 0px;
+    box-shadow: 0px 1px 0px var(--teal);
+}
+
+.form-input::placeholder{
+    color: var(--dark-gray);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Manrope';
+}
+
+.form-field .form-select{
+    width: 100%;
+    display: block;
+    outline: none;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid var(--teal);
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dark-gray);
+    background: var(--white);
+}
+
+.form-field .form-input:focus-within{
+    box-shadow: 0px 1.5px 0px var(--teal);
+}
+
+.form-field .form-input:not(:placeholder-shown){
+    box-shadow: 0px 1.5px 0px var(--teal);
+}
+
+form > .submit-btn-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+.submit-btn-wrapper > .submit-btn{
+    width: 100%;
+}
+

@@ -1,0 +1,134 @@
+.filters-card{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    max-width: 400px;
+    transform: translate(-50%, -50%);
+    z-index: 100000;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0;
+    height: 70%;
+    max-height: 600px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 0 0px 100vmax rgba(0, 0, 0, 0.5);
+}
+
+body:has(.filters-card.show-flex){
+    overflow: hidden !important;
+}
+
+#main:has(.filters-card.show-flex){
+    overflow: hidden !important;
+}
+
+#main-content:has(.filters-card.show-flex){
+    overflow: hidden !important;
+}
+
+.filters-card > .card-header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 0 var(--bluish-gray);
+}
+
+.card-header > h4{
+    font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.card-header > img{
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.filters-card > .card-body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    overflow-y: scroll;
+}
+
+.card-body::-webkit-scrollbar, .card-body > *::-webkit-scrollbar {
+    display: none;
+}
+
+.card-body > .card-body-head{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-body-head > h3{
+    font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    flex-shrink: 0;
+}
+
+.card-body-head > button{
+    font-family: "Manrope";
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.card-body > form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    overflow-y: scroll;
+}
+
+.card-body > form > fieldset{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    border: none;
+    padding: 6px;
+}
+
+.card-body > form > fieldset > legend{
+    font-family: "DM Sans";
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--deep-blue);
+    margin-bottom: 4px;
+}
+
+.card-body > form .form-field{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.form-field label {
+    font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+}

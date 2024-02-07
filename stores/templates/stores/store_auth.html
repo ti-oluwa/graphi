@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block page_title %}Store Authorization{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base/styles/form_card.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="card-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Store Passkey</h2>
+            <p>Enter the current passkey for this store to continue.</p>
+        </div>
+    
+        <!-- Store Passkey Form -->
+        <form id="store-passkey-form">
+            {% csrf_token %}
+            <div class="form-fields">
+                <div class="form-field">
+                    <label for="passkey" hidden>Store Passkey</label>
+                    <input 
+                        title="Set a passkey to protect your store"
+                        type="password" 
+                        id="passkey" 
+                        name="passkey" 
+                        class="form-input" 
+                        placeholder="Pass key"
+                        minlength="4" 
+                        maxlength="20"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div>
+            </div>
+    
+            <div class="submit-btn-wrapper">
+                <button class="btn-primary submit-btn" type="submit">
+                    Done
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'stores//scripts//storeAuth.js' %}"></script>
+{% endblock scripts %}

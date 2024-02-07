@@ -1,0 +1,190 @@
+{% load static %}
+
+<div class="floating-card filters-card">
+    <div class="card-header">
+        <h4>Filters</h4>
+        <img class="close-card" width="16" height="16" src="{% static 'icons/close-icon.svg' %}">
+    </div>
+
+    <div class="card-body">
+        <div class="card-body-head">
+            <h3 class="card-title">{{ filter_title }}</h3>
+            <button class="apply-btn btn-secondary">Apply</button>
+        </div>
+
+        <form id="filter-form">
+            {% csrf_token %}
+
+            {% if "min_price" in filters %}
+            <fieldset class="min-price-filter" data-name="min_price">
+                <legend>Minimum Price</legend>
+
+                <div class="form-field">
+                    <input type="number" name="min_price" id="min_price" min="0">
+                </div>
+            </fieldset>
+            {% endif %}
+
+
+            {% if "max_price" in filters %}
+            <fieldset class="max-price-filter" data-name="max_price">
+                <legend>Maximum Price</legend>
+
+                <div class="form-field">
+                    <input type="number" name="max_price" id="max_price" min="0">
+                </div>
+            </fieldset>
+            {% endif %}
+
+
+            {% if "min_quantity" in filters %}
+            <fieldset class="min-quantity-filter" data-name="min_quantity">
+                <legend>Minimum Quantity</legend>
+
+                <div class="form-field">
+                    <input type="number" name="min_quantity" id="min_quantity" min="0">
+                </div>
+            </fieldset>
+            {% endif %}
+
+
+            {% if "max_quantity" in filters %}
+            <fieldset class="max-quantity-filter" data-name="max_quantity">
+                <legend>Maximum Quantity</legend>
+
+                <div class="form-field">
+                    <input type="number" name="max_quantity" id="max_quantity" min="0">
+                </div>
+            </fieldset>
+            {% endif %}
+
+
+            {% if "brands" in filters and brands %}
+            <fieldset class="brands-filters" data-name="brands">
+                <legend>Product Brands</legend>
+
+                {% for brand in brands %}
+                <div class="form-field">
+                    <input type="checkbox" name="{{ brand.name }}" id="{{ brand.pk }}" value="{{ brand.pk }}">
+                    <label for="{{ brand.pk }}">{{ brand.name|title }}</label>
+                </div>
+                {% endfor %}
+            </fieldset>
+            {% endif %}
+
+
+            {% if "groups" in filters and groups %}
+            <fieldset class="groups-filters" data-name="groups">
+                <legend>Product Groups</legend>
+
+                {% for group in groups %}
+                <div class="form-field">
+                    <input type="checkbox" name="{{ group.name }}" id="{{ group.pk }}" value="{{ group.pk }}">
+                    <label for="{{ group.pk }}">{{ group.name|title }}</label>
+                </div>
+                {% endfor %}
+            </fieldset>
+            {% endif %}
+
+
+            {% if "color" in filters %}
+            <fieldset class="color-filter" data-name="color">
+                <legend>Product Color</legend>
+
+                <div class="form-field">
+                    <input type="text" name="color" id="color" placeholder="Enter color...e.g red">
+                </div>
+            </fieldset>
+            {% endif %}
+            
+
+            {% if "size" in filters %}
+            <fieldset class="size-filter" data-name="size">
+                <legend>Product Size</legend>
+
+                <div class="form-field">
+                    <input type="text" name="size" id="size" placeholder="Enter size...e.g 11''">
+                </div>
+            </fieldset>
+            {% endif %}
+
+
+            {% if "weight" in filters %}
+            <fieldset class="weight-filter" data-name="weight">
+                <legend>Product Weight</legend>
+
+                <div class="form-field">
+                    <input type="number" name="weight" id="weight" placeholder="Enter weight in gram...e.g 200" min="0">
+                </div>
+            </fieldset>
+            {% endif %}
+
+            
+            {% if "categories" in filters %}
+            <fieldset class="category-filters" data-name="categories">
+                <legend>Product Category</legend>
+
+                {% for category in categories %}
+                <div class="form-field">
+                    <input type="checkbox" name="{{ category|first }}" id="{{ category|first }}" value="{{ category|first }}">
+                    <label for="{{ category|first }}">{{ category|last }}</label>
+                </div>
+                {% endfor %}
+            </fieldset>
+            {% endif %}
+
+
+            {% if "date" in filters %}
+            <fieldset class="date-filter" data-name="date">
+                <legend>Date</legend>
+
+                <div class="form-field">
+                    <input type="date" name="date" id="date" max="{% now 'Y-m-d' %}">
+                </div>
+            </fieldset>
+            {% endif %}
+
+
+            {% if "from_time" or "to_time" in filters %}
+            <fieldset class="time-range-filter" data-name="time_range">
+                <legend>Time Range</legend>
+
+                {% if "from_time" in filters %}
+                <div class="form-field">
+                    <label for="from_time">From</label>
+                    <input type="time" name="from_time" id="from_time" value="00:00">
+                </div>
+                {% endif %}
+
+                {% if "to_time" in filters %}
+                <div class="form-field">
+                    <label for="to_time">To</label>
+                    <input type="time" name="to_time" id="to_time" value="23:59">
+                </div>
+                {% endif %}
+            </fieldset>
+            {% endif %}
+
+
+            {% if "from_date" or "to_date" in filters %}
+            <fieldset class="date-range-filter" data-name="date_range">
+                <legend>Date Range</legend>
+
+                {% if "from_date" in filters %}
+                <div class="form-field">
+                    <label for="from-date">From</label>
+                    <input type="date" name="from_date" id="from_date" value="" max="{% now 'Y-m-d' %}">
+                </div>
+                {% endif %}
+
+                {% if "to_date" in filters %}
+                <div class="form-field">
+                    <label for="to-date">To</label>
+                    <input type="date" name="to_date" id="to_date" value="" max="{% now 'Y-m-d' %}">
+                </div>
+                {% endif %}
+            </fieldset>
+            {% endif %}
+        </form>
+    </div>
+</div>

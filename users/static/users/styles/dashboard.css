@@ -1,0 +1,109 @@
+
+/* Dashboard Section */
+#dashboard-stats{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 40px 0;
+    padding: 10px;
+    margin: 20px 0;
+}
+
+#dashboard-stats > #stats-header{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+#stats-header > h2{
+    font-family: "Raleway";
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+#stats-header > p{
+    font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--teal);
+}
+
+#dashboard-stats > #stats-cards{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+#stats-cards > .stat-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    position: relative;
+    padding-inline: 20px;
+}
+
+.stat-card > .stat-card-header{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.stat-card-header > h3{
+    font-family: "Manrope";
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.stat-card-header > p{
+    font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--bluish-gray);
+}
+
+.stat-card-body{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stat-card-body > h1{
+    font-family: "DM Sans";
+    font-size: clamp(24px, 2vw, 36px);
+    font-weight: 700;
+    color: var(--dark-gray);
+    flex-shrink: 0;
+}
+
+.stat-card-body > .more-options{
+    font-family: "Manrope";
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--jasper);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Media Queries */
+@media (hover:hover){
+
+    .stat-card-body > .more-options:hover{
+        opacity: 0.8;
+    }
+}

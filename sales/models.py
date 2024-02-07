@@ -1,13 +1,18 @@
 from __future__ import annotations
+
 from typing import Any
+import uuid
 from django.db import models
-from django_utz.models.mixins import UTZModelMixin
+from django_utz.decorators import model
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
+from django.core.exceptions import ValidationError
 
 
-class Sale(UTZModelMixin, models.Model):
+@model
+class Sale(models.Model):
     """Model for a product sale."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     store = models.ForeignKey(
         "stores.Store", on_delete=models.CASCADE, related_name="sales"
     )
@@ -18,12 +23,14 @@ class Sale(UTZModelMixin, models.Model):
     made_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    datetime_fields = ("made_at", "updated_at")
-
     class Meta:
         verbose_name = "Sale"
         verbose_name_plural = "Sales"
-        ordering = ["-made_at"]
+        ordering = ("-made_at",)
+
+    class UTZMeta:
+        datetime_fields = "__all__"
+
 
     @property
     def revenue(self) -> Money:
@@ -37,29 +44,53 @@ class Sale(UTZModelMixin, models.Model):
 
     
     def __str__(self) -> str:
-        return f"{self.store.name} - {self.product.name} - {self.quantity} - {self.amount}"
+        return f"{self.store.name} - {self.product.name} - {self.quantity} - {self.revenue}"
 
 
     def __add__(self, other: Sale) -> Sale:
-        """Add two sales."""
+        """Add two sales together."""
         if self.product != other.product:
             raise ValueError("Cannot add sales of different products")
         return Sale(
             store=self.store,
             product=self.product,
             quantity=self.quantity + other.quantity,
-            amount=self.amount + other.amount,
         )
+    
+    __iadd__ = __add__
+    __radd__ = __add__
+    
+
+    def __sub__(self, other: Sale) -> Sale:
+        """Subtract two sales."""
+        if self.product != other.product:
+            raise ValueError("Cannot subtract sales of different products")
+        return Sale(
+            store=self.store,
+            product=self.product,
+            quantity=self.quantity - other.quantity,
+        )
+    
+    __isub__ = __sub__
+    __rsub__ = __sub__
 
 
     def save(self, *args: str, **kwargs: Any) -> None:
         """Save the sale."""
         if self.quantity == 0:
-            raise ValueError("Sale quantity cannot be zero")
+            raise ValidationError("Sale quantity cannot be zero")
+        
+        if self.pk is not None:
+            # If the sale is being updated, add the old sale quantity back to the product quantity
+            old_sale = Sale.objects.get(pk=self.pk)
+            self.product.quantity += old_sale.quantity
+
         if self.quantity > self.product.quantity:
-            raise ValueError("Sale quantity cannot be greater than product quantity")
+            raise ValidationError(f"Sale quantity cannot be greater than available product quantity ({self.product.quantity})")
         
         self.product.quantity -= self.quantity
+        # Save the sale first before saving the product. This is to avoid reducing the product quantity
+        # without a corresponding sale.
         super().save(*args, **kwargs)
         self.product.save()
 

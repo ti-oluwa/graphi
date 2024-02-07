@@ -1,0 +1,70 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block page_title %}Update Sale{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="card-container">
+    <div class="form-card">
+        <!-- Sale Update Form Section -->
+        <form action="{% url 'stores:sales:sale_update' sale.store.slug sale.pk %}" id="update-sale-form">
+            {% csrf_token %}
+            <div class="form-fields">
+                <div class="form-field">
+                    <label for="product" hidden>Product Sold</label>
+                    <select 
+                        title="What product was sold?"
+                        id="product" 
+                        name="product" 
+                        required 
+                        class="form-select"
+                    >
+                        <option value="">Select product sold</option>
+                        {% for product in sale.store.products.all %}
+                        <option 
+                            value="{{ product.pk }}"
+                            {% if sale.product == product %}
+                            selected
+                            {% endif %}
+                        >
+                        {{ product.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div> 
+
+                <div class="form-field">
+                    <label for="quantity" hidden>Product Quantity Sold</label>
+                    <input 
+                        title="How many of this product was sold?"
+                        type="number" 
+                        id="quantity" 
+                        name="quantity" 
+                        class="form-input" 
+                        placeholder="Quantity sold"
+                        value="{{ sale.quantity }}"
+                        required
+                    >
+                    <small class="field-message"></small>
+                </div> 
+
+            </div>
+
+            <div class="submit-btn-wrapper">
+                <button class="btn-primary submit-btn" type="submit" disabled>
+                    Update Sale
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'sales//scripts//saleUpdate.js' %}"></script>
+{% endblock scripts %}
