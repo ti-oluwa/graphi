@@ -19,3 +19,16 @@
     align-self: flex-end;
 }
 
+#more-account-options{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-block: 5px;
+}
+
+#more-account-options > #account-delete{
+    font-size: 11px;
+    color: red;
+    font-weight: 500;
+}

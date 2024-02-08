@@ -101,7 +101,7 @@
                                 {% endfor %}
                             </select>
                             <small class="field-message"></small>
-                            
+
                             <small id="auto-timezone">Auto update timezone</small>
                         </div>
                         
@@ -140,6 +140,11 @@
             </div>
         </div>
 
+        <div id="more-account-options">
+            <a id="account-delete" href="{% url 'users:account_delete' user.pk %}" title="This action is irreversible. Are you sure want to perform this action?">
+                Delete my account
+            </a>
+        </div>
     </div>
 </section>
 {% endblock content %}

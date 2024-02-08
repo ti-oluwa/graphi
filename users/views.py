@@ -212,7 +212,8 @@ class UserAccountDetailView(LoginRequiredMixin, generic.DetailView):
         context["timezones"] = pytz.all_timezones
         return context
     
-
+    
+    @requires_password_verification
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
@@ -227,7 +228,6 @@ class UserAccountUpdateView(LoginRequiredMixin, generic.UpdateView):
     context_object_name = "user"
     http_method_names = ["post"]
 
-
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         """Handles user detail update AJAX/Fetch POST request"""
         data: Dict = json.loads(request.body)
@@ -235,7 +235,21 @@ class UserAccountUpdateView(LoginRequiredMixin, generic.UpdateView):
         form = self.get_form_class()(data=data, instance=user)
 
         if form.is_valid():
-            user: UserAccount = form.save(commit=True)
+            user: UserAccount = form.save(commit=False)
+            if "email" in form.changed_data:
+                user.is_verified = False
+            try:
+                user.send_verification_email()
+            except Exception:
+                return JsonResponse(
+                    data={
+                        "status": "error",
+                        "detail": "Failed to send verification email on email update! Please try again!"
+                    },
+                    status=400
+                )
+            
+            user.save()
             return JsonResponse(
                 data={
                     "status": "success",
@@ -254,6 +268,21 @@ class UserAccountUpdateView(LoginRequiredMixin, generic.UpdateView):
         )
 
 
+class UserAccountDeleteView(LoginRequiredMixin, generic.DetailView):
+    """View for deleting a sale record from a store."""
+    model = UserAccount
+    http_method_names = ["get"]
+    pk_url_kwarg = "account_id"
+
+    @requires_password_verification(expiration_time_key="account_deletion_expiration_time")
+    # Changed the expiration time key so that the user cannot 
+    # delete his/her account without password verifying again
+    def get(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.delete()
+        return redirect("users:signin")
+
+
 # Account creation and verification
 user_create_view = UserCreateView.as_view()
 user_login_view = UserLoginView.as_view()
@@ -264,3 +293,4 @@ password_verification_view = UserPasswordVerificationView.as_view()
 # Account management
 user_account_view = UserAccountDetailView.as_view()
 user_account_update_view = UserAccountUpdateView.as_view()
+user_account_delete_view = UserAccountDeleteView.as_view()
