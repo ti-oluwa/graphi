@@ -74,7 +74,10 @@ signUpForm.onsubmit = (e) => {
                 pushNotification("success", data.detail ?? 'Sign up successful!');
                 const redirectURL  = data.redirect_url ?? null
                 if(!redirectURL) return;
-                window.location.href = redirectURL;
+                
+                setTimeout(() => {
+                    window.location.href = redirectURL;
+                }, 3000);
             });
         }
     });
