@@ -14,7 +14,7 @@
             {% if verification_status == "success" %}
                 <h2>{{ verification_detail }}</h2>
                 <p>Congratulations! You can now access all of Graphi's features.</p>
-                <p>Click <a href="{% url 'users:dashboard' %}">here</a> to visit your dashboard.</p>
+                <p>Click <a href="{% url 'dashboard:dashboard' %}">here</a> to visit your dashboard.</p>
             {% elif verification_status == "error" %}
                 <h2>{{ verification_detail }}</h2>
                 <p>Sorry, we were unable to verify your account. Please try again later.</p>

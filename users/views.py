@@ -133,7 +133,7 @@ class UserAccountVerificationView(LoginRequiredMixin, generic.TemplateView):
 
 class UserLogoutView(generic.RedirectView):
     """View for logging out a user."""
-    url = "/signin/"
+    url = "/accounts/signin/"
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> None:
         if request.user.is_authenticated:
@@ -212,7 +212,7 @@ class UserAccountDetailView(LoginRequiredMixin, generic.DetailView):
         context["timezones"] = pytz.all_timezones
         return context
     
-    
+
     @requires_password_verification
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super().get(request, *args, **kwargs)
