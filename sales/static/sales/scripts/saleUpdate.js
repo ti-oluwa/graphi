@@ -3,7 +3,7 @@ const updateSaleFormCard = updateSaleForm.parentElement;
 const updateSaleButton = updateSaleForm.querySelector('.submit-btn');
 
 
-updateSaleForm.onchange = function(e) {
+updateSaleForm.onkeyup = function(e) {
     updateSaleButton.disabled = false;
 };
 

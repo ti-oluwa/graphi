@@ -1,0 +1,149 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+
+{% block page_title %}{{ user.fullname | title }}{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//content_container.css' %}">
+<link rel="stylesheet" href="{% static 'users//styles//user_account.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<section id="content-container">
+    <div id="content-header">
+        <div id="header-text">
+            <h1>{{ user.fullname | title }}</h1>
+            <p>Account and store management</p>
+            <small>Edit your account details, change your password, and manage store activities</small>
+        </div>
+
+        <div id="header-buttons">
+            <button class="header-button btn-secondary">
+                Generate Report
+            </button>
+        </div>
+    </div>
+
+    <div id="content-body">
+
+        <div id="account-details">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2>Account Details</h2>
+                    <p>Update your account details</p>
+                </div>
+        
+                <!-- Account Details Update Form Section -->
+                <form action="{% url 'users:account_update' user.pk %}" id="account-update-form">
+                    {% csrf_token %}
+
+                    <div class="form-fields">
+                        <div class="form-field">
+                            <label for="firstname" hidden>First name</label>
+                            <input
+                                id="firstname" 
+                                name="firstname" 
+                                class="form-input"
+                                placeholder="First name"
+                                value="{{ user.firstname }}" 
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="lastname" hidden>Last name</label>
+                            <input
+                                id="lastname" 
+                                name="lastname" 
+                                class="form-input"
+                                placeholder="Last name"
+                                value="{{ user.lastname }}"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="email" hidden>Email Address</label>
+                            <input
+                                id="email" 
+                                name="email" 
+                                class="form-input"
+                                placeholder="Email address"
+                                value="{{ user.email }}" 
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+        
+                        <div class="form-field">
+                            <label for="timezone" hidden>Timezone</label>
+                            <select 
+                                title="What timezone are you in?"
+                                id="timezone" 
+                                name="timezone" 
+                                class="form-select"
+                                required
+                            >
+                                <option value="">Select your current timezone</option>
+                                {% for timezone in timezones %}
+                                <option 
+                                    value="{{ timezone }}"
+                                    {% if timezone|lower == user.timezone|lower %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ timezone }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="field-message"></small>
+                            
+                            <small id="auto-timezone">Auto update timezone</small>
+                        </div>
+                        
+                        <div class="form-field">
+                            <label for="currency" hidden>Default Currency</label>
+                            <select 
+                                title="What currency do you prefer to use in your stores by default?"
+                                id="currency" 
+                                name="preferred_currency" 
+                                class="form-select"
+                                required
+                            >
+                                <option value="">Choose a preferred currency</option>
+                                {% for currency in currencies %}
+                                <option 
+                                    value="{{ currency|first }}" 
+                                    {% if currency|first == user.preferred_currency %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ currency|last }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="field-message"></small>
+                        </div>
+    
+                    </div>
+        
+                    <div class="submit-btn-wrapper">
+                        <button class="btn-primary submit-btn" type="submit" disabled>
+                            Save changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'users//scripts//userAccount.js' %}"></script>
+{% endblock scripts %}

@@ -15,6 +15,7 @@ from django.template.loader import render_to_string
 from .managers import UserAccountManager
 
 
+
 @model
 @usermodel
 class UserAccount(PermissionsMixin, AbstractBaseUser):
@@ -40,8 +41,8 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
     objects = UserAccountManager()
 
     class Meta:
-        verbose_name = _("useraccount")
-        verbose_name_plural = _("useraccounts")
+        verbose_name = _("User account")
+        verbose_name_plural = _("User accounts")
     
     class UTZMeta:
         timezone_field = "timezone"

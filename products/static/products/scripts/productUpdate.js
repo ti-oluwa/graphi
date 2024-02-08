@@ -5,7 +5,7 @@ const updateProductButton = updateProductForm.querySelector('.submit-btn');
 
 addOnPostAndOnResponseFuncAttr(updateProductButton, 'Updating Product...');
 
-updateProductForm.onchange = function(e) {
+updateProductForm.onkeyup = function(e) {
     updateProductButton.disabled = false;
 };
 

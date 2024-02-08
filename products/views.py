@@ -70,6 +70,7 @@ class ProductListView(
         context = super().get_context_data(**kwargs)
         context["store"] = self.get_store()
         context["product_categories"] = ProductCategories.choices
+        context["has_any_product"] = Product.objects.filter(store=context["store"]).exists()
         return context
     
 

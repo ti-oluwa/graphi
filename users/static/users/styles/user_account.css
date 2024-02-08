@@ -1,0 +1,21 @@
+#account-details{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-block: 5px;
+    border-block: 1px solid var(--bluish-gray)
+}
+
+#account-details > .form-card{
+    box-shadow: none;
+}
+
+#auto-timezone{
+    font-size: 11px;
+    color: var(--teal);
+    font-weight: 500;
+    text-decoration: underline;
+    cursor: pointer;
+    align-self: flex-end;
+}
+

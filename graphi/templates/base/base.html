@@ -33,8 +33,7 @@
             <ul>
                 <li>
                     <a 
-                        href="{% url 'users:dashboard' %}" 
-                        id="dashboard" 
+                        href="{% url 'dashboard:dashboard' %}" 
                         {% if 'dashboard' in request.path %}
                         class="current-tab"
                         {% endif %}
@@ -53,7 +52,6 @@
                 <li>
                     <a 
                         href="{% url 'stores:store_list' %}" 
-                        id="stores"
                         {% if 'stores' in request.path %}
                         class="current-tab"
                         {% endif %}
@@ -90,8 +88,7 @@
 
                 <li>
                     <a 
-                        href="#" 
-                        id="account"
+                        href="{% url 'users:account_management' request.user.pk %}" 
                         {% if 'account' in request.path %}
                         class="current-tab"
                         {% endif %}
@@ -144,7 +141,7 @@
 
             <ul id="nav-menu">
                 <li>
-                    <a href="#" id="account">
+                    <a href="{% url 'users:account_management' request.user.pk %}" id="account">
                         <span id="initials">{{ request.user.initials }}</span>
                         <span id="fullname">{{ request.user.fullname }}</span>
                     </a>

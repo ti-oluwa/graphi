@@ -1,16 +1,26 @@
-const updateStoreForm = document.querySelector('#update-store-form');
-const updateStoreFormCard = updateStoreForm.parentElement;
-const updateStoreButton = updateStoreForm.querySelector('.submit-btn');
-const emailField = updateStoreForm.querySelector('#email');
+const accountUpdateForm = document.querySelector('#account-update-form');
+const accountUpdateFormCard = accountUpdateForm.parentElement;
+const accountUpdateButton = accountUpdateForm.querySelector('.submit-btn');
+const emailField = accountUpdateForm.querySelector('#email');
+const autoSelectTimezoneButton = accountUpdateForm.querySelector('#auto-timezone');
+
+addOnPostAndOnResponseFuncAttr(accountUpdateButton, 'Saving changes...');
+
+accountUpdateForm.addEventListener('keyup', function(e) {
+    accountUpdateButton.disabled = false;
+});
 
 
-addOnPostAndOnResponseFuncAttr(updateStoreButton, 'Updating Store...');
-
-updateStoreForm.onkeyup = function(e) {
-    updateStoreButton.disabled = false;
+autoSelectTimezoneButton.onclick = function() {
+    const timezoneField = accountUpdateForm.querySelector('select#timezone');
+    const timezone = getClientTimezone();
+    var ss = $(timezoneField).selectize();
+    var selectize = ss[0].selectize;
+    selectize.setValue(selectize.search(timezone).items[0].id);
 };
 
-updateStoreForm.onsubmit = function(e) {
+
+accountUpdateForm.onsubmit = function(e) {
     e.stopImmediatePropagation();
     e.preventDefault();
 
@@ -24,7 +34,7 @@ updateStoreForm.onsubmit = function(e) {
         data[key] = value;
     }
 
-    updateStoreButton.onPost();
+    accountUpdateButton.onPost();
     const options = {
         method: 'POST',
         headers: {
@@ -37,10 +47,11 @@ updateStoreForm.onsubmit = function(e) {
 
     fetch(this.action, options).then((response) => {
         if (!response.ok) {
-            updateStoreButton.onResponse();
+            accountUpdateButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;
                 if (errors){
+                    console.log(errors )
                     if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
 
                     for (const [fieldName, msg] of Object.entries(errors)){
@@ -54,13 +65,13 @@ updateStoreForm.onsubmit = function(e) {
             });
 
         }else{
-            response.json().then((data) => {
-                pushNotification("success", data.detail ?? 'Store updated successfully!');
-                const redirectURL  = data.redirect_url ?? null;
+            accountUpdateButton.onResponse();
+            accountUpdateButton.disabled = true;
 
-                if(!redirectURL) return;
-                window.location.href = redirectURL;
+            response.json().then((data) => {
+                pushNotification("success", data.detail ?? 'Account updated successfully!');
             });
         }
     });
 };
+

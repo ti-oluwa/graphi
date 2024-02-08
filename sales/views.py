@@ -69,6 +69,7 @@ class SaleListView(
             made_at__date=user.to_local_timezone(timezone.now()).date()
         )
         context["store"] = Store.objects.get(slug=self.kwargs["store_slug"])
+        context["has_any_sale"] = Sale.objects.filter(store=context["store"]).exists()
         return context
 
 
