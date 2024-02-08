@@ -39,8 +39,10 @@ filtersCardForm.addEventListener("change", () => {
 
     if(!hasStoreChecked){
         disableFiltersCardInputs(true, storeFieldset);
+        filtersCardApplyBtn.disabled = true;
     }else{
         disableFiltersCardInputs(false, storeFieldset);
+        filtersCardApplyBtn.disabled = false;
     }
 });
 

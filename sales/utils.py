@@ -82,6 +82,7 @@ def aggregate_revenue_from_sales(
     """
     store_pks = filter_store_pks_for_user(user, store_pks)
     sales_filters = get_aggregation_filters(store_pks, categories, date, from_date, to_date, from_time, to_time)
+    sales_filters["store__owner"] = user
     # If no aggregation filter, return 0 revenue
     if not sales_filters:
         return Money(Decimal(0), user.preferred_currency).round(max_decimal_places)
@@ -117,6 +118,8 @@ def aggregate_sales_count(
     """
     store_pks = filter_store_pks_for_user(user, store_pks)
     sales_filters = get_aggregation_filters(store_pks, categories, date, from_date, to_date, from_time, to_time)
+    sales_filters["store__owner"] = user
+    
     if not sales_filters:
         return 0
     return Sale.get_count(**sales_filters)
