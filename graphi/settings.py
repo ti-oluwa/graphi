@@ -30,9 +30,11 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',
 
     'users.apps.UsersConfig',
+    'dashboard.apps.DashboardConfig',
     'stores.apps.StoresConfig',
     'products.apps.ProductsConfig',
     'sales.apps.SalesConfig',
+    'reports.apps.ReportsConfig', 
 ]
 
 MIDDLEWARE = [
@@ -151,15 +153,12 @@ STORE_AUTHORIZATION_VIEW = 'stores:store_auth'
 
 PASSWORD_VERIFICATION_VIEW = "users:password_verification"
 
-PASSWORD_VERIFICATION_VALIDITY_PERIOD = 120.0 # in seconds
+PASSWORD_VERIFICATION_VALIDITY_PERIOD = 180.0 # in seconds
 
 BASE_URL = "https://graphi.pythonanywhere.com"
 
 
 # DJMONEY
-
 EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.OpenExchangeRatesBackend'
 
 OPEN_EXCHANGE_RATES_APP_ID = djsm_manager.get_secret("openexchangerates_app_id")
-
-

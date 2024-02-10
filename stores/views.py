@@ -106,7 +106,7 @@ class StoreListView(
     queryset = stores_global_queryset
     paginate_by = 4
     form_class = StoreForm
-    user_fieldname = "owner"
+    user_field = "owner"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

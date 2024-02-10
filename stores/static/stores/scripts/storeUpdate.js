@@ -4,11 +4,16 @@ const updateStoreButton = updateStoreForm.querySelector('.submit-btn');
 const emailField = updateStoreForm.querySelector('#email');
 
 
-addOnPostAndOnResponseFuncAttr(updateStoreButton, 'Updating Store...');
+addOnPostAndOnResponseFuncAttr(updateStoreButton, 'Updating store...');
+
+updateStoreForm.onkeyup = function(e) {
+    updateStoreButton.disabled = false;
+};
 
 updateStoreForm.onchange = function(e) {
     updateStoreButton.disabled = false;
 };
+
 
 updateStoreForm.onsubmit = function(e) {
     e.stopImmediatePropagation();

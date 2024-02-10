@@ -1,0 +1,267 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+
+{% block page_title %}{{ user.fullname | title }}{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//content_container.css' %}">
+<link rel="stylesheet" href="{% static 'users//styles//user_account.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<section id="content-container">
+    <div id="content-header">
+        <div id="header-text">
+            <h1>{{ user.fullname | title }}</h1>
+            <p>Account and store management</p>
+            <small>Edit your account details, change your password, and manage store activities</small>
+        </div>
+
+        <div id="header-buttons">
+            <button 
+                class="header-button btn-secondary" 
+                id="store-select-toggle"
+                {% if user.stores.all %}
+                    title="Get today's sales report for a store"
+                {% else %}
+                    title="You have no store to generate report for"
+                    disabled
+                {% endif %}
+            >
+                Sales report
+            </button>
+        </div>
+    </div>
+
+    <div id="content-body">
+
+        <div id="account-details">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2>Update account info</h2>
+                    <p>Update your account details</p>
+                </div>
+        
+                <!-- Account Details Update Form Section -->
+                <form action="{% url 'users:account_update' user.username %}" id="account-update-form">
+                    {% csrf_token %}
+
+                    <div class="form-fields">
+                        <div class="form-field">
+                            <label for="firstname" hidden>First name</label>
+                            <input
+                                id="firstname" 
+                                name="firstname" 
+                                class="form-input"
+                                placeholder="First name"
+                                value="{{ user.firstname }}" 
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="lastname" hidden>Last name</label>
+                            <input
+                                id="lastname" 
+                                name="lastname" 
+                                class="form-input"
+                                placeholder="Last name"
+                                value="{{ user.lastname }}"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="email" hidden>Email Address</label>
+                            <input
+                                id="email" 
+                                name="email" 
+                                class="form-input"
+                                placeholder="Email address"
+                                value="{{ user.email }}" 
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+        
+                        <div class="form-field">
+                            <label for="timezone" hidden>Timezone</label>
+                            <select 
+                                title="What timezone are you in?"
+                                id="timezone" 
+                                name="timezone" 
+                                class="form-select"
+                                required
+                            >
+                                <option value="">Select your current timezone</option>
+                                {% for timezone in timezones %}
+                                <option 
+                                    value="{{ timezone }}"
+                                    {% if timezone|lower == user.timezone|lower %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ timezone }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="field-message"></small>
+
+                            <small 
+                                id="auto-timezone"
+                                title="Automatically update your timezone based on your current location"
+                            >
+                                Auto update timezone
+                            </small>
+                        </div>
+                        
+                        <div class="form-field">
+                            <label for="currency" hidden>Default Currency</label>
+                            <select 
+                                title="What currency do you prefer to use in your stores by default?"
+                                id="currency" 
+                                name="preferred_currency" 
+                                class="form-select"
+                                required
+                            >
+                                <option value="">Choose a preferred currency</option>
+                                {% for currency in currencies %}
+                                <option 
+                                    value="{{ currency|first }}" 
+                                    {% if currency|first == user.preferred_currency %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ currency|last }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="field-message"></small>
+                        </div>
+    
+                    </div>
+        
+                    <div class="submit-btn-wrapper">
+                        <button class="btn-primary submit-btn" type="submit" disabled>
+                            Save changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="change-password">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2>Change password</h2>
+                    <p>Update your account password</p>
+                </div>
+        
+                <!-- Change Password Form Section -->
+                <form action="{% url 'users:password_change' user.username %}" id="change-password-form">
+                    {% csrf_token %}
+
+                    <div class="form-fields">
+                        <div class="form-field">
+                            <label for="old-password" hidden>Current password</label>
+                            <input
+                                type="password"
+                                id="old-password" 
+                                name="old-password" 
+                                class="form-input"
+                                placeholder="Current password"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="new-password1" hidden>New password</label>
+                            <input
+                                type="password"
+                                id="new-password1" 
+                                name="new-password1" 
+                                class="form-input"
+                                placeholder="New password"
+                                minlength="8"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="new-password2" hidden>Confirm new password</label>
+                            <input
+                                type="password"
+                                id="new-password2" 
+                                name="new-password2" 
+                                class="form-input"
+                                placeholder="Confirm password"
+                                minlength="8"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+                    </div>
+        
+                    <div class="submit-btn-wrapper">
+                        <button class="btn-primary submit-btn" type="submit" disabled>
+                            Update password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="more-account-options">
+            <a id="account-delete" href="{% url 'users:account_delete' user.username %}" title="This action is irreversible. Are you sure want to perform this action?">
+                Delete my account
+            </a>
+        </div>
+    </div>
+
+    <div class="form-card form-card-modal" id="store-select-form-card">
+        <div class="form-header">
+            <h2>Select a store</h2>
+            <p>Select the store to generate report for</p>
+        </div>
+
+        <!-- Store Select Form for Report Generation -->
+        <form action="{% url 'users:store_report_redirect' %}" id="store-select-form" method="GET">
+            {% csrf_token %}
+            <div class="form-fields">
+                <div class="form-field">
+                    <label for="store" hidden>Stores</label>
+                    <select 
+                        id="store" 
+                        name="store" 
+                        required 
+                        class="form-select"
+                    >
+                        <option value="">Select store</option>
+                        {% for store in user.stores.all %}
+                        <option value="{{ store.slug }}">{{ store.name | title }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div> 
+            </div>
+
+            <div class="submit-btn-wrapper">
+                <button class="btn-primary submit-btn" type="submit">
+                    Get today's report
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'users//scripts//userAccount.js' %}"></script>
+<script src="{% static 'users//scripts//passwordChange.js' %}"></script>
+{% endblock scripts %}

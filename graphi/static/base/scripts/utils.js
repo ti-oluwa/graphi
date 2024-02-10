@@ -169,3 +169,13 @@ function underScoreObjectKeys(obj){
     };
     return newObj;
 };
+
+
+const headerSearch = document.querySelector('input#header-search');
+
+/**
+ * Disables the header search input
+ */
+function disableHeaderSearch(){
+    headerSearch.disabled = true;
+}

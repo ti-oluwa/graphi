@@ -8,7 +8,7 @@ Dashboard
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{% static 'base//styles//filters_card.css' %}">
-<link rel="stylesheet" href="{% static 'users//styles//dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard//styles//dashboard.css' %}">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -98,7 +98,7 @@ Dashboard
 
                     {% for category in product_categories %}
                     <div class="form-field">
-                        <input type="checkbox" name="{{ category }}" id="{{ category }}" value="{{ category }}" checked>
+                        <input type="checkbox" name="{{ category }}" id="{{ category }}" value="{{ category }}">
                         <label for="{{ category }}">{{ category }}</label>
                     </div>
                     {% endfor %}
@@ -151,6 +151,6 @@ Dashboard
 
 {% block scripts %}
 <script src="{% static 'base//scripts//filtersCard.js' %}"></script>
-<script src="{% static 'users//scripts//dashboardStats.js' %}"></script>
+<script src="{% static 'dashboard//scripts//dashboardStats.js' %}"></script>
 {% endblock scripts %}
 

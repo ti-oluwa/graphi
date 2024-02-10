@@ -1,0 +1,41 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--parchment) 100%);
+}
+
+main{
+    width: 100%;
+    display: flex;
+    gap: 40px 0;
+    padding: 80px 40px;
+}
+
+main > #message{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 24px 0;
+}
+
+#message > h2{
+    font-family: "Raleway";
+    font-size: clamp(36px, 2vw, 60px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--jasper);
+}
+
+#message > p{
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--dark-gray);
+}
+
+#message > p > a{
+    color: var(--teal);
+    font-weight: 700;
+    text-decoration: underline;
+}

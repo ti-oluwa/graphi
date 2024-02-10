@@ -1,0 +1,96 @@
+#sales-report {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 20px;
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    gap: 20px 0;
+}
+
+#sales-report > #sales-report-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+#sales-report-header > h3 {
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 700;
+  color: var(--text-dark);
+  font-family: "DM Sans";
+}
+
+#sales-report-header > b {
+    font-size: clamp(12px, 2vw, 14px);
+    font-weight: 600;
+    color: var(--jasper);
+    font-family: "DM Sans";
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#sales-report-header > b:hover {
+    opacity: 0.8;
+}
+
+#sales-report > #sales-report-body {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+#sales-report-body > #sales-report-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#sales-report-table > thead > tr {
+    width: 100%;
+    background-color: var(--white);
+}
+
+#sales-report-table > thead > tr > th {
+    font-size: clamp(14px, 2vw, 16px);
+    font-weight: 600;
+    font-family: "DM Sans";
+    color: var(--text-dark);
+    text-align: left;
+    padding: 10px 8px;
+    white-space: nowrap;
+}
+
+#sales-report-table > tbody > tr {
+  width: 100%;
+}
+
+#sales-report-table > tbody > tr > td {
+    font-size: clamp(12px, 2vw, 16px);
+    font-weight: 500;
+    color: var(--text-dark);
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--light-gray);
+    white-space: nowrap;
+}
+
+
+#sales-report-table > tbody > tr#total-row {
+    background: var(--white);
+}
+
+#sales-report-table > tbody > tr#total-row > td {
+    font-size: clamp(14px, 2vw, 18px);
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--light-gray);
+    white-space: nowrap;
+}

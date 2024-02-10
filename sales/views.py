@@ -1,4 +1,3 @@
-from math import e
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -7,16 +6,14 @@ from django.utils import timezone
 from django.urls import reverse
 from django.shortcuts import redirect
 import json
-from urllib.parse import urlencode as urllib_urlencode
 
-from .models import Sale
+from .models import Sale, PaymentMethod
 from .forms import SaleForm
 from stores.models import Store
 from stores.mixins import StoreQuerySetMixin, SupportsQuerySetFiltering
 from stores.decorators import requires_store_authorization, to_JsonResponse
 from users.decorators import requires_account_verification, requires_password_verification
 from users.mixins import RequestUserQuerySetMixin
-from users.utils import parse_query_params_from_request
 
 
 sale_queryset = Sale.objects.all().select_related("store", "product")
@@ -38,12 +35,12 @@ class SaleListView(
     paginate_by = 20
 
     # For the StoreQuerySetMixin
-    store_fieldname = "store"
+    store_field = "store"
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
 
     # For the RequestUserQuerySetMixin
-    user_fieldname = "store__owner"
+    user_field = "store__owner"
 
     # For the SupportsQuerySetFiltering mixin
     filter_mappings = {
@@ -69,6 +66,8 @@ class SaleListView(
             made_at__date=user.to_local_timezone(timezone.now()).date()
         )
         context["store"] = Store.objects.get(slug=self.kwargs["store_slug"])
+        context["payment_methods"] = PaymentMethod.choices
+        context["has_made_sales"] = Sale.objects.filter(store=context["store"]).exists()
         return context
 
 
@@ -138,7 +137,7 @@ class SaleUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateView)
     context_object_name = "sale"
 
     # For the StoreQuerySetMixin
-    store_fieldname = "store"
+    store_field = "store"
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
 
@@ -197,7 +196,7 @@ class SaleDeleteView(StoreQuerySetMixin, LoginRequiredMixin, generic.DetailView)
     pk_url_kwarg = "sale_id"
 
     # For the StoreQuerySetMixin
-    store_fieldname = "store"
+    store_field = "store"
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
 

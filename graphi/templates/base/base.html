@@ -33,11 +33,11 @@
             <ul>
                 <li>
                     <a 
-                        href="{% url 'users:dashboard' %}" 
-                        id="dashboard" 
+                        href="{% url 'dashboard:dashboard' %}" 
                         {% if 'dashboard' in request.path %}
                         class="current-tab"
                         {% endif %}
+                        title="View activities and statistics of all your stores"
                     >
                         <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
                             <g>
@@ -53,10 +53,10 @@
                 <li>
                     <a 
                         href="{% url 'stores:store_list' %}" 
-                        id="stores"
                         {% if 'stores' in request.path %}
                         class="current-tab"
                         {% endif %}
+                        title="View and manage all your stores"
                     >
                         <svg height="24" viewBox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
                             <path fill="currentColor" d="M14 36c-2.21 0-3.98 1.79-3.98 4s1.77 4 3.98 4 4-1.79 4-4-1.79-4-4-4zm-12-32v4h4l7.19 15.17-2.7 4.9c-.31.58-.49 1.23-.49 1.93 0 2.21 1.79 4 4 4h24v-4h-23.15c-.28 0-.5-.22-.5-.5 0-.09.02-.17.06-.24l1.79-3.26h14.9c1.5 0 2.81-.83 3.5-2.06l7.15-12.98c.16-.28.25-.61.25-.96 0-1.11-.9-2-2-2h-29.57l-1.9-4h-6.53zm32 32c-2.21 0-3.98 1.79-3.98 4s1.77 4 3.98 4 4-1.79 4-4-1.79-4-4-4z"/>
@@ -90,11 +90,11 @@
 
                 <li>
                     <a 
-                        href="#" 
-                        id="account"
+                        href="{% url 'users:account_management' request.user.username %}" 
                         {% if 'account' in request.path %}
                         class="current-tab"
                         {% endif %}
+                        title="View and manage your account"
                     >
                         <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                             <path 
@@ -116,7 +116,7 @@
     <!-- Header Section -->
     <main id="main">
         <header class="floating-card">
-            <div id="search-bar">
+            <div id="search-bar" title="Search for products, sales, and more">
                 <svg 
                     style="enable-background:new 0 0 24 24;" 
                     height="24" 
@@ -144,14 +144,22 @@
 
             <ul id="nav-menu">
                 <li>
-                    <a href="#" id="account">
+                    <a 
+                        href="{% url 'users:account_management' request.user.username %}" 
+                        id="account"
+                        title="View and manage your account"
+                    >
                         <span id="initials">{{ request.user.initials }}</span>
                         <span id="fullname">{{ request.user.fullname }}</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="{% url 'users:signout' %}" id="signout">
+                    <a 
+                        href="{% url 'users:signout' %}" 
+                        id="signout"
+                        title="Sign out of your account"
+                    >
                         <svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                             <path 
                                 d="M17 16L21 12M21 12L17 8M21 12L7 12M13 16V17C13 18.6569 11.6569 20 10 20H6C4.34315 20 3 18.6569 3 17V7C3 5.34315 4.34315 4 6 4H10C11.6569 4 13 5.34315 13 7V8" 

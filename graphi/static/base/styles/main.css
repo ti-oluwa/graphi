@@ -169,6 +169,7 @@ button{
 button:disabled, input:disabled{
     opacity: 0.5;
     pointer-events: none;
+    cursor: not-allowed !important;
 }
 
 .show-block{
@@ -179,3 +180,10 @@ button:disabled, input:disabled{
     display: flex !important;
 }
 
+.no-item{
+    font-family: "Manrope";
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 600;
+    color: var(--light-gray);
+    padding: 40px 20px;
+}

@@ -7,6 +7,8 @@ from django.utils import timezone
 from django.conf import settings
 from dateutil import parser as dateutil_parser
 
+from .models import UserAccount
+
 
 def redirect_authenticated(redirect_view: Callable | str):
     """
@@ -93,7 +95,6 @@ def requires_password_verification(
     return decorator
 
 
-
 def requires_account_verification(
         view_func: Callable[..., HttpResponse | JsonResponse] = None,
         error_msg: str = "Account verification required!"
@@ -119,3 +120,47 @@ def requires_account_verification(
     if view_func:
         return decorator(view_func)
     return decorator
+
+
+def email_request_user_on_response(
+        view_func: Callable[..., HttpResponse | JsonResponse] = None,
+        *,
+        status_code: int = 200,
+        subject: str = None,
+        body: str = None 
+    ) -> Callable[..., HttpResponse | JsonResponse]:
+    """
+    Decorator that sends an email to the user on view response.
+
+    :param view_func: The view function to decorate.
+    :param status_code: The status code of the response to send the email on.
+    :param subject: The subject of the email to send.
+    :param body: The body of the email to send.
+    """
+    def decorator(view_func: Callable[..., HttpResponse | JsonResponse]):
+        """
+        Decorator that sends an email to the user on view response.
+        """
+        @functools.wraps(view_func)
+        def wrapper(view, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse | JsonResponse:
+            response = view_func(view, request, *args, **kwargs)
+            sub = subject
+            bod = body
+            if not sub:
+                sub = f"Request to {request.path}"
+            if not bod:
+                bod = f"Your request to {settings.BASE_URL}/{request.path} got response {response.status_code} - {response.reason_phrase}"
+            if response.status_code == status_code:
+                user: UserAccount = request.user
+                try:
+                    user.send_mail(sub, bod)
+                except Exception:
+                    pass
+                
+            return response
+        return wrapper
+    
+    if view_func:
+        return decorator(view_func)
+    return decorator
+    

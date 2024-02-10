@@ -3,11 +3,15 @@ const updateSaleFormCard = updateSaleForm.parentElement;
 const updateSaleButton = updateSaleForm.querySelector('.submit-btn');
 
 
+updateSaleForm.onkeyup = function(e) {
+    updateSaleButton.disabled = false;
+};
+
 updateSaleForm.onchange = function(e) {
     updateSaleButton.disabled = false;
 };
 
-addOnPostAndOnResponseFuncAttr(updateSaleButton, 'Updating Sale...');
+addOnPostAndOnResponseFuncAttr(updateSaleButton, 'Updating sale...');
 
 
 updateSaleForm.onsubmit = function(e) {

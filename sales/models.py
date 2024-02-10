@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 import uuid
+import random
+import string
 from django.db import models
 from django_utz.decorators import model
 from djmoney.money import Money
@@ -9,10 +11,25 @@ from djmoney.contrib.exchange.models import convert_money
 from django.core.exceptions import ValidationError
 
 
+
+def generate_transaction_id() -> str:
+    """Generates a unique transaction ID."""
+    return "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+
+
+class PaymentMethod(models.TextChoices):
+    """Choices for payment methods."""
+    CASH = "cash", "Cash"
+    CARD = "card", "Card"
+    BANK_TRANSFER = "bank transfer", "Bank Transfer"
+
+
+
 @model
 class Sale(models.Model):
     """Model for a product sale."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    transaction_id = models.CharField(max_length=100, default=generate_transaction_id, unique=True)
     store = models.ForeignKey(
         "stores.Store", on_delete=models.CASCADE, related_name="sales"
     )
@@ -20,12 +37,15 @@ class Sale(models.Model):
         "products.Product", on_delete=models.CASCADE, related_name="sales"
     )
     quantity = models.PositiveIntegerField()
+    payment_method = models.CharField(
+        max_length=20, choices=PaymentMethod.choices, default=PaymentMethod.CASH
+    )
     made_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Sale"
-        verbose_name_plural = "Sales"
+        verbose_name = "sale"
+        verbose_name_plural = "sales"
         ordering = ("-made_at",)
 
     class UTZMeta:
@@ -47,29 +67,33 @@ class Sale(models.Model):
         return f"{self.store.name} - {self.product.name} - {self.quantity} - {self.revenue}"
 
 
-    def __add__(self, other: Sale) -> Sale:
-        """Add two sales together."""
-        if self.product != other.product:
-            raise ValueError("Cannot add sales of different products")
-        return Sale(
-            store=self.store,
-            product=self.product,
-            quantity=self.quantity + other.quantity,
-        )
+    def __add__(self, other: Sale) -> Money:
+        """
+        Add the revenue of one sale to another.
+
+        Returns the sum of the revenue in the currency of the first sale.
+        """
+        if not isinstance(other, Sale):
+            raise ValueError("Cannot add a sale to a non-sale object")
+        if other.revenue.currency != self.revenue.currency:
+            other.revenue = convert_money(other.revenue, self.revenue.currency)
+        return self.revenue + other.revenue
     
     __iadd__ = __add__
     __radd__ = __add__
     
 
-    def __sub__(self, other: Sale) -> Sale:
-        """Subtract two sales."""
-        if self.product != other.product:
-            raise ValueError("Cannot subtract sales of different products")
-        return Sale(
-            store=self.store,
-            product=self.product,
-            quantity=self.quantity - other.quantity,
-        )
+    def __sub__(self, other: Sale) -> Money:
+        """
+        Subtract the revenue of one sale from another.
+
+        Returns the difference in revenue in the currency of the first sale.
+        """
+        if not isinstance(other, Sale):
+            raise ValueError("Cannot subtract a sale from a non-sale object")
+        if other.revenue.currency != self.revenue.currency:
+            other.revenue = convert_money(other.revenue, self.revenue.currency)
+        return self.revenue - other.revenue
     
     __isub__ = __sub__
     __rsub__ = __sub__
@@ -80,10 +104,12 @@ class Sale(models.Model):
         if self.quantity == 0:
             raise ValidationError("Sale quantity cannot be zero")
         
-        if self.pk is not None:
+        try:
             # If the sale is being updated, add the old sale quantity back to the product quantity
             old_sale = Sale.objects.get(pk=self.pk)
             self.product.quantity += old_sale.quantity
+        except Sale.DoesNotExist:
+            pass
 
         if self.quantity > self.product.quantity:
             raise ValidationError(f"Sale quantity cannot be greater than available product quantity ({self.product.quantity})")
