@@ -9,13 +9,17 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils import timezone
 from django.views import generic
 from django.conf import settings
+import functools
 from urllib.parse import urlencode as urllib_urlencode
 from djmoney.settings import CURRENCY_CHOICES
 import pytz
 
 from .forms import UserCreationForm, UserUpdateForm
 from .models import UserAccount
-from .decorators import redirect_authenticated, requires_password_verification, requires_account_verification
+from .decorators import (
+    redirect_authenticated, requires_password_verification, 
+    requires_account_verification, email_request_user_on_response
+)
 from stores.decorators import to_JsonResponse
 from .utils import parse_query_params_from_request
 
@@ -202,7 +206,6 @@ class UserPasswordVerificationView(LoginRequiredMixin, generic.TemplateView):
             },
             status=400
         )
-    
 
 
 
@@ -225,6 +228,83 @@ class UserAccountDetailView(LoginRequiredMixin, generic.DetailView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
+
+
+class UserAccountPasswordChangeView(LoginRequiredMixin, generic.DetailView):
+    """View for changing a user's password."""
+    model = UserAccount
+    http_method_names = ["post"]
+    slug_field = "username"
+    slug_url_kwarg = "username"
+
+    subject = "Graphi - Account Password Change"
+    body = "Your Graphi account password has been changed successfully.\n\n If you did not make this change, please contact us immediately."
+
+    email_request_user_on_password_change = functools.partial(email_request_user_on_response, subject=subject, body=body)
+
+    @email_request_user_on_password_change
+    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
+        """Handles user password change AJAX/Fetch POST request"""
+        data: Dict = json.loads(request.body)
+        user: UserAccount = self.get_object()
+        current_password = data.get("old-password", None)
+        new_password = data.get("new-password1", None)
+        confirm_password = data.get("new-password2", None)
+
+        if not current_password:
+            return JsonResponse(
+                data={
+                    "status": "error",
+                    "detail": "Current password not provided!"
+                },
+                status=400
+            )
+
+        if not new_password:
+            return JsonResponse(
+                data={
+                    "status": "error",
+                    "detail": "New password not provided!"
+                },
+                status=400
+            )
+        
+        if current_password == new_password:
+            return JsonResponse(
+                data={
+                    "status": "error",
+                    "detail": "New password cannot be the same as the current password!"
+                },
+                status=400
+            )
+
+        if new_password != confirm_password:
+            return JsonResponse(
+                data={
+                    "status": "error",
+                    "detail": "New password and confirm password do not match!"
+                },
+                status=400
+            )
+
+        if user.check_password(current_password):
+            user.set_password(new_password)
+            user.save()
+            return JsonResponse(
+                data={
+                    "status": "success",
+                    "detail": "Password changed successfully!"
+                },
+                status=200
+            )
+        
+        return JsonResponse(
+            data={
+                "status": "error",
+                "detail": "Incorrect current password!"
+            },
+            status=400
+        )
 
 
 
@@ -320,8 +400,10 @@ account_verification_view = UserAccountVerificationView.as_view()
 user_logout_view = UserLogoutView.as_view()
 password_verification_view = UserPasswordVerificationView.as_view()
 
+
 # Account management
 user_account_view = UserAccountDetailView.as_view()
+user_account_password_change_view = UserAccountPasswordChangeView.as_view()
 user_account_update_view = UserAccountUpdateView.as_view()
 user_account_delete_view = UserAccountDeleteView.as_view()
 

@@ -6,7 +6,7 @@
     border-block: 1px solid var(--bluish-gray)
 }
 
-#account-details > .form-card{
+#account-details > .form-card, #change-password > .form-card{
     box-shadow: none;
 }
 

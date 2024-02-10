@@ -40,7 +40,7 @@
         <div id="account-details">
             <div class="form-card">
                 <div class="form-header">
-                    <h2>Account info</h2>
+                    <h2>Update account info</h2>
                     <p>Update your account details</p>
                 </div>
         
@@ -154,6 +154,69 @@
             </div>
         </div>
 
+        <div id="change-password">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2>Change password</h2>
+                    <p>Update your account password</p>
+                </div>
+        
+                <!-- Change Password Form Section -->
+                <form action="{% url 'users:password_change' user.username %}" id="change-password-form">
+                    {% csrf_token %}
+
+                    <div class="form-fields">
+                        <div class="form-field">
+                            <label for="old-password" hidden>Current password</label>
+                            <input
+                                type="password"
+                                id="old-password" 
+                                name="old-password" 
+                                class="form-input"
+                                placeholder="Current password"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="new-password1" hidden>New password</label>
+                            <input
+                                type="password"
+                                id="new-password1" 
+                                name="new-password1" 
+                                class="form-input"
+                                placeholder="New password"
+                                minlength="8"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="new-password2" hidden>Confirm new password</label>
+                            <input
+                                type="password"
+                                id="new-password2" 
+                                name="new-password2" 
+                                class="form-input"
+                                placeholder="Confirm password"
+                                minlength="8"
+                                required
+                            >
+                            <small class="field-message"></small>
+                        </div>
+                    </div>
+        
+                    <div class="submit-btn-wrapper">
+                        <button class="btn-primary submit-btn" type="submit" disabled>
+                            Update password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div id="more-account-options">
             <a id="account-delete" href="{% url 'users:account_delete' user.username %}" title="This action is irreversible. Are you sure want to perform this action?">
                 Delete my account
@@ -200,4 +263,5 @@
 
 {% block scripts %}
 <script src="{% static 'users//scripts//userAccount.js' %}"></script>
+<script src="{% static 'users//scripts//passwordChange.js' %}"></script>
 {% endblock scripts %}

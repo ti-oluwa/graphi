@@ -16,6 +16,10 @@ accountUpdateForm.addEventListener('keyup', function(e) {
     accountUpdateButton.disabled = false;
 });
 
+accountUpdateForm.addEventListener('change', function(e) {
+    accountUpdateButton.disabled = false;
+});
+
 
 autoSelectTimezoneButton.onclick = function() {
     const timezoneField = accountUpdateForm.querySelector('select#timezone');

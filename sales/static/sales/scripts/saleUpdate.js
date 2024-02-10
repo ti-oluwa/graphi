@@ -7,6 +7,10 @@ updateSaleForm.onkeyup = function(e) {
     updateSaleButton.disabled = false;
 };
 
+updateSaleForm.onchange = function(e) {
+    updateSaleButton.disabled = false;
+};
+
 addOnPostAndOnResponseFuncAttr(updateSaleButton, 'Updating sale...');
 
 

@@ -18,6 +18,7 @@ urlpatterns = [
 
     # Account management
     path("<str:username>/", views.user_account_view, name="account_management"),
+    path("<str:username>/change-password/", views.user_account_password_change_view, name="password_change"),
     path("<str:username>/update/", views.user_account_update_view, name="account_update"),
     path("<str:username>/delete/", views.user_account_delete_view, name="account_delete"),
 

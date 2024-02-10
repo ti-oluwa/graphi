@@ -9,6 +9,11 @@ updateProductForm.onkeyup = function(e) {
     updateProductButton.disabled = false;
 };
 
+updateProductForm.onchange = function(e) {
+    updateProductButton.disabled = false;
+};
+
+
 updateProductForm.onsubmit = function(e) {
     e.stopImmediatePropagation();
     e.preventDefault();

@@ -1,35 +1,34 @@
-const updateStoreForm = document.querySelector('#update-store-form');
-const updateStoreFormCard = updateStoreForm.parentElement;
-const updateStoreButton = updateStoreForm.querySelector('.submit-btn');
-const emailField = updateStoreForm.querySelector('#email');
+const passwordChangeForm = document.querySelector('#change-password-form');
+const passwordChangeFormCard = passwordChangeForm.parentElement;
+const changePasswordButton = passwordChangeForm.querySelector('.submit-btn');
+const passwordField1 = passwordChangeForm.querySelector('#new-password1');
+const passwordField2 = passwordChangeForm.querySelector('#new-password2');
 
 
-addOnPostAndOnResponseFuncAttr(updateStoreButton, 'Updating store...');
+addOnPostAndOnResponseFuncAttr(changePasswordButton, 'Updating password...');
 
-updateStoreForm.onkeyup = function(e) {
-    updateStoreButton.disabled = false;
-};
+passwordChangeForm.addEventListener('keyup', function(e) {
+    changePasswordButton.disabled = false;
+});
 
-updateStoreForm.onchange = function(e) {
-    updateStoreButton.disabled = false;
-};
+passwordChangeForm.addEventListener('change', function(e) {
+    changePasswordButton.disabled = false;
+});
 
 
-updateStoreForm.onsubmit = function(e) {
+passwordChangeForm.onsubmit = function(e) {
     e.stopImmediatePropagation();
     e.preventDefault();
 
-    if (!isValidEmail(emailField.value)) {
-        formFieldHasError(emailField.parentElement, 'Invalid email address!');
-        return;
-    }
+    if (!validatePassword(passwordField1, passwordField2)) return;
+
     const formData = new FormData(this);
     const data = {};
     for (const [key, value] of formData.entries()) {
         data[key] = value;
     }
 
-    updateStoreButton.onPost();
+    changePasswordButton.onPost();
     const options = {
         method: 'POST',
         headers: {
@@ -42,10 +41,11 @@ updateStoreForm.onsubmit = function(e) {
 
     fetch(this.action, options).then((response) => {
         if (!response.ok) {
-            updateStoreButton.onResponse();
+            changePasswordButton.onResponse();
             response.json().then((data) => {
                 const errors = data.errors ?? null;
                 if (errors){
+                    console.log(errors )
                     if(!typeof errors === Object) throw new TypeError("Invalid data type for 'errors'")
 
                     for (const [fieldName, msg] of Object.entries(errors)){
@@ -59,13 +59,17 @@ updateStoreForm.onsubmit = function(e) {
             });
 
         }else{
-            response.json().then((data) => {
-                pushNotification("success", data.detail ?? 'Store updated successfully!');
-                const redirectURL  = data.redirect_url ?? null;
+            changePasswordButton.onResponse();
+            changePasswordButton.disabled = true;
 
-                if(!redirectURL) return;
-                window.location.href = redirectURL;
+            response.json().then((data) => {
+                pushNotification("success", data.detail ?? 'Password updated successfully!');
             });
+            
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
         }
     });
 };
+

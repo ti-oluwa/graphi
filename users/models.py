@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 import uuid
+from typing import Any
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -68,24 +69,48 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
         if not self.username:
             self.username = slugify(f'{self.firstname}{self.lastname}{random.randrange(00000, 99999)}')[:100]
         return super().save(*args, **kwargs)
+    
+
+    def send_mail(
+            self, 
+            subject: str, 
+            message: str, 
+            from_email: str = settings.DEFAULT_FROM_EMAIL, 
+            connection: Any | None = None,
+            html: bool = False
+        ) -> None:
+        """
+        Send email to user.
+        
+        :param subject: The subject of the email.
+        :param message: The message to send.
+        :param from_email: The email address to send from.
+        :param connection: The email connection to use.
+        :param html: Whether the message is an html message.
+        """
+        connection = connection or get_smtp_connection()
+        email = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=f"Graphi <{from_email}>",
+            to=[self.email],
+            connection=connection
+        )
+        email.send(fail_silently=False)
+        if html:
+            email.content_subtype = "html"
+        return None
 
 
     def send_verification_email(self) -> None:
         """Send verification email to user."""
         if self.is_verified:
             return
-        connection = get_smtp_connection()
-        email = EmailMessage(
-            subject="Graphi - Verify your email address",
-            body=construct_verification_email(self),
-            from_email=f"Graphi <{settings.DEFAULT_FROM_EMAIL}>",
-            to=[self.email],
-            connection=connection
-        )
-        email.content_subtype = "html"
-        email.send(fail_silently=False)
+        subject = "Graphi - Verify your email address"
+        body = construct_verification_email(self)
+        return self.send_mail(subject, body, html=True)
 
-           
+    
 
 def construct_verification_email(user: UserAccount) -> str:
     """Construct the verification email body."""
