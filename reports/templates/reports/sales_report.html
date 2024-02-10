@@ -1,0 +1,93 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load django_utz %}
+
+{% block page_title %}Sales Report{% endblock page_title %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'base//styles//content_container.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//form_card.css' %}">
+<link rel="stylesheet" href="{% static 'base//styles//filters_card.css' %}">
+<link rel="stylesheet" href="{% static 'reports//styles//sales_report.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+<section id="content-container">
+    <div id="content-header">
+        <div id="header-text">
+            <h1>Sales Report for {{ store.name | title }}</h1>
+            <p>A concise summary of sales made in your store</p>
+            <small>Click on the customize option to customize sales report generation</small>
+        </div>
+    </div>
+
+    <div id="content-body">
+        {% if has_made_sales %}
+        <p id="filters-toggle">
+            Customize report
+        </p>
+        {% endif %}
+
+        <div id="content-body">
+            {% if sales %}
+                <div id="sales-report">
+                    <div id="sales-report-header">
+                        <h3>Report</h3>
+                        {% if sales.count > 1 %}
+                        <b id="print-report">Print report</b>
+                        {% endif %}
+                    </div>
+
+                    <div id="sales-report-body">
+                        <table id="sales-report-table">
+                            <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Transaction ID</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Amount</th>
+                                    <th>Payment Method</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for sale in sales %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ sale.transaction_id }}</td>
+                                    <td>{{ sale.product }}</td>
+                                    <td>{{ sale.quantity }}</td>
+                                    <td>{{ sale.revenue }}</td>
+                                    <td>{{ sale.payment_method | title }}</td>
+                                    <td>{{ sale.made_at_utz | date:"F j, Y" }}</td>
+                                </tr>
+                                {% endfor %}
+
+                                <tr id="total-row">
+                                    <td colspan="1"></td>
+                                    <td colspan="3">Total</td>
+                                    <td>{{ total_revenue }}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <p class="no-item">No sale made yet</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% include 'base/filters_card.html' %}
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'base//scripts//filtersCard.js' %}"></script>
+<script src="{% static 'base//scripts//usesFiltersCard.js' %}"></script>
+<script src="{% static 'reports//scripts//salesReport.js' %}"></script>
+{% endblock scripts %}
+

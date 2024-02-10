@@ -36,12 +36,12 @@ class ProductListView(
     paginate_by = 40
 
     # For the StoreQuerySetMixin
-    store_fieldname = "store"
+    store_field = "store"
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
 
     # For the RequestUserQuerySetMixin
-    user_fieldname = "store__owner"
+    user_field = "store__owner"
 
     # For the SupportsQuerySetFiltering mixin
     filter_mappings = {
@@ -153,7 +153,7 @@ class ProductUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateVi
     pk_url_kwarg = "product_id"
     template_name = "products/product_update.html"
     # For the StoreQuerySetMixin
-    store_fieldname = "store"
+    store_field = "store"
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
 
@@ -210,7 +210,7 @@ class ProductDeleteView(StoreQuerySetMixin, LoginRequiredMixin, generic.DetailVi
     http_method_names = ["get"]
     pk_url_kwarg = "product_id"
     # For the StoreQuerySetMixin
-    store_fieldname = "store"
+    store_field = "store"
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
 

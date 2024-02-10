@@ -12,4 +12,5 @@ urlpatterns = [
     path("<slug:store_slug>/delete/", views.store_delete_view, name="store_delete"),
     path("<slug:store_slug>/products/", include("products.urls", namespace="products")),
     path("<slug:store_slug>/sales/", include("sales.urls", namespace="sales")),
+    path("<slug:store_slug>/reports/", include("reports.urls", namespace="reports")),
 ]

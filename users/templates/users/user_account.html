@@ -20,8 +20,17 @@
         </div>
 
         <div id="header-buttons">
-            <button class="header-button btn-secondary">
-                Generate Report
+            <button 
+                class="header-button btn-secondary" 
+                id="store-select-toggle"
+                {% if user.stores.all %}
+                    title="Get today's sales report for a store"
+                {% else %}
+                    title="You have no store to generate report for"
+                    disabled
+                {% endif %}
+            >
+                Sales Reports
             </button>
         </div>
     </div>
@@ -36,7 +45,7 @@
                 </div>
         
                 <!-- Account Details Update Form Section -->
-                <form action="{% url 'users:account_update' user.pk %}" id="account-update-form">
+                <form action="{% url 'users:account_update' user.username %}" id="account-update-form">
                     {% csrf_token %}
 
                     <div class="form-fields">
@@ -102,7 +111,12 @@
                             </select>
                             <small class="field-message"></small>
 
-                            <small id="auto-timezone">Auto update timezone</small>
+                            <small 
+                                id="auto-timezone"
+                                title="Automatically update your timezone based on your current location"
+                            >
+                                Auto update timezone
+                            </small>
                         </div>
                         
                         <div class="form-field">
@@ -141,10 +155,45 @@
         </div>
 
         <div id="more-account-options">
-            <a id="account-delete" href="{% url 'users:account_delete' user.pk %}" title="This action is irreversible. Are you sure want to perform this action?">
+            <a id="account-delete" href="{% url 'users:account_delete' user.username %}" title="This action is irreversible. Are you sure want to perform this action?">
                 Delete my account
             </a>
         </div>
+    </div>
+
+    <div class="form-card form-card-modal" id="store-select-form-card">
+        <div class="form-header">
+            <h2>Select Store</h2>
+            <p>Select the store to generate report for</p>
+        </div>
+
+        <!-- Store Select Form for Report Generation -->
+        <form action="{% url 'users:store_report_redirect' %}" id="store-select-form" method="GET">
+            {% csrf_token %}
+            <div class="form-fields">
+                <div class="form-field">
+                    <label for="store" hidden>Stores</label>
+                    <select 
+                        id="store" 
+                        name="store" 
+                        required 
+                        class="form-select"
+                    >
+                        <option value="">Select store</option>
+                        {% for store in user.stores.all %}
+                        <option value="{{ store.slug }}">{{ store.name | title }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="field-message"></small>
+                </div> 
+            </div>
+
+            <div class="submit-btn-wrapper">
+                <button class="btn-primary submit-btn" type="submit">
+                    Get today's report
+                </button>
+            </div>
+        </form>
     </div>
 </section>
 {% endblock content %}

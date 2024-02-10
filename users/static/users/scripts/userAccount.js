@@ -3,6 +3,12 @@ const accountUpdateFormCard = accountUpdateForm.parentElement;
 const accountUpdateButton = accountUpdateForm.querySelector('.submit-btn');
 const emailField = accountUpdateForm.querySelector('#email');
 const autoSelectTimezoneButton = accountUpdateForm.querySelector('#auto-timezone');
+const storeSelectFormCard = document.querySelector('#store-select-form-card');
+const storeSelectToggle = document.querySelector('#store-select-toggle');
+
+
+// Disable header search
+disableHeaderSearch();
 
 addOnPostAndOnResponseFuncAttr(accountUpdateButton, 'Saving changes...');
 
@@ -18,6 +24,16 @@ autoSelectTimezoneButton.onclick = function() {
     var selectize = ss[0].selectize;
     selectize.setValue(selectize.search(timezone).items[0].id);
 };
+
+storeSelectToggle.onclick = function() {
+    storeSelectFormCard.classList.add("show-block");
+}
+
+document.addEventListener('click', (e) => {
+    if (!storeSelectToggle.contains(e.target) && !storeSelectFormCard.contains(e.target)){
+        storeSelectFormCard.classList.remove('show-block');
+    };
+});
 
 
 accountUpdateForm.onsubmit = function(e) {

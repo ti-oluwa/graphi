@@ -30,10 +30,11 @@ INSTALLED_APPS = [
     'djmoney.contrib.exchange',
 
     'users.apps.UsersConfig',
+    'dashboard.apps.DashboardConfig',
     'stores.apps.StoresConfig',
     'products.apps.ProductsConfig',
     'sales.apps.SalesConfig',
-    'dashboard.apps.DashboardConfig',
+    'reports.apps.ReportsConfig', 
 ]
 
 MIDDLEWARE = [
@@ -161,5 +162,3 @@ BASE_URL = "https://graphi.pythonanywhere.com"
 EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.OpenExchangeRatesBackend'
 
 OPEN_EXCHANGE_RATES_APP_ID = djsm_manager.get_secret("openexchangerates_app_id")
-
-

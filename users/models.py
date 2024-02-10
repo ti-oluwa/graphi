@@ -1,9 +1,10 @@
-import time
+import random
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 import uuid
 from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_utz.decorators import model, usermodel
 from timezone_field import TimeZoneField
@@ -21,6 +22,7 @@ from .managers import UserAccountManager
 class UserAccount(PermissionsMixin, AbstractBaseUser):
     """Custom user model"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(max_length=100, unique=True, blank=True)
     firstname = models.CharField(max_length=50)
     lastname = models.CharField(max_length=50)
     email = models.EmailField(_("email address"), unique=True)
@@ -41,8 +43,8 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
     objects = UserAccountManager()
 
     class Meta:
-        verbose_name = _("User account")
-        verbose_name_plural = _("User accounts")
+        verbose_name = _("user account")
+        verbose_name_plural = _("user accounts")
     
     class UTZMeta:
         timezone_field = "timezone"
@@ -59,9 +61,16 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
     @property
     def initials(self):
         return f"{self.firstname[0]}{self.lastname[0]}"
+    
+
+    def save(self, *args, **kwargs) -> None:
+        """Save user account."""
+        if not self.username:
+            self.username = slugify(f'{self.firstname}{self.lastname}{random.randrange(00000, 99999)}')[:100]
+        return super().save(*args, **kwargs)
 
 
-    def send_verification_email(self):
+    def send_verification_email(self) -> None:
         """Send verification email to user."""
         if self.is_verified:
             return

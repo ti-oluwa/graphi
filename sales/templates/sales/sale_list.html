@@ -22,7 +22,7 @@
     </div>
 
     <div id="content-body">
-        {% if has_any_sale %}
+        {% if has_made_sales %}
         <p id="filters-toggle">
             Filter sales
         </p>
@@ -65,7 +65,30 @@
                             >
                             <small class="field-message"></small>
                         </div> 
-        
+
+                        <div class="form-field">
+                            <label for="payment_method" hidden>Payment Method</label>
+                            <select 
+                                title="What payment method was used?"
+                                id="payment_method" 
+                                name="payment_method" 
+                                required 
+                                class="form-select"
+                            >
+                                <option value="">Select payment method</option>
+                                {% for payment_method in payment_methods %}
+                                <option 
+                                    value="{{ payment_method | first }}"
+                                    {% if payment_method|first == 'cash' %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ payment_method | last }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="field-message"></small>
+                        </div> 
                     </div>
         
                     <div class="submit-btn-wrapper">

@@ -49,8 +49,8 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Product"
-        verbose_name_plural = "Products"
+        verbose_name = "product"
+        verbose_name_plural = "products"
         ordering = ("name", "-added_at")
     
     class UTZMeta:

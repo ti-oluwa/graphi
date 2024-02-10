@@ -37,77 +37,81 @@
 
 
         <div id="stores-wrapper">
-            {% for store in stores %}
-            <div class="store-card floating-card">
-                <div class="store-card-top">
-                    <div>
-                        <h3 class="store-name">{{ store.name | title }}</h3>
-                        <span class="store-category">{{ store.type | title }}</span>
+            {% if stores %}
+                {% for store in stores %}
+                <div class="store-card floating-card">
+                    <div class="store-card-top">
+                        <div>
+                            <h3 class="store-name">{{ store.name | title }}</h3>
+                            <span class="store-category">{{ store.type | title }}</span>
+                        </div>
+
+                        <small class="store-products-count">{{ store.products.count }} Product{{ store.products.count | pluralize:"s" }}</small>
                     </div>
 
-                    <small class="store-products-count">{{ store.products.count }} Product{{ store.products.count | pluralize:"s" }}</small>
-                </div>
+                    <div class="store-card-bottom">
+                        <div>
+                            {% if store.sales.count %}
+                            <small class="last-sale-indicator">Last sale - {{ store.sales.last.made_at_utz | timesince }}</small>
+                            {% else %}
+                            <small class="last-sale-indicator">No sales yet</small>
+                            {% endif %}
 
-                <div class="store-card-bottom">
-                    <div>
-                        {% if store.sales.count %}
-                        <small class="last-sale-indicator">Last sale - {{ store.sales.last.made_at_utz | timesince }}</small>
-                        {% else %}
-                        <small class="last-sale-indicator">No sales yet</small>
-                        {% endif %}
+                            <p class="store-email">
+                                {{ store.email | default:store.owner.email }}
+                            </p>
+                        </div>
 
-                        <p class="store-email">
-                            {{ store.email | default:store.owner.email }}
-                        </p>
+                        <a href="{% url 'stores:products:product_list' store.slug %}" class="view-products-link">
+                            View Products
+                        </a>
                     </div>
 
-                    <a href="{% url 'stores:products:product_list' store.slug %}" class="view-products-link">
-                        View Products
-                    </a>
+                    <div class="card-options">
+                        {% usertimezone request.user %}
+                        <a href="{% url 'stores:sales:sale_list' store.slug %}?date={% now 'Y-m-d' %}" title="Record store sales" class="card-option sales-record-button">
+                            <svg height="24" viewBox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 0h48v48H0z" fill="none"/>
+                                <path fill="currentColor" d="M8 12H4v28c0 2.21 1.79 4 4 4h28v-4H8V12zm32-8H16c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h24c2.21 0 4-1.79 4-4V8c0-2.21-1.79-4-4-4zm-2 18H18v-4h20v4zm-8 8H18v-4h12v4zm8-16H18v-4h20v4z"/>
+                            </svg>
+                        </a>
+                        {% endusertimezone %}
+
+                        <a href="{% url 'stores:store_update' store.slug %}" title="Update store details" class="card-option update-store-button">
+                            <svg 
+                                width="24px"
+                                height="24px"
+                                style="enable-background:new 0 0 24 24;" 
+                                version="1.1" 
+                                viewBox="0 0 24 24" 
+                                xml:space="preserve" 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                            >
+                                <g id="info"/><g id="icons"><g id="edit">
+                                    <path fill="currentColor" d="M2,20c0,1.1,0.9,2,2,2h2.6L2,17.4V20z"/>
+                                    <path fill="currentColor" d="M21.6,5.6l-3.2-3.2c-0.8-0.8-2-0.8-2.8,0l-0.2,0.2C15,3,15,3.6,15.4,4L20,8.6c0.4,0.4,1,0.4,1.4,0l0.2-0.2    C22.4,7.6,22.4,6.4,21.6,5.6z"/>
+                                    <path fill="currentColor" d="M14,5.4c-0.4-0.4-1-0.4-1.4,0l-9.1,9.1C3,15,3,15.6,3.4,16L8,20.6c0.4,0.4,1,0.4,1.4,0l9.1-9.1c0.4-0.4,0.4-1,0-1.4    L14,5.4z"/>
+                                </g></g>
+                            </svg>
+                        </a>
+
+                        <a href="{% url 'stores:store_delete' store.slug %}" title="Delete store" class="card-option delete-store-button">
+                            <svg 
+                                width="24px"
+                                height="24px"
+                                viewBox="0 0 448 512" 
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path fill="currentColor" d="M432 80h-82.38l-34-56.75C306.1 8.827 291.4 0 274.6 0H173.4C156.6 0 141 8.827 132.4 23.25L98.38 80H16C7.125 80 0 87.13 0 96v16C0 120.9 7.125 128 16 128H32v320c0 35.35 28.65 64 64 64h256c35.35 0 64-28.65 64-64V128h16C440.9 128 448 120.9 448 112V96C448 87.13 440.9 80 432 80zM171.9 50.88C172.9 49.13 174.9 48 177 48h94c2.125 0 4.125 1.125 5.125 2.875L293.6 80H154.4L171.9 50.88zM352 464H96c-8.837 0-16-7.163-16-16V128h288v320C368 456.8 360.8 464 352 464zM224 416c8.844 0 16-7.156 16-16V192c0-8.844-7.156-16-16-16S208 183.2 208 192v208C208 408.8 215.2 416 224 416zM144 416C152.8 416 160 408.8 160 400V192c0-8.844-7.156-16-16-16S128 183.2 128 192v208C128 408.8 135.2 416 144 416zM304 416c8.844 0 16-7.156 16-16V192c0-8.844-7.156-16-16-16S288 183.2 288 192v208C288 408.8 295.2 416 304 416z"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-
-                <div class="card-options">
-                    {% usertimezone request.user %}
-                    <a href="{% url 'stores:sales:sale_list' store.slug %}?date={% now 'Y-m-d' %}" title="Record store sales" class="card-option sales-record-button">
-                        <svg height="24" viewBox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M0 0h48v48H0z" fill="none"/>
-                            <path fill="currentColor" d="M8 12H4v28c0 2.21 1.79 4 4 4h28v-4H8V12zm32-8H16c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h24c2.21 0 4-1.79 4-4V8c0-2.21-1.79-4-4-4zm-2 18H18v-4h20v4zm-8 8H18v-4h12v4zm8-16H18v-4h20v4z"/>
-                        </svg>
-                    </a>
-                    {% endusertimezone %}
-
-                    <a href="{% url 'stores:store_update' store.slug %}" title="Update store details" class="card-option update-store-button">
-                        <svg 
-                            width="24px"
-                            height="24px"
-                            style="enable-background:new 0 0 24 24;" 
-                            version="1.1" 
-                            viewBox="0 0 24 24" 
-                            xml:space="preserve" 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                        >
-                            <g id="info"/><g id="icons"><g id="edit">
-                                <path fill="currentColor" d="M2,20c0,1.1,0.9,2,2,2h2.6L2,17.4V20z"/>
-                                <path fill="currentColor" d="M21.6,5.6l-3.2-3.2c-0.8-0.8-2-0.8-2.8,0l-0.2,0.2C15,3,15,3.6,15.4,4L20,8.6c0.4,0.4,1,0.4,1.4,0l0.2-0.2    C22.4,7.6,22.4,6.4,21.6,5.6z"/>
-                                <path fill="currentColor" d="M14,5.4c-0.4-0.4-1-0.4-1.4,0l-9.1,9.1C3,15,3,15.6,3.4,16L8,20.6c0.4,0.4,1,0.4,1.4,0l9.1-9.1c0.4-0.4,0.4-1,0-1.4    L14,5.4z"/>
-                            </g></g>
-                        </svg>
-                    </a>
-
-                    <a href="{% url 'stores:store_delete' store.slug %}" title="Delete store" class="card-option delete-store-button">
-                        <svg 
-                            width="24px"
-                            height="24px"
-                            viewBox="0 0 448 512" 
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path fill="currentColor" d="M432 80h-82.38l-34-56.75C306.1 8.827 291.4 0 274.6 0H173.4C156.6 0 141 8.827 132.4 23.25L98.38 80H16C7.125 80 0 87.13 0 96v16C0 120.9 7.125 128 16 128H32v320c0 35.35 28.65 64 64 64h256c35.35 0 64-28.65 64-64V128h16C440.9 128 448 120.9 448 112V96C448 87.13 440.9 80 432 80zM171.9 50.88C172.9 49.13 174.9 48 177 48h94c2.125 0 4.125 1.125 5.125 2.875L293.6 80H154.4L171.9 50.88zM352 464H96c-8.837 0-16-7.163-16-16V128h288v320C368 456.8 360.8 464 352 464zM224 416c8.844 0 16-7.156 16-16V192c0-8.844-7.156-16-16-16S208 183.2 208 192v208C208 408.8 215.2 416 224 416zM144 416C152.8 416 160 408.8 160 400V192c0-8.844-7.156-16-16-16S128 183.2 128 192v208C128 408.8 135.2 416 144 416zM304 416c8.844 0 16-7.156 16-16V192c0-8.844-7.156-16-16-16S288 183.2 288 192v208C288 408.8 295.2 416 304 416z"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p class="no-item">No store created yet</p>
+            {% endif %}
         </div>
     </div>
 

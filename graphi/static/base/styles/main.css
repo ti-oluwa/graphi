@@ -169,6 +169,7 @@ button{
 button:disabled, input:disabled{
     opacity: 0.5;
     pointer-events: none;
+    cursor: not-allowed !important;
 }
 
 .show-block{

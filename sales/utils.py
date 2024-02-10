@@ -123,3 +123,4 @@ def aggregate_sales_count(
     if not sales_filters:
         return 0
     return Sale.get_count(**sales_filters)
+

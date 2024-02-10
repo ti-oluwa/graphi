@@ -1,4 +1,5 @@
 import json
+import random
 from typing import Any, Dict
 from django.urls import reverse
 from django.shortcuts import redirect
@@ -8,12 +9,14 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils import timezone
 from django.views import generic
 from django.conf import settings
+from urllib.parse import urlencode as urllib_urlencode
 from djmoney.settings import CURRENCY_CHOICES
 import pytz
 
 from .forms import UserCreationForm, UserUpdateForm
 from .models import UserAccount
-from .decorators import redirect_authenticated, requires_password_verification
+from .decorators import redirect_authenticated, requires_password_verification, requires_account_verification
+from stores.decorators import to_JsonResponse
 from .utils import parse_query_params_from_request
 
 
@@ -45,7 +48,7 @@ class UserCreateView(generic.CreateView):
             return JsonResponse(
                 data={
                     "status": "success",
-                    "detail": "Account created successfully. Check your email for verification link.",
+                    "detail": "Account created successfully. Check your email for a verification link.",
                     "redirect_url": reverse("users:signin")
                 },
                 status=201
@@ -66,7 +69,7 @@ class UserLoginView(generic.TemplateView):
     """View for authenticating a user."""
     template_name = "users/signin.html"
 
-    @redirect_authenticated("users:dashboard")
+    @redirect_authenticated("dashboard:dashboard")
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         return super().get(request, *args, **kwargs)
 
@@ -83,14 +86,18 @@ class UserLoginView(generic.TemplateView):
             if current_timezone:
                 user.timezone = current_timezone
                 user.save()
-                
             login(request, user)
+            
             query_params = parse_query_params_from_request(request)
+            next_url = query_params.pop("next", None) 
+            if next_url and query_params:
+                other_query_params = urllib_urlencode(query_params)
+                next_url = f"{next_url}?{other_query_params}"
             return JsonResponse(
                 data={
                     "status": "success",
                     "detail": f"Welcome {user.fullname}!",
-                    "redirect_url": query_params.get("next", None) or reverse("users:dashboard")
+                    "redirect_url": next_url or reverse("dashboard:dashboard")
                 },
                 status=200
             )
@@ -203,7 +210,8 @@ class UserAccountDetailView(LoginRequiredMixin, generic.DetailView):
     """View for getting a user's account details."""
     model = UserAccount
     template_name = "users/user_account.html"
-    pk_url_kwarg = "account_id"
+    slug_field = "username"
+    slug_url_kwarg = "username"
     context_object_name = "user"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -224,10 +232,13 @@ class UserAccountUpdateView(LoginRequiredMixin, generic.UpdateView):
     """View for updating a user's account details."""
     model = UserAccount
     form_class = UserUpdateForm
-    pk_url_kwarg = "account_id"
+    slug_field = "username"
+    slug_url_kwarg = "username"
     context_object_name = "user"
     http_method_names = ["post"]
 
+    @to_JsonResponse
+    @requires_account_verification
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> JsonResponse:
         """Handles user detail update AJAX/Fetch POST request"""
         data: Dict = json.loads(request.body)
@@ -236,10 +247,12 @@ class UserAccountUpdateView(LoginRequiredMixin, generic.UpdateView):
 
         if form.is_valid():
             user: UserAccount = form.save(commit=False)
+            extra_msg = ""
             if "email" in form.changed_data:
                 user.is_verified = False
             try:
                 user.send_verification_email()
+                extra_msg = "Please check your email inbox for an email verification link."
             except Exception:
                 return JsonResponse(
                     data={
@@ -253,7 +266,7 @@ class UserAccountUpdateView(LoginRequiredMixin, generic.UpdateView):
             return JsonResponse(
                 data={
                     "status": "success",
-                    "detail": "Account update successfully!",
+                    "detail": f"Account update successfully! {extra_msg}",
                 },
                 status=200
             )
@@ -272,15 +285,32 @@ class UserAccountDeleteView(LoginRequiredMixin, generic.DetailView):
     """View for deleting a sale record from a store."""
     model = UserAccount
     http_method_names = ["get"]
-    pk_url_kwarg = "account_id"
+    slug_field = "username"
+    slug_url_kwarg = "username"
 
-    @requires_password_verification(expiration_time_key="account_deletion_expiration_time")
+    @requires_password_verification(expiration_time_key=f"{random.randrange(0000000, 9999999)}")
     # Changed the expiration time key so that the user cannot 
     # delete his/her account without password verifying again
     def get(self, request, *args, **kwargs):
         user = self.get_object()
         user.delete()
         return redirect("users:signin")
+
+
+
+class StoreReportRedirectView(LoginRequiredMixin, generic.RedirectView):
+    """View for redirecting to a store's sales report page from the account management page."""
+    permanent = False
+    pattern_name = "stores:reports:sales_report"
+
+    def get_redirect_url(self, *args, **kwargs) -> str:
+        store_slug = self.request.GET.get("store", None)
+        if store_slug:
+            redirect_url = reverse(self.pattern_name, kwargs={"store_slug": store_slug})
+            todays_date = self.request.user.to_local_timezone(timezone.now()).date()
+            return f"{redirect_url}?date={todays_date}"
+        return reverse("dashboard:dashboard")
+
 
 
 # Account creation and verification
@@ -294,3 +324,7 @@ password_verification_view = UserPasswordVerificationView.as_view()
 user_account_view = UserAccountDetailView.as_view()
 user_account_update_view = UserAccountUpdateView.as_view()
 user_account_delete_view = UserAccountDeleteView.as_view()
+
+# Store report redirect
+store_report_redirect_view = StoreReportRedirectView.as_view()
+
