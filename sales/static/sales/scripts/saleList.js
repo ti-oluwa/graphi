@@ -3,7 +3,7 @@ const addSaleFormCard = addSaleForm.parentElement;
 const addSaleButton = addSaleForm.querySelector('.submit-btn');
 
 
-addOnPostAndOnResponseFuncAttr(addSaleButton, 'Recording Sale...');
+addOnPostAndOnResponseFuncAttr(addSaleButton, 'Recording sale...');
 
 
 addSaleForm.onsubmit = function(e) {

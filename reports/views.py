@@ -56,7 +56,8 @@ class SalesReportView(
         sales = context["sales"]
         if sales:
             context["total_revenue"] = get_total_sales_revenue(sales)
-            
+            context["total_quantity_sold"] = sum(sale.quantity for sale in sales)
+
         store = self._get_store()
         context["store"] = store
         context["has_made_sales"] = Sale.objects.filter(store=store).exists()

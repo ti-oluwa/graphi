@@ -30,7 +30,7 @@ document.addEventListener('click', (e) => {
     };
 });
 
-addOnPostAndOnResponseFuncAttr(addProductButton, 'Adding Product...');
+addOnPostAndOnResponseFuncAttr(addProductButton, 'Adding product...');
 
 
 addProductForm.onsubmit = function(e) {

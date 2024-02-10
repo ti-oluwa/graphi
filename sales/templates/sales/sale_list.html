@@ -93,7 +93,7 @@
         
                     <div class="submit-btn-wrapper">
                         <button class="btn-primary submit-btn" type="submit">
-                            Record Sale
+                            Record sale
                         </button>
                     </div>
                 </form>
@@ -107,6 +107,10 @@
                             <a href="{% url 'stores:products:product_list' sale.store.slug %}?product={{ sale.product.pk }}">{{ sale.product.name }}</a> - {{ sale.quantity }}
                         </p>
                         <p class="sale-revenue">{{ sale.revenue }}</p>
+                    </div>
+
+                    <div class="sale-record-main-middle">
+                        <p class="sale-payment-method">Paid for by {{ sale.payment_method }}</p>
                     </div>
 
                     <div class="sale-record-main-bottom">

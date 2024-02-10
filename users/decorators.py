@@ -93,7 +93,6 @@ def requires_password_verification(
     return decorator
 
 
-
 def requires_account_verification(
         view_func: Callable[..., HttpResponse | JsonResponse] = None,
         error_msg: str = "Account verification required!"

@@ -21,3 +21,4 @@ def get_total_sales_revenue(sales: list[Sale], currency: str = None) -> Money:
     for sale in sales:
         t += sale.revenue
     return t
+

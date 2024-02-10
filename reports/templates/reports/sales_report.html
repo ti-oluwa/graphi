@@ -49,6 +49,7 @@
                                     <th>Amount</th>
                                     <th>Payment Method</th>
                                     <th>Date</th>
+                                    <th>Time</th>
                                 </tr>
                             </thead>
 
@@ -61,15 +62,17 @@
                                     <td>{{ sale.quantity }}</td>
                                     <td>{{ sale.revenue }}</td>
                                     <td>{{ sale.payment_method | title }}</td>
-                                    <td>{{ sale.made_at_utz | date:"F j, Y" }}</td>
+                                    <td>{{ sale.made_at_utz | date }}</td>
+                                    <td>{{ sale.made_at_utz | time:"H:i" }}</td>
                                 </tr>
                                 {% endfor %}
 
                                 <tr id="total-row">
                                     <td colspan="1"></td>
-                                    <td colspan="3">Total</td>
+                                    <td colspan="2">Total</td>
+                                    <td>{{ total_quantity_sold }}</td>
                                     <td>{{ total_revenue }}</td>
-                                    <td colspan="2"></td>
+                                    <td colspan="3"></td>
                                 </tr>
                             </tbody>
                         </table>

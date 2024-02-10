@@ -3,7 +3,7 @@ const updateProductFormCard = updateProductForm.parentElement;
 const updateProductButton = updateProductForm.querySelector('.submit-btn');
 
 
-addOnPostAndOnResponseFuncAttr(updateProductButton, 'Updating Product...');
+addOnPostAndOnResponseFuncAttr(updateProductButton, 'Updating product...');
 
 updateProductForm.onkeyup = function(e) {
     updateProductButton.disabled = false;

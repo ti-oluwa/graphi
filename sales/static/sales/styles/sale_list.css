@@ -39,6 +39,12 @@
     font-weight: 700;
 }
 
+.sale-payment-method{
+    font-family: "Manrope";
+    font-size: 12px;
+    font-weight: 500;
+}
+
 .sale-options{
     display: flex;
     gap: 6px;

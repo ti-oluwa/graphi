@@ -15,7 +15,7 @@ document.addEventListener('click', (e) => {
     };
 });
 
-addOnPostAndOnResponseFuncAttr(createStoreButton, 'Creating Store...');
+addOnPostAndOnResponseFuncAttr(createStoreButton, 'Creating store...');
 
 
 createStoreForm.onsubmit = function(e) {

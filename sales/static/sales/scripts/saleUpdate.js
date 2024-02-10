@@ -7,7 +7,7 @@ updateSaleForm.onkeyup = function(e) {
     updateSaleButton.disabled = false;
 };
 
-addOnPostAndOnResponseFuncAttr(updateSaleButton, 'Updating Sale...');
+addOnPostAndOnResponseFuncAttr(updateSaleButton, 'Updating sale...');
 
 
 updateSaleForm.onsubmit = function(e) {
