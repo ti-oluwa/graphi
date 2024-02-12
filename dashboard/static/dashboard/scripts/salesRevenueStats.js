@@ -2,7 +2,7 @@ const storeFieldset = filtersCardForm.querySelector('fieldset.store-filters');
 const storeFieldsetCheckboxes = storeFieldset.querySelectorAll('input[type=checkbox]');
 
 const filtersCardToggles = document.querySelectorAll('.stat-card .more-options');
-const filtersProcessURL = window.location.href + 'stats/advanced-options/';
+const filtersProcessURL = window.location.href + 'stats/sales-revenue/';
 
 
 filtersCardToggles.forEach(toggle => {

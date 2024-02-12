@@ -16,7 +16,7 @@ Dashboard
 <section id="dashboard-stats">
     <div id="stats-header">
         <h2>Dashboard</h2>
-        <p>Account stats summary</p>
+        <p>Account stats</p>
     </div>
 
     <div id="stats-cards">
@@ -70,14 +70,14 @@ Dashboard
         <div id="most-sold-card" class="stat-card floating-card">
             <div class="stat-card-header">
                 <h3>Most sold product</h3>
-                <p>Providence Ventures</p>
+                <p class="stat-value-misc">{{ most_sold_product.store.name }} - {{ most_sold_product.sales_count }} sales</p>
             </div>
 
             <div class="stat-card-body">
-                <h1 class="stat-value">Test Product</h1>
+                <h1 class="stat-value">{{ most_sold_product.name }}</h1>
 
                 <!-- Most Sold Product Form Section -->
-                <form action="" id="most-sold-product-form">
+                <form action="{% url 'dashboard:most_sold_product_stat' %}" id="most-sold-product-form">
                     {% csrf_token %}
                     <div class="form-fields">
                         <div class="form-field">
@@ -89,11 +89,14 @@ Dashboard
                                 required 
                                 placeholder="Select a time frame"
                                 class="form-select"
-                            >
-                                <option value="past 3 days" selected>In the past 3 days</option>
+                            >   
+                                <option value="all time" selected>All time</option>
+                                <option value="past 3 days">In the past 3 days</option>
                                 <option value="past week">In the past week</option>
                                 <option value="past 2 weeks">In the past 2 weeks</option>
                                 <option value="past month">In the past month</option>
+                                <option value="past 3 months">In the past 3 month</option>
+                                <option value="past 6 months">In the past 6 month</option>
                                 <option value="past year">In the past year</option>
                             </select>
                             <small class="field-message"></small>
@@ -107,14 +110,14 @@ Dashboard
         <div id="revenue-card" class="stat-card floating-card">
             <div class="stat-card-header">
                 <h3>Most active store</h3>
-                <p>1000 sales</p>
+                <p class="stat-value-misc">{{ most_active_store.sales_count }} sales</p>
             </div>
 
             <div class="stat-card-body">
-                <h1 class="stat-value">Providence Ventures</h1>
+                <h1 class="stat-value">{{ most_active_store.name }}</h1>
 
                 <!-- Most Active Sroduct Form Section -->
-                <form action="" id="most-active-store-form">
+                <form action="{% url 'dashboard:most_active_store_stat' %}" id="most-active-store-form">
                     {% csrf_token %}
                     <div class="form-fields">
                         <div class="form-field">
@@ -126,11 +129,14 @@ Dashboard
                                 required 
                                 placeholder="Select a time frame"
                                 class="form-select"
-                            >
-                                <option value="past 3 days" selected>In the past 3 days</option>
+                            >   
+                                <option value="all time" selected>All time</option>
+                                <option value="past 3 days">In the past 3 days</option>
                                 <option value="past week">In the past week</option>
                                 <option value="past 2 weeks">In the past 2 weeks</option>
                                 <option value="past month">In the past month</option>
+                                <option value="past 3 months">In the past 3 month</option>
+                                <option value="past 6 months">In the past 6 month</option>
                                 <option value="past year">In the past year</option>
                             </select>
                             <small class="field-message"></small>
@@ -225,6 +231,8 @@ Dashboard
 
 {% block scripts %}
 <script src="{% static 'base//scripts//filtersCard.js' %}"></script>
-<script src="{% static 'dashboard//scripts//dashboardStats.js' %}"></script>
+<script src="{% static 'dashboard//scripts//salesRevenueStats.js' %}"></script>
+<script src="{% static 'dashboard//scripts//mostSoldProductStat.js' %}"></script>
+<script src="{% static 'dashboard//scripts//mostActiveStoreStat.js' %}"></script>
 {% endblock scripts %}
 

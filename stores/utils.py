@@ -51,7 +51,7 @@ def parse_timeframe_statement(statement: str) -> Tuple[datetime.datetime, dateti
         datetime.datetime(2022, 9, 16, 15, 22, 46, 606000, tzinfo=<UTC>)
     )
 
-    Note: The start and end of the timeframe are timezone aware datetime objects in the UTC timezone.
+    Note: The start and end of the timeframe are timezone aware datetime objects in the server's timezone.
     Convert to the desired timezone using the `astimezone` method.
     """
     allowed_prefixes = ("last", "past", "in", "next")
@@ -93,11 +93,15 @@ def parse_timeframe_statement(statement: str) -> Tuple[datetime.datetime, dateti
         if key == "years":
             key = "weeks"
             duration *= 52
+        elif key == "months":
+            key = "weeks"
+            duration *= 4
+
         time_delta = timezone.timedelta(**{key: duration})
     except TypeError:
         raise ValueError(f"Unrecognized time statement: '{parts[2]}' in '{statement}'")
     
-    now = timezone.now().astimezone(timezone.utc)
+    now = timezone.now()
     if prefix in negative_delta_prefixes:
         return now - time_delta, now
     return now, now + time_delta

@@ -44,7 +44,7 @@
 #stats-cards > .stat-card{
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: flex-start;
     gap: 10px;
     position: relative;
@@ -78,14 +78,14 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 10px;
 }
 
 .stat-card-body > h1{
     font-family: "DM Sans";
-    font-size: clamp(24px, 2vw, 36px);
+    font-size: clamp(22px, 2vw, 28px);
     font-weight: 700;
     color: var(--dark-gray);
     flex-shrink: 0;
@@ -98,6 +98,10 @@
     color: var(--jasper);
     cursor: pointer;
     text-decoration: underline;
+}
+
+.stat-card-body .form-field{
+    min-width: 100px !important;
 }
 
 /* Media Queries */
