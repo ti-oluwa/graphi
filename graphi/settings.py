@@ -153,7 +153,7 @@ STORE_AUTHORIZATION_VIEW = 'stores:store_auth'
 
 PASSWORD_VERIFICATION_VIEW = "users:password_verification"
 
-PASSWORD_VERIFICATION_VALIDITY_PERIOD = 180.0 # in seconds
+PASSWORD_VERIFICATION_VALIDITY_PERIOD = 3.0 # in seconds # Made short for security reasons
 
 BASE_URL = "https://graphi.pythonanywhere.com"
 

@@ -65,6 +65,80 @@ Dashboard
                 <span class="more-options" data-title="Filter revenue by">Advanced options</span>
             </div>
         </div>
+
+        <!-- {% if products_count > 0 %} -->
+        <div id="most-sold-card" class="stat-card floating-card">
+            <div class="stat-card-header">
+                <h3>Most sold product</h3>
+                <p>Providence Ventures</p>
+            </div>
+
+            <div class="stat-card-body">
+                <h1 class="stat-value">Test Product</h1>
+
+                <!-- Most Sold Product Form Section -->
+                <form action="" id="most-sold-product-form">
+                    {% csrf_token %}
+                    <div class="form-fields">
+                        <div class="form-field">
+                            <label for="timeframe" hidden>Time frame</label>
+                            <select 
+                                title="Select a time frame"
+                                id="timeframe" 
+                                name="timeframe" 
+                                required 
+                                placeholder="Select a time frame"
+                                class="form-select"
+                            >
+                                <option value="past 3 days" selected>In the past 3 days</option>
+                                <option value="past week">In the past week</option>
+                                <option value="past 2 weeks">In the past 2 weeks</option>
+                                <option value="past month">In the past month</option>
+                                <option value="past year">In the past year</option>
+                            </select>
+                            <small class="field-message"></small>
+                        </div> 
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- {% endif %} -->
+
+        <div id="revenue-card" class="stat-card floating-card">
+            <div class="stat-card-header">
+                <h3>Most active store</h3>
+                <p>1000 sales</p>
+            </div>
+
+            <div class="stat-card-body">
+                <h1 class="stat-value">Providence Ventures</h1>
+
+                <!-- Most Active Sroduct Form Section -->
+                <form action="" id="most-active-store-form">
+                    {% csrf_token %}
+                    <div class="form-fields">
+                        <div class="form-field">
+                            <label for="timeframe" hidden>Time frame</label>
+                            <select 
+                                title="Select a time frame"
+                                id="timeframe" 
+                                name="timeframe" 
+                                required 
+                                placeholder="Select a time frame"
+                                class="form-select"
+                            >
+                                <option value="past 3 days" selected>In the past 3 days</option>
+                                <option value="past week">In the past week</option>
+                                <option value="past 2 weeks">In the past 2 weeks</option>
+                                <option value="past month">In the past month</option>
+                                <option value="past year">In the past year</option>
+                            </select>
+                            <small class="field-message"></small>
+                        </div> 
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
 
@@ -87,7 +161,7 @@ Dashboard
 
                     {% for store in request.user.stores.all %}
                     <div class="form-field">
-                        <input type="checkbox" name="{{ store.pk }}" id="{{ store.pk }}" checked>
+                        <input type="checkbox" name="{{ store.pk }}" id="{{ store.pk }}" value="{{ store.pk }}" checked>
                         <label for="{{ store.pk }}">{{ store.name }}</label>
                     </div>
                     {% endfor %}

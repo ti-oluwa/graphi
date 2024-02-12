@@ -4,6 +4,10 @@ const passwordField = passwordVerificationForm.querySelector('input#password');
 const verifyButton = passwordVerificationForm.querySelector('button.submit-btn');
 
 
+// Disable header search
+disableHeaderSearch();
+
+
 function getPasswordVerificationFormData() {
     let formData = new FormData(passwordVerificationForm);
     return {

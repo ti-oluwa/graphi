@@ -4,6 +4,10 @@ const passkeyField = storePasskeyForm.querySelector('input#passkey');
 const authorizeButton = storePasskeyForm.querySelector('button.submit-btn');
 
 
+// Disable header search
+disableHeaderSearch();
+
+
 function getStorePasskeyFormData() {
     let formData = new FormData(storePasskeyForm);
     return {

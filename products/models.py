@@ -12,6 +12,7 @@ from decimal import Decimal
 class ProductCategories(models.TextChoices):
     """Choices for product categories."""
     FASHION = "fashion", _("Fashion")
+    IOT_DEVICE = "iot device", _("IOT Device")
     ELECTRONICS = "electronics", _("Electronics")
     FOOD = "food", _("Food")
     BEAUTY = "beauty", _("Beauty")
