@@ -66,7 +66,7 @@ Dashboard
             </div>
         </div>
 
-        <!-- {% if products_count > 0 %} -->
+        {% if most_sold_product %}
         <div id="most-sold-card" class="stat-card floating-card">
             <div class="stat-card-header">
                 <h3>Most sold product</h3>
@@ -105,8 +105,9 @@ Dashboard
                 </form>
             </div>
         </div>
-        <!-- {% endif %} -->
+        {% endif %}
 
+        {% if most_active_store %}
         <div id="revenue-card" class="stat-card floating-card">
             <div class="stat-card-header">
                 <h3>Most active store</h3>
@@ -145,6 +146,7 @@ Dashboard
                 </form>
             </div>
         </div>
+        {% endif %}
     </div>
 
 
