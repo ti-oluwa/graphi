@@ -66,7 +66,7 @@ function formFieldHasError(formField, errorMsg) {
  * @returns {boolean} true if the email is valid, false otherwise
  */
 function isValidEmail(email) {
-    const emailRegex = /^[a-za-z0-9_.]+@[a-za-z0-9_]+\.[a-z]{2,}$/;
+    const emailRegex = /^[a-zA-Z0-9_.]+@[a-zA-Z0-9\._]+\.[a-z]{2,}$/;
     return emailRegex.test(email);
 }
 

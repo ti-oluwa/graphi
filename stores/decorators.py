@@ -5,8 +5,10 @@ from django.views.generic import View
 from django.shortcuts import get_object_or_404, redirect
 from django.conf import settings
 import functools
+from urllib.parse import urlencode as urllib_urlencode
 
 from .models import Store
+from users.utils import parse_query_params_from_request
 
 
 def to_JsonResponse(func: Callable[..., HttpResponse]) -> Callable[..., JsonResponse]:
@@ -65,7 +67,10 @@ def requires_store_authorization(
             store = get_object_or_404(Store, **{identifier: identifier_value})
             if store.check_request_is_authorized(request) is False:
                 auth_url = reverse(auth_view)
+                query_params = parse_query_params_from_request(request)
                 redirect_url = f"{auth_url}?{identifier}={identifier_value}&next={request.path}"
+                if query_params:
+                    redirect_url += f"?{urllib_urlencode(query_params)}"
                 return redirect(redirect_url, permanent=False)
 
             return view_func(view, request, *args, **kwargs)
