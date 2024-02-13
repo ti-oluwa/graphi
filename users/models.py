@@ -96,9 +96,9 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
             to=[self.email],
             connection=connection
         )
-        email.send(fail_silently=False)
         if html:
             email.content_subtype = "html"
+        email.send(fail_silently=False)
         return None
 
 
