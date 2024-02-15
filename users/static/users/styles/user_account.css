@@ -1,3 +1,14 @@
+#header-text > h1{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0 4px;
+}
+
+#header-text > h1 > svg{
+    fill: var(--teal) !important;
+}
+
 #account-details{
     display: flex;
     justify-content: flex-start;

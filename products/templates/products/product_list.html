@@ -23,7 +23,28 @@
         <div id="header-buttons">
             <button id="add-product-toggle" class="header-button btn-secondary">
                 Add Product
+
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="24" height="24" 
+                    viewBox="0 0 24 24" 
+                    style="fill: currentColor;"
+                >
+                    <path d="M20 2H8c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM8 16V4h12l.002 12H8z"></path>
+                    <path d="M4 8H2v12c0 1.103.897 2 2 2h12v-2H4V8zm11-2h-2v3h-3v2h3v3h2v-3h3V9h-3z"></path>
+                </svg>
             </button>
+
+            {% usertimezone request.user %}
+            <a href="{% url 'stores:sales:sale_list' store.slug %}?date={% now 'Y-m-d' %}" class="header-button btn-secondary">
+                View sales
+
+                <svg height="24" viewBox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h48v48H0z" fill="none"/>
+                    <path fill="currentColor" d="M8 12H4v28c0 2.21 1.79 4 4 4h28v-4H8V12zm32-8H16c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h24c2.21 0 4-1.79 4-4V8c0-2.21-1.79-4-4-4zm-2 18H18v-4h20v4zm-8 8H18v-4h12v4zm8-16H18v-4h20v4z"/>
+                </svg>
+            </a>
+            {% endusertimezone %}
         </div>
     </div>
 
