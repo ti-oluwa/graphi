@@ -63,12 +63,12 @@
                             {% if store.sales.count %}
                             <small class="last-sale-indicator">Last sale - {{ store.sales.last.made_at_utz | timesince }}</small>
                             {% else %}
-                            <small class="last-sale-indicator">No sales yet</small>
+                            <small class="last-sale-indicator">No sale yet</small>
                             {% endif %}
 
                             {% usertimezone request.user %}
                             <a href="{% url 'stores:sales:sale_list' store.slug %}?date={% now 'Y-m-d' %}" title="Record store sales" class="store-card-link">
-                                Add sales +
+                                Add sale +
                             </a>
                             {% endusertimezone %}
                         </div>
@@ -134,7 +134,8 @@
                         id="name" 
                         name="name" 
                         class="form-input"
-                        placeholder="Store name" 
+                        placeholder="Store name"
+                        autofocus 
                         required
                     >
                     <small class="field-message"></small>

@@ -48,7 +48,7 @@
 
         <div id="content-wrapper">
             <div class="form-card">
-                <!-- Product Add Form Section -->
+                <!-- Sales Add Form Section -->
                 <form action="{% url 'stores:sales:sale_add' store.slug %}" id="add-sale-form">
                     {% csrf_token %}
                     <div class="form-fields">
@@ -60,6 +60,7 @@
                                 name="product" 
                                 required 
                                 class="form-select"
+                                autofocus
                             >
                                 <option value="">Select product sold</option>
                                 {% for product in store.products.all %}

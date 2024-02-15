@@ -179,3 +179,4 @@ const headerSearch = document.querySelector('input#header-search');
 function disableHeaderSearch(){
     headerSearch.disabled = true;
 }
+
