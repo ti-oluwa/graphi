@@ -330,17 +330,17 @@ class UserAccountUpdateView(LoginRequiredMixin, generic.UpdateView):
             extra_msg = ""
             if "email" in form.changed_data:
                 user.is_verified = False
-            try:
-                user.send_verification_email()
-                extra_msg = "Please check your email inbox for an email verification link."
-            except Exception:
-                return JsonResponse(
-                    data={
-                        "status": "error",
-                        "detail": "Failed to send verification email on email update! Please try again!"
-                    },
-                    status=400
-                )
+                try:
+                    user.send_verification_email()
+                    extra_msg = "You'll need to verify your new email. Please check your email inbox for a verification link."
+                except Exception:
+                    return JsonResponse(
+                        data={
+                            "status": "error",
+                            "detail": "Failed to send verification email on email update! Please try again!"
+                        },
+                        status=400
+                    )
             
             user.save()
             return JsonResponse(

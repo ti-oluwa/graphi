@@ -3,7 +3,7 @@ from djmoney.money import Money
 from decimal import Decimal
 
 from .models import Store
-from products.models import ProductCategories
+from products.models import ProductCategory
 
 
 
@@ -154,7 +154,7 @@ class SupportsQuerySetFiltering:
         context = super().get_context_data(*args, **kwargs)
         context["filters"] = list(self.filter_mappings.keys())
         context["filter_title"] = f"Filter {self.context_object_name} by"
-        context["categories"] = ProductCategories.choices
+        context["categories"] = ProductCategory.choices
 
         store = self._get_store()
         if store:

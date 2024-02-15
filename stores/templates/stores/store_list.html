@@ -18,13 +18,13 @@
     <div id="content-header">
         <div id="header-text">
             <h1>Stores</h1>
-            <p>All stores you own</p>
+            <p>All the stores you own</p>
             <small>Hover over the cards to view more options</small>
         </div>
 
         <div id="header-buttons">
             <button id="create-store-toggle" class="header-button btn-secondary">
-                Create Store
+                Create a store
             </button>
         </div>
     </div>
@@ -43,7 +43,7 @@
                     <div class="store-card-top">
                         <div>
                             <h3 class="store-name">{{ store.name | title }}</h3>
-                            <span class="store-category">{{ store.type | title }}</span>
+                            <span class="store-category">{{ store.type | title }} store</span>
                         </div>
 
                         <small class="store-products-count">{{ store.products.count }} Product{{ store.products.count | pluralize:"s" }}</small>
@@ -57,26 +57,19 @@
                             <small class="last-sale-indicator">No sales yet</small>
                             {% endif %}
 
-                            <p class="store-email">
-                                {{ store.email | default:store.owner.email }}
-                            </p>
+                            {% usertimezone request.user %}
+                            <a href="{% url 'stores:sales:sale_list' store.slug %}?date={% now 'Y-m-d' %}" title="Record store sales" class="store-card-link">
+                                View sales
+                            </a>
+                            {% endusertimezone %}
                         </div>
 
-                        <a href="{% url 'stores:products:product_list' store.slug %}" class="view-products-link">
+                        <a href="{% url 'stores:products:product_list' store.slug %}" class="store-card-link">
                             Products
                         </a>
                     </div>
 
                     <div class="card-options">
-                        {% usertimezone request.user %}
-                        <a href="{% url 'stores:sales:sale_list' store.slug %}?date={% now 'Y-m-d' %}" title="Record store sales" class="card-option sales-record-button">
-                            <svg height="24" viewBox="0 0 48 48" width="24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M0 0h48v48H0z" fill="none"/>
-                                <path fill="currentColor" d="M8 12H4v28c0 2.21 1.79 4 4 4h28v-4H8V12zm32-8H16c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h24c2.21 0 4-1.79 4-4V8c0-2.21-1.79-4-4-4zm-2 18H18v-4h20v4zm-8 8H18v-4h12v4zm8-16H18v-4h20v4z"/>
-                            </svg>
-                        </a>
-                        {% endusertimezone %}
-
                         <a href="{% url 'stores:store_update' store.slug %}" title="Update store details" class="card-option update-store-button">
                             <svg 
                                 width="24px"

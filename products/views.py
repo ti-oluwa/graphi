@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 import json
 from decimal import Decimal
 
-from .models import Product, ProductCategories
+from .models import Product, ProductCategory
 from stores.models import Store
 from stores.mixins import StoreQuerySetMixin, SupportsQuerySetFiltering
 from users.mixins import RequestUserQuerySetMixin
@@ -69,7 +69,7 @@ class ProductListView(
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["store"] = self.get_store()
-        context["product_categories"] = ProductCategories.choices
+        context["product_categories"] = ProductCategory.choices
         context["has_any_product"] = Product.objects.filter(store=context["store"]).exists()
         return context
     
@@ -159,7 +159,7 @@ class ProductUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateVi
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["product_categories"] = ProductCategories.choices
+        context["product_categories"] = ProductCategory.choices
         return context
     
 

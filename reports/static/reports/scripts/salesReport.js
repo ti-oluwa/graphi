@@ -14,6 +14,10 @@ function prettyPrintTable(table) {
     printWindow.print();
 }
 
-printReportButton.addEventListener('click', () => {
-    prettyPrintTable(reportTable);
-});
+
+if (printReportButton) {
+    printReportButton.addEventListener('click', () => {
+        prettyPrintTable(reportTable);
+    });
+
+}

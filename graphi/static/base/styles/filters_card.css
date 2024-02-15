@@ -63,7 +63,7 @@ body:has(.filters-card.show-flex){
 }
 
 .card-body::-webkit-scrollbar, .card-body > *::-webkit-scrollbar {
-    display: none;
+    display: none !important;
 }
 
 .card-body > .card-body-head{

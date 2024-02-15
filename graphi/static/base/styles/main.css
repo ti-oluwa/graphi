@@ -4,7 +4,7 @@
 
 :root{
     --bluish-gray: #d5dce5;
-    --light-gray: #f2f2f2;
+    --light-gray: #e2e2e2;
     --dark-gray: #373b3f;
     --white: #fff;
     --text-dark: #2f2f2f;
@@ -39,8 +39,8 @@ body{
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;
     font-smooth: always !important;
-    -webkit-text-size-adjust: none;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: none !important;
+    -webkit-tap-highlight-color: transparent !important;
     color: var(--text-dark);
     background: var(--white);
     overflow-x: hidden !important;

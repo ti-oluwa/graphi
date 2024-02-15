@@ -9,18 +9,33 @@ from django_utz.decorators import model
 from decimal import Decimal
 
 
-class ProductCategories(models.TextChoices):
+class ProductCategory(models.TextChoices):
     """Choices for product categories."""
     FASHION = "fashion", _("Fashion")
     IOT_DEVICE = "iot device", _("IOT Device")
     ELECTRONICS = "electronics", _("Electronics")
     FOOD = "food", _("Food")
-    BEAUTY = "beauty", _("Beauty")
     HEALTH = "health", _("Health")
     HOME = "home", _("Home")
     BOOKS = "books", _("Books")
     SPORTS = "sports", _("Sports")
     AUTOMOBILE = "automobile", _("Automobile")
+    PHONE_ACCESSORIES = "phone accessories", _("Phone Accessories")
+    AUTO = "auto", _("Auto")
+    GIFT = "gift", _("Gift")
+    MUSIC = "music", _("Music")
+    FURNITURE = "furniture", _("Furniture")
+    JEWELRY = "jewelry", _("Jewelry")
+    COSMETICS = "cosmetics", _("Cosmetics")
+    FOOTWEAR = "footwear", _("Footwear")
+    TOYS = "toys", _("Toys")
+    HARDWARE = "hardware", _("Hardware")
+    REPAIR_TOOL = "repair tool", _("Repair tool")
+    SOFTWARE = "software", _("Software")
+    STATIONERY = "stationery", _("Stationery")
+    GADGET = "gadget", _("Gadget")
+    PET = "pet", _("Pet")
+    GROCERY = "grocery", _("Grocery")
     OTHERS = "others", _("Others")
 
 
@@ -42,7 +57,7 @@ class Product(models.Model):
     color = models.CharField(max_length=50, blank=True)
     size = models.CharField(max_length=50, blank=True)
     weight = models.DecimalField(_("Weight in grams"), max_digits=10, decimal_places=2, blank=True, null=True)
-    category = models.CharField(max_length=50, choices=ProductCategories.choices, default=ProductCategories.OTHERS)
+    category = models.CharField(max_length=50, choices=ProductCategory.choices, default=ProductCategory.OTHERS)
     group = models.ForeignKey("ProductGroup", blank=True, null=True, on_delete=models.SET_NULL, related_name="products")
     brand = models.ForeignKey("ProductBrand", blank=True, null=True, on_delete=models.SET_NULL, related_name="products")
     store = models.ForeignKey("stores.Store", on_delete=models.CASCADE, related_name="products")

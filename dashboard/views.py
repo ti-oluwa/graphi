@@ -10,7 +10,7 @@ from stores.models import Store
 from products.utils import get_products_count
 from products.models import Product
 from sales.utils import aggregate_sales_count, aggregate_revenue_from_sales
-from products.models import ProductCategories
+from products.models import ProductCategory
 from .utils import get_most_sold_product, get_most_active_store
 
 
@@ -27,7 +27,7 @@ class DashboardView(LoginRequiredMixin, generic.TemplateView):
         todays_date_for_user = self.request.user.to_local_timezone(timezone.now()).date()
         context["sales_count_today"] = aggregate_sales_count(self.request.user, date=todays_date_for_user)
         context["revenue_from_sales_today"] = aggregate_revenue_from_sales(self.request.user, date=todays_date_for_user)
-        context["product_categories"] = ProductCategories.labels
+        context["product_categories"] = ProductCategory.labels
         context["most_sold_product"] = get_most_sold_product(Product.objects.filter(store__owner=self.request.user))
         context["most_active_store"] = get_most_active_store(Store.objects.filter(owner=self.request.user))
         return context
