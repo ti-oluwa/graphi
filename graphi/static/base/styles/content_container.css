@@ -55,6 +55,16 @@
 #header-buttons .header-button{
     font-size: clamp(12px, 2vw, 14px);
     padding: 10px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.header-button > svg{
+    width: 20px;
+    height: 20px;
+    fill: var(--teal);
 }
 
 /* Optional */

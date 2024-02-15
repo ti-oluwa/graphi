@@ -43,6 +43,14 @@ body:has(.filters-card.show-flex){
     font-size: 14px;
     font-weight: 700;
     color: var(--text-dark);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0 4px;
+}
+
+.card-header > h4 > svg{
+    color: var(--jasper);
 }
 
 .card-header > img{

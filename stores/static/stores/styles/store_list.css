@@ -163,8 +163,5 @@
     color: var(--jasper);
 }
 
-.store-card:hover:not(.view-products-link:hover) > .card-options{
-    display: flex;
-}
 
 

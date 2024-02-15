@@ -65,6 +65,14 @@
     font-size: clamp(16px, 2vw, 18px);
     font-weight: 700;
     color: var(--text-dark);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-card-header > h3 > svg{
+    color: var(--jasper);
 }
 
 .stat-card-header > p{

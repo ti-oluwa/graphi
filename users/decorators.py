@@ -97,7 +97,7 @@ def requires_password_verification(
 
 def requires_account_verification(
         view_func: Callable[..., HttpResponse | JsonResponse] = None,
-        error_msg: str = "Account verification required!"
+        error_msg: str = "Account verification required! Please check your mail box for a verification link."
     ):
     """
     Ensures a user verifies account before accessing the view.
