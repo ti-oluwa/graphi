@@ -48,7 +48,13 @@ body::-webkit-scrollbar{
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+#sidebar #logo > svg{
+    width: 36px;
+    height: 36px;
 }
 
 #sidebar #logo h1{

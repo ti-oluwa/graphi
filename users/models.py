@@ -13,9 +13,10 @@ from djmoney.models.fields import CurrencyField
 from django.core.mail import EmailMessage, get_connection as get_smtp_connection
 from django.urls import reverse
 from django.template.loader import render_to_string
+from concurrent.futures import ThreadPoolExecutor
 
 from .managers import UserAccountManager
-
+from stores.models import Store
 
 
 @model
@@ -68,6 +69,18 @@ class UserAccount(PermissionsMixin, AbstractBaseUser):
         """Save user account."""
         if not self.username:
             self.username = slugify(f'{self.firstname}{self.lastname}{random.randrange(00000, 99999)}')[:100]
+        
+        if self.pk:
+            # Update stores email if the user's email changes if the store uses the user's(owner's) email
+            try:
+                existing_user = self.__class__.objects.get(pk=self.pk)
+                if existing_user.email != self.email:
+                    user_stores = Store.objects.filter(owner=self, uses_owner_email=True)
+                    if user_stores.exists():
+                        with ThreadPoolExecutor() as executor:
+                            executor.map(lambda store: store.update_email(self.email), user_stores)
+            except self.__class__.DoesNotExist:
+                pass
         return super().save(*args, **kwargs)
     
 

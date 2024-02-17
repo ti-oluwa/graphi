@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 import uuid
 from django.http import HttpRequest
@@ -76,6 +77,7 @@ class Store(models.Model):
         help_text="A unique string that identifies this store apart from its primary key. It is used in store access authorization."
     )
     default_currency = CurrencyField(default="NGN")
+    uses_owner_email = models.BooleanField(default=True, help_text="If checked, the store uses the owner's email as its contact email.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -103,6 +105,19 @@ class Store(models.Model):
                 self.update_products_prices(self.default_currency)
                 pass
         return super().save(*args, **kwargs)
+    
+
+    def update_email(self, new_email: str, save: bool = True) -> None:
+        """
+        Updates the email of this store.
+
+        :param new_email: The new email to set for this store.
+        :param save: If True, the change is saved to the database.
+        """
+        self.email = new_email
+        if save:
+            self.save()
+        return None
     
 
     def update_products_prices(self, new_currency: str) -> None:
@@ -179,7 +194,7 @@ class Store(models.Model):
 
 
     def revoke_authorization(self, request: HttpRequest) -> None:
-        """Revokes authorization for a request to access this store."""
+        """Revokes request's authorization to access this store."""
         if not request.user == self.owner:
             return
         if not self.passkey:
