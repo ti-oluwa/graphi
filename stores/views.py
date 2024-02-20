@@ -14,7 +14,7 @@ from .forms import StoreForm
 from .decorators import to_JsonResponse
 from users.utils import parse_query_params_from_request
 from users.decorators import requires_password_verification, requires_account_verification
-from users.mixins import RequestUserQuerySetMixin
+from users.mixins import RequestUserQuerySetMixin, QuerySetSearchMixin
 
 
 stores_global_queryset = Store.objects.all().prefetch_related("products").select_related("owner")
@@ -95,6 +95,7 @@ class StoreTypesAndCurrencyChoicesContextMixin:
 
 
 class StoreListView(
+        QuerySetSearchMixin,
         RequestUserQuerySetMixin,
         StoreTypesAndCurrencyChoicesContextMixin,
         LoginRequiredMixin, 

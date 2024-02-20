@@ -1,4 +1,3 @@
-from email.policy import default
 from django.db import models
 import uuid
 from django.http import HttpRequest
@@ -7,11 +6,12 @@ from django.utils import timezone
 from django.utils.text import slugify
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-
 from django_utz.decorators import model
 from djmoney.models.fields import CurrencyField
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
+
+from .managers import StoreManager
 
 
 class StoreTypes(models.TextChoices):
@@ -80,6 +80,8 @@ class Store(models.Model):
     uses_owner_email = models.BooleanField(default=True, help_text="If checked, the store uses the owner's email as its contact email.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = StoreManager()
 
     class Meta:
         ordering = ("name", "-created_at")

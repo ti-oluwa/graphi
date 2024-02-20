@@ -1,6 +1,7 @@
 from django.db.models import QuerySet
 from djmoney.money import Money
 from decimal import Decimal
+from urllib.parse import unquote_plus as urllib_unquote
 
 from .models import Store
 from products.models import ProductCategory
@@ -138,7 +139,8 @@ class SupportsQuerySetFiltering:
             param_val = params.get(param_name, None)
             if not param_val:
                 continue
-
+            
+            param_val = urllib_unquote(param_val)
             if param_name in LIST_TYPE_FILTERS:
                 param_val = param_val.split(",")
 

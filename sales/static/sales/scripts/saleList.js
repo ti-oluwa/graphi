@@ -3,6 +3,8 @@ const addSaleFormCard = addSaleForm.parentElement;
 const addSaleButton = addSaleForm.querySelector('.submit-btn');
 
 
+setHeaderSearchTitle("Search sales");
+
 addOnPostAndOnResponseFuncAttr(addSaleButton, 'Recording sale...');
 
 

@@ -35,7 +35,7 @@ mostSoldProductForm.onchange = function(e) {
                 const mostSoldProduct = responseData.mostSoldProduct ?? null;
                 if (mostSoldProduct){
                     statValueElementMSP.innerHTML = mostSoldProduct.name;
-                    miscStatValueElementMSP.innerHTML = `${mostSoldProduct.store} - ${mostSoldProduct.salesCount} sales`
+                    miscStatValueElementMSP.innerHTML = `${mostSoldProduct.store} - ${mostSoldProduct.totalQuantitySold} units sold`
 
                 }else{
                     statValueElementMSP.innerHTML = 'No data';

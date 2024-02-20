@@ -98,7 +98,7 @@ class MostSoldProductStatsView(LoginRequiredMixin, generic.View):
             sales_filters={"made_at__range": timeframe}
         most_sold_product = get_most_sold_product(products, sales_filters)
 
-        if most_sold_product:
+        if most_sold_product and most_sold_product.total_quantity_sold > 1:
             return JsonResponse(
                 data={
                     "status": "success",
@@ -106,7 +106,7 @@ class MostSoldProductStatsView(LoginRequiredMixin, generic.View):
                     "data": {
                         "mostSoldProduct": {
                             "name": most_sold_product.name,
-                            "salesCount": most_sold_product.sales_count,
+                            "totalQuantitySold": most_sold_product.total_quantity_sold,
                             "store": most_sold_product.store.name,
                         }
                     }
@@ -146,7 +146,7 @@ class MostActiveStoreStatsView(LoginRequiredMixin, generic.View):
             sales_filters={"made_at__range": timeframe}
         most_active_store = get_most_active_store(stores, sales_filters)
 
-        if most_active_store:
+        if most_active_store and most_active_store.sales_count > 1:
             return JsonResponse(
                 data={
                     "status": "success",

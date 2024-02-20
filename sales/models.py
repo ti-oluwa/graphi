@@ -10,6 +10,8 @@ from djmoney.money import Money
 from djmoney.contrib.exchange.models import convert_money
 from django.core.exceptions import ValidationError
 
+from .managers import SaleManager
+
 
 
 def generate_transaction_id() -> str:
@@ -42,6 +44,8 @@ class Sale(models.Model):
     )
     made_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = SaleManager()
 
     class Meta:
         verbose_name = "sale"

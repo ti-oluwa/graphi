@@ -128,7 +128,7 @@
     <!-- Header Section -->
     <main id="main">
         <header class="floating-card">
-            <div id="search-bar" title="Search for products, sales, and more">
+            <form id="search-bar">
                 <svg 
                     style="enable-background:new 0 0 24 24;" 
                     height="24" 
@@ -152,7 +152,7 @@
                     id="header-search" 
                     placeholder="Search here..."
                 >
-            </div>
+            </form>
 
             <ul id="nav-menu">
                 <li>
@@ -212,6 +212,7 @@
 
 {% block mainscripts %}
 <script src="{% static 'base//scripts//base.js' %}"></script>
+<script src="{% static 'base//scripts//search.js' %}"></script>
 
 {% block scripts %}
 {% endblock scripts %}

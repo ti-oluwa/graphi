@@ -8,6 +8,8 @@ from django.utils.translation import gettext_lazy as _
 from django_utz.decorators import model
 from decimal import Decimal
 
+from .managers import ProductManager
+
 
 class ProductCategory(models.TextChoices):
     """Choices for product categories."""
@@ -63,6 +65,8 @@ class Product(models.Model):
     store = models.ForeignKey("stores.Store", on_delete=models.CASCADE, related_name="products")
     added_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = ProductManager()
 
     class Meta:
         verbose_name = "product"

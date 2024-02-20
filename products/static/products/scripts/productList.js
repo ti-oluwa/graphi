@@ -5,6 +5,9 @@ const addProductFormCard = addProductForm.parentElement;
 const addProductButton = addProductForm.querySelector('.submit-btn');
 
 
+setHeaderSearchTitle("Search products");
+
+
 productCards.forEach((card) => {
     let cardMain = card.querySelector('.product-card-main');
     let cardExtras = card.querySelector('.product-card-extras');

@@ -13,13 +13,14 @@ from stores.models import Store
 from stores.mixins import StoreQuerySetMixin, SupportsQuerySetFiltering
 from stores.decorators import requires_store_authorization, to_JsonResponse
 from users.decorators import requires_account_verification, requires_password_verification
-from users.mixins import RequestUserQuerySetMixin
+from users.mixins import RequestUserQuerySetMixin, QuerySetSearchMixin
 
 
 sale_queryset = Sale.objects.all().select_related("store", "product")
 
 
 class SaleListView(
+    QuerySetSearchMixin,
     SupportsQuerySetFiltering,
     RequestUserQuerySetMixin,
     StoreQuerySetMixin,

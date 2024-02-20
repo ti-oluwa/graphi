@@ -3,6 +3,8 @@ const statValueElementMAS = mostActiveStoreForm.previousElementSibling;
 const miscStatValueElementMAS = mostActiveStoreForm.parentElement.previousElementSibling.querySelector('.stat-value-misc');
 
 
+disableHeaderSearch();
+
 mostActiveStoreForm.onchange = function(e) {
     e.stopImmediatePropagation();
     e.preventDefault();
@@ -35,7 +37,7 @@ mostActiveStoreForm.onchange = function(e) {
                 const mostActiveStore = responseData.mostActiveStore ?? null;
                 if (mostActiveStore){
                     statValueElementMAS.innerHTML = mostActiveStore.name;
-                    miscStatValueElementMAS.innerHTML = `${mostActiveStore.salesCount} sales`
+                    miscStatValueElementMAS.innerHTML = `${mostActiveStore.salesCount} sales made`
 
                 }else{
                     statValueElementMAS.innerHTML = 'No data';

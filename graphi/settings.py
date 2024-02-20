@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'reports.apps.ReportsConfig', 
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -132,6 +133,8 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# SMTP
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
@@ -147,7 +150,13 @@ EMAIL_HOST_PASSWORD = djsm_manager.get_secret("project_email_password")
 DEFAULT_FROM_EMAIL = djsm_manager.get_secret("project_email")
 
 
+# SITE SETTINGS
+
 LOGIN_URL = 'users:signin'
+
+LOGIN_REDIRECT_URL = 'dashboard:dashboard'
+
+LOGOUT_REDIRECT_URL = 'users:signin'
 
 STORE_AUTHORIZATION_VIEW = 'stores:store_auth'
 
@@ -159,6 +168,8 @@ BASE_URL = "https://graphi.pythonanywhere.com"
 
 
 # DJMONEY
+
 EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.OpenExchangeRatesBackend'
 
 OPEN_EXCHANGE_RATES_APP_ID = djsm_manager.get_secret("openexchangerates_app_id")
+

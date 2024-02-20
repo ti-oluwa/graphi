@@ -16,10 +16,11 @@
     gap: 4px;
     padding: 8px 10px;
     cursor: pointer;
+    border-radius: inherit;
 }
 
 .product-card-main:hover{
-    background: var(--light-gray) !important;
+    background: #f5f5f5 !important;
 }
 
 .product-card-main > *{

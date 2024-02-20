@@ -13,7 +13,7 @@ from decimal import Decimal
 from .models import Product, ProductCategory
 from stores.models import Store
 from stores.mixins import StoreQuerySetMixin, SupportsQuerySetFiltering
-from users.mixins import RequestUserQuerySetMixin
+from users.mixins import RequestUserQuerySetMixin, QuerySetSearchMixin
 from stores.decorators import requires_store_authorization, to_JsonResponse
 from users.decorators import requires_password_verification, requires_account_verification
 from .forms import ProductForm
@@ -23,6 +23,7 @@ product_queryset = Product.objects.all().select_related("store", "brand", "group
 
 
 class ProductListView(
+        QuerySetSearchMixin,
         SupportsQuerySetFiltering,
         RequestUserQuerySetMixin, 
         StoreQuerySetMixin, 

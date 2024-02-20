@@ -6,6 +6,8 @@ const emailField = createStoreForm.querySelector('#email');
 const cardOptionsContainers = document.querySelectorAll('.card-options');
 
 
+setHeaderSearchTitle("Search stores");
+
 createStoreToggle.onclick = () => {
     createStoreFormCard.classList.add('show-block');
 };
