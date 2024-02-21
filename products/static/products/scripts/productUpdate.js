@@ -3,6 +3,8 @@ const updateProductFormCard = updateProductForm.parentElement;
 const updateProductButton = updateProductForm.querySelector('.submit-btn');
 
 
+disableHeaderSearch();
+
 addOnPostAndOnResponseFuncAttr(updateProductButton, 'Updating product...');
 
 updateProductForm.onkeyup = function(e) {

@@ -3,8 +3,6 @@ const statValueElementMAS = mostActiveStoreForm.previousElementSibling;
 const miscStatValueElementMAS = mostActiveStoreForm.parentElement.previousElementSibling.querySelector('.stat-value-misc');
 
 
-disableHeaderSearch();
-
 mostActiveStoreForm.onchange = function(e) {
     e.stopImmediatePropagation();
     e.preventDefault();

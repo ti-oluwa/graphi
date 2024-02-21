@@ -1,3 +1,11 @@
+#main > header > #search-bar{
+    display: none !important;
+}
+
+#main > header > #header-logo{
+    display: flex !important;
+}
+
 #header-text > h1{
     display: flex;
     justify-content: flex-start;

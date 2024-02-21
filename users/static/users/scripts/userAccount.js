@@ -7,9 +7,6 @@ const storeSelectFormCard = document.querySelector('#store-select-form-card');
 const storeSelectToggle = document.querySelector('#store-select-toggle');
 
 
-// Disable header search
-disableHeaderSearch();
-
 addOnPostAndOnResponseFuncAttr(accountUpdateButton, 'Saving changes...');
 
 accountUpdateForm.addEventListener('keyup', function(e) {

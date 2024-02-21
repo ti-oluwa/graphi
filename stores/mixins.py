@@ -1,7 +1,9 @@
+from django.utils import timezone
 from django.db.models import QuerySet
 from djmoney.money import Money
 from decimal import Decimal
 from urllib.parse import unquote_plus as urllib_unquote
+from dateutil.parser import parse as date_parse
 
 from .models import Store
 from products.models import ProductCategory
@@ -147,6 +149,19 @@ class SupportsQuerySetFiltering:
             if "price" in param_name:
                 store = self._get_store()
                 param_val = Money(Decimal(param_val), store.default_currency) if store else Money(Decimal(param_val), "NGN")
+
+            if "date" in param_name:
+                # Convert the date string to a datetime in user's timezone at 12:00 PM(Noon).
+                date_in_users_tz = date_parse(param_val).astimezone(self.request.user.utz)
+                date_in_users_tz = date_in_users_tz.replace(hour=12, minute=0)
+
+                # Convert the user timezone based datetime to the server's timezone
+                date_in_servers_tz = date_in_users_tz.astimezone(timezone.get_current_timezone())
+                param_val = date_in_servers_tz.date()
+
+                # This conversion is done because the date on the object is in the server's timezone, but the 
+                # date in the request params is in the user's timezone. This ensures that the date in the request
+                # is properly translated to the server's timezone and the right objects are returned.
 
             query_filters[query_filter] = param_val
         return query_filters

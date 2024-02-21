@@ -4,6 +4,8 @@ const updateStoreButton = updateStoreForm.querySelector('.submit-btn');
 const emailField = updateStoreForm.querySelector('#email');
 
 
+disableHeaderSearch();
+
 addOnPostAndOnResponseFuncAttr(updateStoreButton, 'Updating store...');
 
 updateStoreForm.onkeyup = function(e) {
