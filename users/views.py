@@ -137,7 +137,7 @@ class UserAccountVerificationView(LoginRequiredMixin, generic.TemplateView):
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         if request.user.is_verified:
-            return redirect("users:dashboard")
+            return redirect("dashboard:dashboard")
         return super().get(request, *args, **kwargs)
 
 
