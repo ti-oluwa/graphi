@@ -7,6 +7,7 @@ const headerSearchForm = headerSearch.parentElement;
  */
 function disableHeaderSearch(){
     headerSearch.disabled = true;
+    headerSearchForm.classList.add("remove");
 }
 
 /**

@@ -180,6 +180,10 @@ button:disabled, input:disabled{
     display: flex !important;
 }
 
+.remove{
+    display: none !important;
+}
+
 .no-item{
     font-family: "Manrope";
     font-size: clamp(18px, 2vw, 24px);
