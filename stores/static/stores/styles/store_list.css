@@ -1,11 +1,3 @@
-#main > header > #search-bar{
-    display: none !important;
-}
-
-#main > header > #header-logo{
-    display: flex !important;
-}
-
 #stores-body{
     width: 100%;
     display: flex;

@@ -142,6 +142,12 @@ class SaleUpdateView(StoreQuerySetMixin, LoginRequiredMixin, generic.UpdateView)
     store_identifier = "slug"
     store_url_kwarg = "store_slug"
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["payment_methods"] = PaymentMethod.choices
+        return context
+    
+
     @requires_store_authorization(identifier="slug", url_kwarg="store_slug")
     def get(self, request, *args, **kwargs) -> HttpResponse:
         return super().get(request, *args, **kwargs)
