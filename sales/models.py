@@ -38,7 +38,7 @@ class Sale(models.Model):
     product = models.ForeignKey(
         "products.Product", on_delete=models.CASCADE, related_name="sales"
     )
-    quantity = models.PositiveIntegerField()
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(
         max_length=20, choices=PaymentMethod.choices, default=PaymentMethod.CASH
     )

@@ -61,7 +61,7 @@
                     <div class="store-card-bottom">
                         <div>
                             {% if store.sales.count %}
-                            <small class="last-sale-indicator">Last sale - {{ store.sales.last.made_at_utz | timesince }}</small>
+                            <small class="last-sale-indicator">Last sale - {{ store.sales.first.made_at_utz | timesince }}</small>
                             {% else %}
                             <small class="last-sale-indicator">No sale yet</small>
                             {% endif %}

@@ -142,7 +142,11 @@ class StoreCreateView(LoginRequiredMixin, generic.CreateView):
                         },
                         status=400
                     )
-
+                
+            if store.email != request.user.email:
+                store.uses_owner_email = False
+            else:
+                store.uses_owner_email = True 
             store.save()
             return JsonResponse(
                 data={
@@ -202,8 +206,12 @@ class StoreUpdateView(
                         },
                         status=400
                     )
+            
+            if store.email != request.user.email:
+                store.uses_owner_email = False
+            else:
+                store.uses_owner_email = True 
             store.save()
-
             return JsonResponse(
                 data={
                     "status": "success",
