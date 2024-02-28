@@ -199,7 +199,7 @@ class Schedule(AbstractBaseSchedule):
         if self.parent:
             # If the schedule has a parent(s) return the representation of the parent(s) and the schedule
             # joined together in the same order as they are chained.
-            return f"{".".join([ repr(ancestor) for ancestor in self.get_ancestors() ])}.{repr(self)}"
+            return f"{'.'.join([ repr(ancestor) for ancestor in self.get_ancestors() ])}.{repr(self)}"
         # Just return the representation of the schedule.
         return repr(self)
 
