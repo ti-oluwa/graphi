@@ -15,9 +15,9 @@ def get_most_sold_product(product_qs: models.QuerySet[Product], sales_filters: D
     """
     if sales_filters:
         filters = {f'sales__{key}': value for key, value in sales_filters.items()}
-        get_total_quantity_sold = models.Sum("sales__quantity", filter=models.Q(**filters))
+        get_total_quantity_sold = models.Sum("sales__quantity", filter=models.Q(**filters), default=0)
     else:
-        get_total_quantity_sold = models.Sum("sales__quantity")
+        get_total_quantity_sold = models.Sum("sales__quantity", default=0)
     return product_qs.annotate(total_quantity_sold=get_total_quantity_sold).order_by("-total_quantity_sold").first()
 
 

@@ -21,5 +21,5 @@ def update_rates(exchange_backend: str = settings.EXCHANGE_BACKEND, **kwargs) ->
 def run_tasks() -> None:
     """Runs the scheduled tasks (in background mode)."""
     manager.start()
-    update_rates()
+    # update_rates()
 
