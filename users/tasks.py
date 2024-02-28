@@ -7,7 +7,7 @@ from pysche.manager import TaskManager
 from pysche.schedules import RunAfterEvery
 
 
-manager = TaskManager("graphi_task_manager", log_to=".//tasklog.log")
+manager = TaskManager(name="graphi_task_manager")
 run_every_1hr = RunAfterEvery(hours=1)
 
 
