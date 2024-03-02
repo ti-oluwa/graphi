@@ -10,7 +10,8 @@ except ImportError:
 from abc import ABC, abstractmethod
 
 from .manager import TaskManager
-from .utils import SetOnceDescriptor, utcoffset_to_zoneinfo, get_datetime_now
+from .utils import utcoffset_to_zoneinfo, get_datetime_now
+from .descriptors import SetOnceDescriptor
 
 
 
@@ -33,10 +34,14 @@ class AbstractBaseSchedule(ABC):
 
         :param manager: The manager to execute the task.
         :param name: The name of the task. If not specified, the name of the function will be used.
-        :param execute_then_wait: If True, the task will be executed immediately before waiting for the schedule to be due.
-        :param stop_on_error: If True, the task will stop running if an exception is encountered.
-        :param max_retry: The maximum number of times the task will be retried if an exception is encountered.
-        :param start_immediately: If True, the task will start immediately after being created.
+        :param execute_then_wait: If True, the function will be dry run first before applying the schedule.
+        Also, if this is set to True, errors encountered on dry run will be propagated and will stop the task
+        without retry, irrespective of `stop_on_error` or `max_retry`
+        :param stop_on_error: If True, the task will stop running when an error is encountered during its execution.
+        :param max_retry: The maximum number of times the task will be retried after an error is encountered.
+        :param start_immediately: If True, the task will start immediately after creation. 
+        This is only applicable if the manager is already running.
+        Otherwise, task execution will start when the manager starts executing tasks.
         """
         from .tasks import ScheduledTask
         def decorator(func: Callable) -> Callable[..., ScheduledTask]:
@@ -57,6 +62,7 @@ class AbstractBaseSchedule(ABC):
                 )
             wrapper.__name__ = name or func.__name__
             return wrapper
+        
         return decorator
 
     @abstractmethod
@@ -119,32 +125,7 @@ class Schedule(AbstractBaseSchedule):
         if not self.tz:
             self.tz = utcoffset_to_zoneinfo(get_datetime_now().utcoffset())
         return None
-    
 
-    def __call__(
-        self, 
-        *, 
-        manager: TaskManager, 
-        name: str = None, 
-        execute_then_wait: bool = False, 
-        stop_on_error: bool = False, 
-        max_retry: int = 0, 
-        start_immediately: bool = True
-    ):
-        if self.timedelta is None:
-            raise ValueError(
-                f"The '{self.__class__.__name__}' schedule cannot be used solely to create a task."
-                " It has to be chained with a schedule that has its timedelta defined to form a useable schedule clause."
-            )
-        return super().__call__(
-            manager=manager, 
-            name=name, 
-            execute_then_wait=execute_then_wait, 
-            stop_on_error=stop_on_error, 
-            max_retry=max_retry, 
-            start_immediately=start_immediately
-        )
-    
 
     def make_schedule_func_for_task(self, scheduledtask) -> Callable[..., Coroutine[Any, Any, None]]:
         schedule_is_due: Callable[..., bool] = scheduledtask.manager._make_asyncable(self.is_due)
@@ -160,7 +141,7 @@ class Schedule(AbstractBaseSchedule):
                 continue
             
             if await schedule_is_due() is True:
-                scheduledtask._last_ran_at = datetime.datetime.now(tz=self.tz)
+                scheduledtask._last_ran_at = get_datetime_now(self.tz)
                 await scheduledtask.func(*args, **kwargs)
             return
 
@@ -179,7 +160,7 @@ class Schedule(AbstractBaseSchedule):
         run_in_march_from_mon_to_fri_at_12_30pm = RunInMonth(month=3).from_weekday__to(_from=0, _to=4).at("12:30:00")
 
         print(run_in_march_from_mon_to_fri_at_12_30pm.get_ancestors())
-        # [RunInMonth(month=3), RunInMonth(month=3).RunFromWeekday__To(_from=0, _to=4)]
+        # [RunInMonth(month=3), RunFromWeekday__To(_from=0, _to=4)]
         """
         ancestors = []
         if self.parent:

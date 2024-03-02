@@ -7,7 +7,7 @@ from pysche.manager import TaskManager
 from pysche.schedules import RunAfterEvery
 
 
-manager = TaskManager(name="graphi_task_manager")
+manager = TaskManager(name="graphi_task_manager", log_to='.//tasks.log')
 run_every_1hr = RunAfterEvery(hours=1)
 
 
@@ -15,11 +15,11 @@ run_every_1hr = RunAfterEvery(hours=1)
 def update_rates(exchange_backend: str = settings.EXCHANGE_BACKEND, **kwargs) -> None:
     exchange_backend: SimpleExchangeBackend = import_string(exchange_backend)()
     exchange_backend.update_rates(**kwargs)
-    sys.stdout.write("\nRates updated!\n")
+    sys.stdout.write("Rates updated!\n")
 
 
 def run_tasks() -> None:
     """Runs the scheduled tasks (in background mode)."""
     manager.start()
-    # update_rates()
+    update_rates()
 

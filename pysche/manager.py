@@ -1,6 +1,6 @@
 from collections.abc import Coroutine
 import datetime
-import sys
+import logging
 from collections import deque
 import threading
 import time
@@ -8,10 +8,11 @@ from typing import Any, Callable, Dict, Sequence, List, Mapping
 import asyncio
 import functools
 from concurrent.futures import CancelledError, ThreadPoolExecutor
-from bs4_web_scraper.logger import Logger
 
-from .utils import get_current_datetime, _RedirectStandardOutputStream
+
+from .utils import _RedirectStandardOutputStream, parse_datetime, get_datetime_now
 from .exceptions import UnregisteredTask
+from .logging import get_logger
 
 
 
@@ -19,10 +20,9 @@ class TaskManager:
     """
     Manages scheduled tasks.
     """
-    log_to_console = True
     __slots__ = (
         "name", "_tasks", "_futures", "_continue", "_loop", 
-        "_workthread", "_executor", "max_duplicates", "_logger"
+        "_workthread", "_executor", "max_duplicates", "logger"
     )
 
     def __init__(self, name: str = None, max_duplicates: int = 1, log_to: str = None):
@@ -44,19 +44,18 @@ class TaskManager:
         self.name: str = name or f"{self.__class__.__name__.lower()}{str(id(self))[-6:]}"
         # Used deque to allow for thread-safety and O(1) time complexity when removing tasks from the list
         self._tasks: deque[ScheduledTask] = deque([])
-        self._futures: deque[asyncio.Task] = deque([])
+        self._futures: deque[asyncio.Future] = deque([])
         self._continue: bool = False
         self._loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
         self._workthread: threading.Thread | None = None
-        self._executor: ThreadPoolExecutor = ThreadPoolExecutor()
+        self._executor: ThreadPoolExecutor = ThreadPoolExecutor(thread_name_prefix=f"{self.name}_sync_to_async_executor")
         self.max_duplicates = max_duplicates
-
-        if log_to:
-            self._logger = Logger(name=f'{self.__class__.__name__.lower()}{id(self)}', log_filepath=log_to)
-            self._logger.to_console = self.log_to_console
-            self._logger.date_format = "%Y-%m-%d %H:%M:%S (%z)"
-        else: 
-            self._logger = None
+        self.logger = get_logger(
+            name=f"{self.name}_logger",
+            logfile_path=log_to,
+            base_level="DEBUG",
+            date_format="%Y-%m-%d %H:%M:%S (%z)"
+        )
         return None
     
     
@@ -72,7 +71,7 @@ class TaskManager:
     @property
     def has_started(self) -> bool:
         """Returns True if the task manager has started executing tasks"""
-        return self._continue and self._loop.is_running()
+        return self._continue is True and self._loop.is_running()
     
     @property
     def tasks(self):
@@ -103,6 +102,7 @@ class TaskManager:
     
     @property
     def status(self):
+        """Returns the status of the task manager - 'busy' or 'idle'"""
         return "busy" if self.is_busy else "idle"
 
     
@@ -134,24 +134,30 @@ class TaskManager:
         return async_func
     
 
-    def _make_future(self, scheduledtask) -> asyncio.Task:
-        """Creates and returns an `asyncio.Task` for the scheduled task"""
-        future = self._loop.create_task(scheduledtask(), name=scheduledtask.name)
+    def _make_future(self, scheduledtask) -> asyncio.Future:
+        """
+        Creates and returns an `asyncio.Future` for the scheduled task.
+        Adds the future to the list of futures handled by this manager
+        """
+        # Used `run_coroutine_threadsafe` to ensure that tasks(futures) are 
+        # run concurrently and in a thread-safe manner once the loop starts running
+        future = asyncio.run_coroutine_threadsafe(scheduledtask(), self._loop)
+        future.name = scheduledtask.name
         future.id = scheduledtask.id
         self._futures.append(future)
         return future
     
 
-    def _get_futures(self, name: str) -> List[asyncio.Task]:
+    def _get_futures(self, name: str) -> List[asyncio.Future]:
         """Returns a list of futures with the specified name"""
         matches = []
         for future in self._futures:
-            if future.get_name() == name:
+            if future.name == name:
                 matches.append(future)
         return matches
 
     
-    def _get_future(self, future_id: str) -> asyncio.Task | None:
+    def _get_future(self, future_id: str) -> asyncio.Future | None:
         """Returns future with specified ID if any"""
         for future in self._futures:
             if future.id == future_id:
@@ -203,25 +209,19 @@ class TaskManager:
             raise RuntimeError(f"{self.name} has not started task execution yet.\n")
 
         self._continue = False # breaks outermost while loop in all ScheduleTasks
-        for fut in self._futures:
-            self._loop.call_soon_threadsafe(fut.cancel)
+
+        # Cancel all tasks which eventually cancels all futures before stopping loop
+        # This helps avoid the warning message that is thrown by the loop when it is stopped
+        for task in self.tasks:
+            task.cancel()
+
         self._loop.call_soon_threadsafe(self._loop.stop)
 
-        try:
-            self._workthread.join()
-        except:
-            pass
+        self._workthread.join()
+        del self._workthread
         self._workthread = None
         return None
     
-
-    def restart(self) -> None:
-        """Quick way to restart all tasks"""
-        if self.has_started:
-            self.stop()
-        self.start()
-        return None
-
 
     def shutdown(self) -> None:
         """
@@ -230,14 +230,13 @@ class TaskManager:
         """
         if self.is_busy:
             self.stop() # stop all task execution, if the manager is busy with any
-        for task in self.tasks:
-            task.cancel() # Cancel all scheduled tasks
+
         self._loop.close()
         self._executor.shutdown(wait=True, cancel_futures=True)
         return None
 
 
-    def is_managing(self, name_or_id: str) -> bool:
+    def is_managing(self, name_or_id: str, /) -> bool:
         """Check if the task manager is managing a task with the specified name or ID"""
         for task in self.tasks:
             if task.name == name_or_id or task.id == name_or_id:
@@ -267,7 +266,8 @@ class TaskManager:
     def run_after(
         self, 
         delay: int | float, 
-        func: Callable, *,
+        func: Callable, 
+        /, *,
         args: Sequence[Any] = (), 
         kwargs: Mapping[str, Any] = {}, 
         task_name: str = None
@@ -309,12 +309,66 @@ class TaskManager:
         return task
     
 
+    def run_on(
+        self, 
+        datetime: str, 
+        func: Callable, 
+        /, *,
+        tz: str | datetime.tzinfo = None,
+        args: Sequence[Any] = (), 
+        kwargs: Mapping[str, Any] = {}, 
+        task_name: str = None
+    ):
+        """
+        Creates a task that runs the function on a specified datetime.
+
+        :param datetime: The datetime to run the function. It should be in the format 'YYYY-MM-DD HH:MM:SS'
+        :param func: The function to run as a task
+        :param tz: The timezone to use. Defaults to local timezone.
+        :param args: The arguments to pass to the function
+        :param kwargs: The keyword arguments to pass to the function
+        :param task_name: The name to give the task created to run the function. 
+        This can make it easier to identify the task in logs in the case of errors.
+        :return: The created task
+        """
+        dt = parse_datetime(datetime, tz)
+        now = get_datetime_now(tz)
+        if dt < now:
+            raise ValueError("datetime cannot be in the past")
+        timedelta = dt - now
+        
+        from .schedules import RunAfterEvery
+        from .tasks import ScheduledTask
+        # Wraps function such that the function runs once and then the task is cancelled
+        @functools.wraps(func)
+        def _wrapper(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            finally:
+                _wrapper.task.cancel()
+        
+        task = ScheduledTask(
+            func=_wrapper,
+            schedule=RunAfterEvery(seconds=timedelta.total_seconds()),
+            manager=self,
+            args=args,
+            kwargs=kwargs,
+            name=task_name or f"run_{func.__name__}_on_{dt}",
+            stop_on_error=True,
+            max_retry=0,
+            start_immediately=False,
+        )
+        _wrapper.task = task
+        task.start()
+        return task
+    
+
     def run_at(
         self, 
         time: str, 
-        func: Callable,
+        func: Callable, 
+        /, *,
         tz: str | datetime.tzinfo = None,
-            *,
         args: Sequence[Any] = (), 
         kwargs: Mapping[str, Any] = {}, 
         task_name: str = None
@@ -324,7 +378,7 @@ class TaskManager:
 
         :param time: The time to run the function. Must be in the format 'HH:MM:SS'
         :param func: The function to run as a task
-        :param tz: The timezone to use when running the function. Defaults to local timezone.
+        :param tz: The timezone to use. Defaults to local timezone.
         :param args: The arguments to pass to the function
         :param kwargs: The keyword arguments to pass to the function
         :param task_name: The name to give the task created to run the function. 
@@ -357,7 +411,7 @@ class TaskManager:
         return task
 
 
-    def stop_after(self, delay: int | float):
+    def stop_after(self, delay: int | float, /):
         """
         Creates a task that stops the execution of all scheduled tasks after a specified delay in seconds
 
@@ -369,7 +423,7 @@ class TaskManager:
         return self.run_after(delay, self.stop, task_name=f"stop_{self.name}_after_{delay}seconds")
     
 
-    def stop_at(self, time: str):
+    def stop_at(self, time: str, /):
         """
         Creates a task that stops the execution of all scheduled tasks at the specified time
 
@@ -381,7 +435,7 @@ class TaskManager:
         return self.run_at(time, self.stop, task_name=f"stop_{self.name}_at_{time}")
     
     
-    def cancel_task(self, name_or_id: str) -> None:
+    def cancel_task(self, name_or_id: str, /) -> None:
         """Cancel all tasks with the specified name or ID"""
         if not self.is_managing(name_or_id):
             raise UnregisteredTask(f"Task '{name_or_id}' is not registered with {self.name}")
@@ -426,34 +480,19 @@ class TaskManager:
         return failed_tasks
     
 
-    def log(self, msg: str, level: str = "INFO") -> None:
+    def log(self, msg: object, level: str = "INFO", **kwargs) -> None:
         """
-        Log message to console and to log file (if `log_to` is set)
-        :param msg: message to log.
-        :param level: Log level. Defaults to INFO. Level only applies if 
-        `log_to` is provided on class instantiation.
+        Log message to console and/or to log file.
+
+        :param msg: The message to log
+        :param level: The log level. Defaults to "INFO"
+        :param kwargs: Additional keyword arguments to pass to `logger.log`
         """
-        if self._logger:
-            self._logger.log(msg, level)
-        else:
-            if self.log_to_console:
-                msg = f"{get_current_datetime(with_tz=True)} - {level} - {msg}\n"
-                sys.stdout.write(msg)
-        return None
-
-
-    def clear_log_history(self) -> None:
-        """Clear all logs in log file"""
-        if self._logger:
-            self._logger.clear_logs()
-        return None
-    
-
-    def start_new_log(self, log_filepath: str) -> None:
-        """Start a new log history in a new file"""
-        if self._logger:
-            old_logger = self._logger
-            self._logger = Logger(name=self._logger._logger.name, log_filepath=log_filepath)
-            self._logger.to_console = old_logger.to_console
-        return None
+        level = getattr(logging, level.upper())
+        try:
+            return self.logger.log(level, msg, **kwargs)
+        except ImportError:
+            # Just to avoid the error message that is thrown by the rich library
+            # Anytime logging is interrupted by a system exit or keyboard interrupt
+            pass
     
